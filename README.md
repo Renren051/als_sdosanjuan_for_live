@@ -132,10 +132,24 @@ git config --global user.email "your.email@example.com"
 
 ### Installation Steps
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Renren051/als_sdosanjuan.git
+1. **Clone the branch you want:** Run one of these commands to clone into `als_sdosanjuan`:
+   ```powershell
+   # Main branch
+   git clone --branch main --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan
+   ```
+   ```powershell
+   # Preview branch
+   git clone --branch preview-deployment --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan
+   ```
+   Then enter the project folder:
+   ```powershell
    cd als_sdosanjuan
+   ```
+
+   To clone both branches into separate folders, use different destination names:
+   ```powershell
+   git clone --branch main --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan-main
+   git clone --branch preview-deployment --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan-preview
    ```
 
 2. **Install PHP and Node dependencies:**
