@@ -180,6 +180,50 @@ git config --global user.email "your.email@example.com"
    ```
    Visit the portal in your browser at: **`http://127.0.0.1:8000`**
 
+### Run `main` and `preview-deployment`
+
+The same checkout can run only one branch at a time. To switch branches in the existing project folder, stop the server with `Ctrl+C`, then run:
+
+```powershell
+git switch main
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+Open **`http://127.0.0.1:8000`**. To run the preview instead, stop the server and switch branches:
+
+```powershell
+git switch preview-deployment
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+On a fresh clone, fetch and create the local preview branch once with:
+
+```powershell
+git fetch origin
+git switch --track origin/preview-deployment
+```
+
+#### Run both branches at the same time
+
+Use a separate Git worktree for `main`, then run each branch on a different port. In the original project folder, keep the preview branch on port `8000`:
+
+```powershell
+git switch preview-deployment
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+In a second PowerShell window, create and prepare the `main` worktree. Run these commands from the original project folder:
+
+```powershell
+git worktree add ..\als_sdosanjuan-main main
+Copy-Item .env ..\als_sdosanjuan-main\.env
+cd ..\als_sdosanjuan-main
+composer install
+php artisan serve --host=127.0.0.1 --port=8001
+```
+
+Open **`http://127.0.0.1:8000`** for `preview-deployment` and **`http://127.0.0.1:8001`** for `main`. The worktree setup is needed only once. Both worktrees use the database configured in the copied `.env`; keep that in mind when changing or migrating local data. If both branches point to the same commit, their pages will look the same until one branch has different changes.
+
 ---
 
 ## 👥 Default Demo Accounts
