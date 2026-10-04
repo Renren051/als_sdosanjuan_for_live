@@ -100,7 +100,7 @@
                     <a href="{{ route('home') }}" class="flex items-center gap-2.5 sm:gap-3 group">
                         <!-- School / SDO San Juan Logo Container -->
                         <div class="w-10 h-10 sm:w-11 sm:h-11 p-1 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
-                            <img src="{{ file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg') }}" 
+                            <img src="{{ file_exists(public_path('images/sdosj.svg')) ? asset('images/sdosj.svg') : (file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg')) }}" 
                                  alt="SDO San Juan City Logo" 
                                  class="w-full h-full object-contain">
                         </div>
@@ -1053,7 +1053,7 @@
                 <!-- Logos & Title -->
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 p-1 rounded-xl bg-white flex items-center justify-center">
-                        <img src="{{ file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg') }}" 
+                        <img src="{{ file_exists(public_path('images/sdosj.svg')) ? asset('images/sdosj.svg') : (file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg')) }}" 
                              alt="SDO San Juan" class="w-full h-full object-contain">
                     </div>
                     <div class="w-12 h-12 p-1 rounded-xl bg-white flex items-center justify-center">
