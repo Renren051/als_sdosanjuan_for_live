@@ -17,6 +17,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/about-als', [HomeController::class, 'showPage'])->defaults('pageKey', 'about')->name('about');
+Route::get('/programs', [HomeController::class, 'showPage'])->defaults('pageKey', 'programs')->name('programs');
+Route::get('/requirements', [HomeController::class, 'showPage'])->defaults('pageKey', 'requirements')->name('requirements');
+Route::get('/learning-centers', [HomeController::class, 'showPage'])->defaults('pageKey', 'centers')->name('centers');
+Route::get('/contact', [HomeController::class, 'showPage'])->defaults('pageKey', 'contact')->name('contact');
 
 // Authentication & Registration
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

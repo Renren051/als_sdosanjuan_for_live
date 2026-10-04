@@ -1,6 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'SDO San Juan City - Alternative Learning System (ALS) | Official Portal')
+@section('title', ($pageTitles[$pageKey] ?? 'Home') . ' | SDO San Juan City - Alternative Learning System (ALS)')
+
+@php
+    $publicNavigation = [
+        ['label' => 'Home', 'route' => 'home'],
+        ['label' => 'About ALS', 'route' => 'about'],
+        ['label' => 'Online Registration', 'route' => 'register'],
+        ['label' => 'A & E Program', 'route' => 'programs'],
+        ['label' => 'Requirements', 'route' => 'requirements'],
+        ['label' => 'Learning Centers', 'route' => 'centers'],
+        ['label' => 'Contact Us', 'route' => 'contact'],
+    ];
+@endphp
 
 @push('styles')
 <style>
@@ -83,9 +95,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between min-h-[72px] sm:min-h-[78px] py-2 gap-3 sm:gap-4">
                 
-                <!-- Left Column: Dual Logo & Brand Titles (flex-1 justify-start for balance) -->
-                <div class="flex items-center flex-1 justify-start min-w-0">
-                    <a href="#home" class="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+                <!-- Brand -->
+                <div class="flex items-center shrink-0">
+                    <a href="{{ route('home') }}" class="flex items-center gap-2.5 sm:gap-3 group">
                         <!-- School / SDO San Juan Logo Container -->
                         <div class="w-10 h-10 sm:w-11 sm:h-11 p-1 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
                             <img src="{{ file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg') }}" 
@@ -115,23 +127,22 @@
                     </a>
                 </div>
 
-                <!-- Center Column: Navigation Pill (Centered mathematically between left and right) -->
-                <div class="hidden lg:flex items-center justify-center shrink-0">
-                    <nav class="flex items-center gap-0.5 xl:gap-1 font-bold text-[11px] xl:text-xs uppercase tracking-wide text-slate-600 bg-slate-100/80 p-1 rounded-full border border-slate-200/90 shadow-2xs">
-                        <a href="#home" class="px-2.5 xl:px-3 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all whitespace-nowrap">Home</a>
-                        <a href="#about" class="px-2.5 xl:px-3 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all whitespace-nowrap">About ALS</a>
-                        <a href="{{ route('register') }}" class="px-2.5 xl:px-3.5 py-1.5 rounded-full text-deped-blue bg-blue-50 hover:bg-deped-blue hover:text-white transition-all font-black whitespace-nowrap">
-                            Online Registration
-                        </a>
-                        <a href="#programs" class="px-2.5 xl:px-3 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all whitespace-nowrap">A &amp; E Program</a>
-                        <a href="#requirements" class="px-2.5 xl:px-3 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all whitespace-nowrap">Requirements</a>
-                        <a href="#centers" class="px-2.5 xl:px-3 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all whitespace-nowrap">Learning Centers</a>
-                        <a href="#contact" class="px-2.5 xl:px-3 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all whitespace-nowrap">Contact Us</a>
+                <!-- Desktop Navigation -->
+                <div class="hidden 2xl:flex flex-1 min-w-0 items-center justify-center px-2">
+                    <nav aria-label="Main navigation" class="flex items-center gap-0.5 font-bold text-[10px] uppercase tracking-wide text-slate-600 bg-slate-100/80 p-1 rounded-full border border-slate-200/90 shadow-2xs">
+                        @foreach($publicNavigation as $item)
+                            @php $isActive = request()->routeIs($item['route']); @endphp
+                            <a href="{{ route($item['route']) }}"
+                               @if($isActive) aria-current="page" @endif
+                               class="px-2.5 py-1.5 rounded-full transition-all whitespace-nowrap {{ $isActive ? 'bg-white text-deped-blue shadow-sm' : 'hover:text-deped-blue hover:bg-white' }} {{ $item['route'] === 'register' ? 'font-black' : '' }}">
+                                {{ $item['label'] }}
+                            </a>
+                        @endforeach
                     </nav>
                 </div>
 
-                <!-- Right Column: Portal Sign In (flex-1 justify-end to mirror left column) -->
-                <div class="flex items-center flex-1 justify-end gap-3 shrink-0">
+                <!-- Portal Sign In and Responsive Menu -->
+                <div class="flex items-center justify-end gap-3 shrink-0">
                     <a href="{{ route('login') }}" 
                        class="hidden sm:inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-deped-blue hover:bg-deped-dark text-white font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap">
                         <span>Portal Sign In</span>
@@ -139,7 +150,7 @@
                     </a>
 
                     <!-- Mobile Hamburger Button -->
-                    <div class="lg:hidden flex items-center gap-2">
+                    <div class="2xl:hidden flex items-center gap-2">
                         <a href="{{ route('login') }}" class="sm:hidden px-3 py-1.5 bg-deped-blue text-white text-xs font-bold rounded-lg whitespace-nowrap">
                             Sign In
                         </a>
@@ -164,15 +175,19 @@
              x-transition:leave="transition ease-in duration-150"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-2"
-             class="xl:hidden border-b border-slate-200 bg-white px-6 py-5 space-y-3 font-bold text-xs uppercase tracking-wider shadow-xl" 
+             class="2xl:hidden border-b border-slate-200 bg-white px-6 py-5 space-y-3 font-bold text-xs uppercase tracking-wider shadow-xl" 
              x-cloak>
-            <a href="#home" @click="mobileNav = false" class="block py-2 text-slate-800 hover:text-deped-blue">Home</a>
-            <a href="#about" @click="mobileNav = false" class="block py-2 text-slate-800 hover:text-deped-blue">About ALS</a>
-            <a href="{{ route('register') }}" class="block py-2.5 px-3 rounded-lg bg-blue-50 text-deped-blue font-black">ALS Online Registration</a>
-            <a href="#programs" @click="mobileNav = false" class="block py-2 text-slate-800 hover:text-deped-blue">A &amp; E Program</a>
-            <a href="#requirements" @click="mobileNav = false" class="block py-2 text-slate-800 hover:text-deped-blue">Requirements</a>
-            <a href="#centers" @click="mobileNav = false" class="block py-2 text-slate-800 hover:text-deped-blue">Learning Centers</a>
-            <a href="#contact" @click="mobileNav = false" class="block py-2 text-slate-800 hover:text-deped-blue">Contact Us</a>
+            <nav aria-label="Main navigation" class="space-y-1">
+                @foreach($publicNavigation as $item)
+                    @php $isActive = request()->routeIs($item['route']); @endphp
+                    <a href="{{ route($item['route']) }}"
+                       @click="mobileNav = false"
+                       @if($isActive) aria-current="page" @endif
+                       class="block py-2 px-3 rounded-lg {{ $isActive ? 'bg-blue-50 text-deped-blue' : 'text-slate-800 hover:text-deped-blue hover:bg-slate-50' }} {{ $item['route'] === 'register' ? 'font-black' : '' }}">
+                        {{ $item['label'] }}
+                    </a>
+                @endforeach
+            </nav>
             <div class="pt-3 border-t border-slate-100">
                 <a href="{{ route('login') }}" class="w-full py-3 text-center block rounded-xl bg-deped-blue text-white font-bold">
                     Learner &amp; Teacher Portal Sign In
@@ -187,6 +202,7 @@
         <!-- ==========================================
              HERO BENTO GRID SECTION (#home)
              ========================================== -->
+        @if($pageKey === 'home')
         <section id="home" class="scroll-mt-28">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
@@ -223,7 +239,7 @@
                             <svg class="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
 
-                        <a href="#centers" 
+                        <a href="{{ route('centers') }}" 
                            class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl bg-slate-900/80 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm uppercase tracking-wider border border-white/30 backdrop-blur-md transition-all shadow-md hover:border-deped-gold/50">
                             <span>Locate Learning Centers</span>
                             <svg class="w-4 h-4 text-deped-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
@@ -374,11 +390,13 @@
                 </div>
             </div>
         </section>
+        @endif
 
 
         <!-- ==========================================
              SECTION 2: ABOUT ALS BENTO (#about)
              ========================================== -->
+        @if($pageKey === 'about')
         <section id="about" class="scroll-mt-28 space-y-6">
             <!-- Section Header -->
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-200 pb-4">
@@ -520,11 +538,13 @@
 
             </div>
         </section>
+        @endif
 
 
         <!-- ==========================================
              SECTION 3: A & E PROGRAM BENTO (#programs)
              ========================================== -->
+        @if($pageKey === 'programs')
         <section id="programs" class="scroll-mt-28 space-y-6">
             <!-- Section Header -->
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-200 pb-4">
@@ -651,11 +671,13 @@
                 </div>
             </div>
         </section>
+        @endif
 
 
         <!-- ==========================================
              SECTION 4: REQUIREMENTS BENTO (#requirements)
              ========================================== -->
+        @if($pageKey === 'requirements')
         <section id="requirements" class="scroll-mt-28 space-y-6">
             <!-- Section Header -->
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-200 pb-4">
@@ -767,11 +789,13 @@
                 </div>
             </div>
         </section>
+        @endif
 
 
         <!-- ==========================================
              SECTION 5: LEARNING CENTERS BENTO (#centers)
              ========================================== -->
+        @if($pageKey === 'centers')
         <section id="centers" class="scroll-mt-28 space-y-6">
             <!-- Section Header -->
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-200 pb-4">
@@ -870,11 +894,13 @@
                 @endforeach
             </div>
         </section>
+        @endif
 
 
         <!-- ==========================================
              SECTION 6: FAST INTAKE BENTO CTA BANNER
              ========================================== -->
+        @if($pageKey === 'home')
         <section id="register-cta" class="bento-card bento-dark bg-slate-950 text-white p-8 sm:p-12 relative overflow-hidden bento-grid-dark-bg border border-slate-800 shadow-xl">
             <div class="relative z-10 max-w-3xl mx-auto text-center space-y-4">
                 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-deped-gold text-slate-950 font-black text-xs uppercase tracking-wider">
@@ -898,11 +924,13 @@
                 </div>
             </div>
         </section>
+        @endif
 
 
         <!-- ==========================================
              SECTION 7: CONTACT US BENTO (#contact)
              ========================================== -->
+        @if($pageKey === 'contact')
         <section id="contact" class="scroll-mt-28 space-y-6">
             <!-- Section Header -->
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-200 pb-4">
@@ -1014,6 +1042,7 @@
 
             </div>
         </section>
+        @endif
 
     </main>
 
@@ -1039,12 +1068,11 @@
 
                 <!-- Navigation Links -->
                 <div class="flex flex-wrap items-center gap-4 text-xs font-bold text-slate-400 uppercase">
-                    <a href="#home" class="hover:text-white transition-colors">Home</a>
-                    <a href="#about" class="hover:text-white transition-colors">About ALS</a>
-                    <a href="{{ route('register') }}" class="text-deped-gold hover:underline">Register</a>
-                    <a href="#programs" class="hover:text-white transition-colors">A &amp; E Program</a>
-                    <a href="#requirements" class="hover:text-white transition-colors">Requirements</a>
-                    <a href="#centers" class="hover:text-white transition-colors">Learning Centers</a>
+                    @foreach($publicNavigation as $item)
+                        <a href="{{ route($item['route']) }}" class="{{ $item['route'] === 'register' ? 'text-deped-gold hover:underline' : 'hover:text-white transition-colors' }}">
+                            {{ $item['label'] === 'Online Registration' ? 'Register' : $item['label'] }}
+                        </a>
+                    @endforeach
                     <a href="{{ route('login') }}" class="text-white hover:text-deped-gold transition-colors">Portal Sign In</a>
                 </div>
             </div>
