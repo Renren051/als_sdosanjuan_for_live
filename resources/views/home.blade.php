@@ -77,66 +77,66 @@
     </div>
 
     <!-- Modern Bento Glass Navigation Bar -->
-    <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-xl border-b border-slate-200/80 transition-all duration-300">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-xs transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
+            <div class="flex items-center justify-between min-h-[72px] sm:min-h-[78px] py-2 gap-3 sm:gap-4">
                 
                 <!-- Dual Logo Branding (School Logo + ALS Logo) -->
-                <a href="#home" class="flex items-center gap-3 group">
+                <a href="#home" class="flex items-center gap-2.5 sm:gap-3 group shrink-0">
                     <!-- School / SDO San Juan Logo Container -->
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 p-1 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center transition-all group-hover:scale-105 group-hover:border-deped-blue/40">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 p-1 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
                         <img src="{{ file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg') }}" 
                              alt="SDO San Juan City Logo" 
                              class="w-full h-full object-contain">
                     </div>
 
                     <!-- DepEd ALS Official Logo Container -->
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 p-1 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center transition-all group-hover:scale-105 group-hover:border-deped-blue/40">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 p-1 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
                         <img src="{{ file_exists(public_path('images/als_logo.png')) ? asset('images/als_logo.png') : asset('images/als_logo.svg') }}" 
                              alt="DepEd ALS Logo" 
                              class="w-full h-full object-contain">
                     </div>
 
                     <!-- Typography Titles -->
-                    <div class="leading-none pl-1">
-                        <div class="text-[10px] font-black uppercase tracking-wider text-deped-blue">
+                    <div class="leading-tight">
+                        <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-deped-blue block whitespace-nowrap">
                             SDO San Juan City
-                        </div>
-                        <div class="text-base sm:text-lg font-black text-slate-900 tracking-tight mt-0.5">
+                        </span>
+                        <span class="text-sm sm:text-base font-black text-slate-900 tracking-tight block whitespace-nowrap">
                             Alternative Learning System
-                        </div>
-                        <div class="text-[10px] font-semibold text-slate-500 tracking-wide mt-0.5">
-                            Modular LMS &bull; Student Information System
-                        </div>
+                        </span>
+                        <span class="text-[9px] sm:text-[10px] font-semibold text-slate-500 tracking-wide block whitespace-nowrap">
+                            Modular LMS &bull; SIS Portal
+                        </span>
                     </div>
                 </a>
 
                 <!-- Desktop Bento Nav Links -->
-                <nav class="hidden xl:flex items-center gap-1 font-bold text-xs uppercase tracking-wider text-slate-600 bg-slate-100/70 p-1.5 rounded-full border border-slate-200/80">
-                    <a href="#home" class="px-3.5 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all">Home</a>
-                    <a href="#about" class="px-3.5 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all">About ALS</a>
-                    <a href="{{ route('register') }}" class="px-3.5 py-1.5 rounded-full text-deped-blue bg-blue-50/80 hover:bg-deped-blue hover:text-white transition-all font-black">
-                        ALS Online Registration
+                <nav class="hidden lg:flex items-center gap-0.5 xl:gap-1 font-bold text-[11px] xl:text-xs uppercase tracking-wide text-slate-600 bg-slate-100/80 p-1 rounded-full border border-slate-200/90 shadow-2xs shrink-0">
+                    <a href="#home" class="px-2.5 xl:px-3 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all whitespace-nowrap">Home</a>
+                    <a href="#about" class="px-2.5 xl:px-3 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all whitespace-nowrap">About ALS</a>
+                    <a href="{{ route('register') }}" class="px-2.5 xl:px-3.5 py-1.5 rounded-full text-deped-blue bg-blue-50 hover:bg-deped-blue hover:text-white transition-all font-black whitespace-nowrap">
+                        Online Registration
                     </a>
-                    <a href="#programs" class="px-3.5 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all">A &amp; E Program</a>
-                    <a href="#requirements" class="px-3.5 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all">Requirements</a>
-                    <a href="#centers" class="px-3.5 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all">Learning Centers</a>
-                    <a href="#contact" class="px-3.5 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all">Contact Us</a>
+                    <a href="#programs" class="px-2.5 xl:px-3 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all whitespace-nowrap">A &amp; E Program</a>
+                    <a href="#requirements" class="px-2.5 xl:px-3 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all whitespace-nowrap">Requirements</a>
+                    <a href="#centers" class="px-2.5 xl:px-3 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all whitespace-nowrap">Learning Centers</a>
+                    <a href="#contact" class="px-2.5 xl:px-3 py-1.5 rounded-full hover:text-deped-blue hover:bg-white transition-all whitespace-nowrap">Contact Us</a>
                 </nav>
 
                 <!-- Right Action: Portal Sign In -->
-                <div class="hidden sm:flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-3 shrink-0">
                     <a href="{{ route('login') }}" 
-                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-deped-blue hover:bg-deped-dark text-white font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]">
+                       class="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-deped-blue hover:bg-deped-dark text-white font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap">
                         <span>Portal Sign In</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
                 </div>
 
                 <!-- Mobile Hamburger Button -->
-                <div class="xl:hidden flex items-center gap-2">
-                    <a href="{{ route('login') }}" class="sm:hidden px-3 py-1.5 bg-deped-blue text-white text-xs font-bold rounded-lg">
-                        Login
+                <div class="lg:hidden flex items-center gap-2">
+                    <a href="{{ route('login') }}" class="sm:hidden px-3 py-1.5 bg-deped-blue text-white text-xs font-bold rounded-lg whitespace-nowrap">
+                        Sign In
                     </a>
                     <button @click="mobileNav = !mobileNav" 
                             class="p-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 hover:bg-slate-100 transition-colors"
