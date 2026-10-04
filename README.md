@@ -82,6 +82,54 @@ The web application is built on a **Bento Grid UI** inspired by Constructivist e
 - **MySQL / MariaDB** (via XAMPP or standalone)
 - **Git**
 
+---
+
+### 📥 How to Download & Install Git
+
+If Git is not yet installed on your system, follow the steps for your Operating System:
+
+#### 🪟 Windows (Recommended)
+1. **Direct Download:**
+   - Go to the official Git download page: **[https://git-scm.com/download/win](https://git-scm.com/download/win)**
+   - Click **"Click here to download"** (64-bit Git for Windows Setup).
+   - Run the downloaded `.exe` file.
+   - Keep the default recommended options selected during setup (ensure *"Git from the command line and also from 3rd-party software"* and *"Git Bash"* are checked).
+   - Click **Next** until the installation completes, then click **Finish**.
+
+2. **Or Install via Windows Terminal / PowerShell (Using winget):**
+   ```powershell
+   winget install --id Git.Git -e --source winget
+   ```
+
+#### 🍎 macOS
+- If you use **Homebrew**:
+  ```bash
+  brew install git
+  ```
+- Or download the binary installer from: **[https://git-scm.com/download/mac](https://git-scm.com/download/mac)**
+
+#### 🐧 Linux (Ubuntu / Debian)
+```bash
+sudo apt update
+sudo apt install git -y
+```
+
+#### ✅ Verify Installation
+After installing, open a new terminal (Command Prompt, PowerShell, or Git Bash) and run:
+```bash
+git --version
+```
+*Expected output: `git version 2.x.x`*
+
+#### ⚙️ Initial Git Configuration (First-Time Setup)
+Set your name and email address in Git:
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
+
+---
+
 ### Installation Steps
 
 1. **Clone the repository:**
