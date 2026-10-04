@@ -16,10 +16,12 @@ class ExampleTest extends TestCase
 
         $response->assertStatus(200)
             ->assertSee('SDO San Juan City')
-            ->assertSee('Alternative Learning System')
-            ->assertSee('A &amp; E Program', false)
-            ->assertSee('Enrolment Requirements')
-            ->assertSee('San Juan Learning Centers')
-            ->assertSee('Contact SDO San Juan City ALS');
+            ->assertSee('Alternative Learning System');
+
+        $this->get('/about-als')->assertStatus(200)->assertSee('About Alternative Learning System');
+        $this->get('/programs')->assertStatus(200)->assertSee('Accreditation &amp; Equivalency', false);
+        $this->get('/requirements')->assertStatus(200)->assertSee('Enrolment Requirements');
+        $this->get('/learning-centers')->assertStatus(200)->assertSee('San Juan Learning Centers');
+        $this->get('/contact')->assertStatus(200)->assertSee('Contact SDO San Juan City ALS');
     }
 }

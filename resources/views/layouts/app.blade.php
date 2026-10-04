@@ -6,6 +6,11 @@
     <title>@yield('title', 'SDO San Juan City - Alternative Learning System (ALS)')</title>
     <meta name="description" content="Web-Based Student Information & Android-Based Modular LMS for DepEd SDO San Juan Alternative Learning System">
     
+    <!-- Favicon (SDO San Juan City Logo) -->
+    <link rel="icon" type="image/svg+xml" href="{{ file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : (file_exists(public_path('favicon.svg')) ? asset('favicon.svg') : asset('images/school_logo.svg')) }}">
+    <link rel="alternate icon" href="{{ file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('favicon.svg') }}">
+    <link rel="apple-touch-icon" href="{{ file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg') }}">
+    
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
