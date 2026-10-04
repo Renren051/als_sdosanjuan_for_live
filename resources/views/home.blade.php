@@ -92,49 +92,49 @@
 
     <!-- Modern Bento Glass Navigation Bar -->
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-xs transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between min-h-[72px] sm:min-h-[78px] py-2 gap-3 sm:gap-4">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between min-h-[72px] sm:min-h-[78px] py-2 gap-2 sm:gap-4">
                 
                 <!-- Brand -->
-                <div class="flex items-center shrink-0">
-                    <a href="{{ route('home') }}" class="flex items-center gap-2.5 sm:gap-3 group">
+                <div class="flex min-w-0 flex-1 items-center 2xl:flex-none">
+                    <a href="{{ route('home') }}" class="flex min-w-0 items-center gap-1.5 sm:gap-3 group">
                         <!-- School / SDO San Juan Logo Container -->
-                        <div class="w-10 h-10 sm:w-11 sm:h-11 p-1 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+                        <div class="w-8 h-8 sm:w-11 sm:h-11 p-1 rounded-lg sm:rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
                             <img src="{{ file_exists(public_path('images/sdosj.svg')) ? asset('images/sdosj.svg') : (file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg')) }}" 
                                  alt="SDO San Juan City Logo" 
                                  class="w-full h-full object-contain">
                         </div>
 
                         <!-- DepEd ALS Official Logo Container -->
-                        <div class="w-10 h-10 sm:w-11 sm:h-11 p-1 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+                        <div class="w-8 h-8 sm:w-11 sm:h-11 p-1 rounded-lg sm:rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
                             <img src="{{ file_exists(public_path('images/als_logo.png')) ? asset('images/als_logo.png') : asset('images/als_logo.svg') }}" 
                                  alt="DepEd ALS Logo" 
                                  class="w-full h-full object-contain">
                         </div>
 
                         <!-- Typography Titles -->
-                        <div class="leading-tight">
-                            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-deped-blue block whitespace-nowrap">
+                        <div class="min-w-0 leading-tight">
+                            <span class="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.08em] sm:tracking-widest text-deped-blue block sm:whitespace-nowrap">
                                 SDO San Juan City
                             </span>
-                            <span class="text-sm sm:text-base font-black text-slate-900 tracking-tight block whitespace-nowrap">
+                            <span class="text-[11px] leading-tight sm:text-base font-black text-slate-900 tracking-tight block sm:whitespace-nowrap">
                                 Alternative Learning System
                             </span>
-                            <span class="text-[9px] sm:text-[10px] font-semibold text-slate-500 tracking-wide block whitespace-nowrap">
+                            <span class="hidden sm:block text-[10px] font-semibold text-slate-500 tracking-wide whitespace-nowrap">
                                 Modular LMS &bull; SIS Portal
                             </span>
                         </div>
                     </a>
                 </div>
 
-                <!-- Desktop Navigation -->
-                <div class="hidden 2xl:flex flex-1 min-w-0 items-center justify-center px-2">
-                    <nav aria-label="Main navigation" class="flex items-center gap-0.5 font-bold text-[10px] uppercase tracking-wide text-slate-600 bg-slate-100/80 p-1 rounded-full border border-slate-200/90 shadow-2xs">
+                <!-- Desktop navigation centered between the brand and portal actions. -->
+                <div class="hidden min-w-0 flex-1 items-center justify-center px-1 2xl:flex">
+                    <nav aria-label="Main navigation" class="flex max-w-full items-center justify-center rounded-full border border-slate-200/90 bg-slate-100/80 p-1 text-[9px] font-bold uppercase tracking-wide text-slate-600 shadow-2xs 2xl:text-[10px]">
                         @foreach($publicNavigation as $item)
                             @php $isActive = request()->routeIs($item['route']); @endphp
                             <a href="{{ route($item['route']) }}"
                                @if($isActive) aria-current="page" @endif
-                               class="px-2.5 py-1.5 rounded-full transition-all whitespace-nowrap {{ $isActive ? 'bg-white text-deped-blue shadow-sm' : 'hover:text-deped-blue hover:bg-white' }} {{ $item['route'] === 'register' ? 'font-black' : '' }}">
+                               class="rounded-full px-1.5 py-1.5 transition-all whitespace-nowrap hover:bg-white hover:text-deped-blue focus:outline-none focus:ring-2 focus:ring-deped-blue/30 2xl:px-2 {{ $isActive ? 'bg-white text-deped-blue shadow-sm' : '' }} {{ $item['route'] === 'register' ? 'font-black' : '' }}">
                                 {{ $item['label'] }}
                             </a>
                         @endforeach
@@ -142,7 +142,7 @@
                 </div>
 
                 <!-- Portal Sign In and Responsive Menu -->
-                <div class="flex items-center justify-end gap-3 shrink-0">
+                <div class="flex shrink-0 items-center justify-end gap-1 sm:gap-3">
                     <a href="{{ route('login') }}" 
                        class="hidden sm:inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-deped-blue hover:bg-deped-dark text-white font-bold text-xs uppercase tracking-wider shadow-sm hover:shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap">
                         <span>Portal Sign In</span>
@@ -156,7 +156,9 @@
                         </a>
                         <button @click="mobileNav = !mobileNav" 
                                 class="p-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 hover:bg-slate-100 transition-colors"
-                                aria-label="Toggle Navigation">
+                                :aria-expanded="mobileNav.toString()"
+                                aria-controls="mobile-public-navigation"
+                                :aria-label="mobileNav ? 'Close navigation menu' : 'Open navigation menu'">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                             </svg>
@@ -175,6 +177,7 @@
              x-transition:leave="transition ease-in duration-150"
              x-transition:leave-start="opacity-100 translate-y-0"
              x-transition:leave-end="opacity-0 -translate-y-2"
+             id="mobile-public-navigation"
              class="2xl:hidden border-b border-slate-200 bg-white px-6 py-5 space-y-3 font-bold text-xs uppercase tracking-wider shadow-xl" 
              x-cloak>
             <nav aria-label="Main navigation" class="space-y-1">
@@ -197,7 +200,7 @@
     </header>
 
     <!-- MAIN BENTO CONTAINER -->
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-12">
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-7 sm:py-12 space-y-10 sm:space-y-12">
 
         <!-- ==========================================
              HERO BENTO GRID SECTION (#home)
@@ -207,7 +210,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
                 <!-- BENTO HERO CARD 1: PRIMARY MANIFESTO (Span 8) -->
-                <div class="lg:col-span-8 bento-card bento-dark bento-glow-blue p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden bento-grid-dark-bg min-h-[480px]">
+                <div class="lg:col-span-8 bento-card bento-dark bento-glow-blue p-5 sm:p-12 flex flex-col justify-between relative overflow-hidden bento-grid-dark-bg min-h-[440px] sm:min-h-[480px]">
                     <!-- Ambient Glow Blobs -->
                     <div class="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-deped-blue/30 blur-3xl pointer-events-none"></div>
                     <div class="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-deped-gold/15 blur-3xl pointer-events-none"></div>
@@ -234,13 +237,13 @@
                     <!-- Call To Action & Pill Badges -->
                     <div class="relative z-10 pt-8 sm:pt-10 flex flex-wrap items-center gap-4">
                         <a href="{{ route('register') }}" 
-                           class="inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl bg-deped-gold hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]">
+                           class="inline-flex w-full items-center justify-center gap-2.5 px-4 py-3.5 sm:w-auto sm:px-7 sm:py-4 rounded-2xl bg-deped-gold hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]">
                             <span>ALS Online Registration (Form 2)</span>
                             <svg class="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
 
                         <a href="{{ route('centers') }}" 
-                           class="inline-flex items-center gap-2 px-6 py-4 rounded-2xl bg-slate-900/80 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm uppercase tracking-wider border border-white/30 backdrop-blur-md transition-all shadow-md hover:border-deped-gold/50">
+                           class="inline-flex w-full items-center justify-center gap-2 px-4 py-3.5 sm:w-auto sm:px-6 sm:py-4 rounded-2xl bg-slate-900/80 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm uppercase tracking-wider border border-white/30 backdrop-blur-md transition-all shadow-md hover:border-deped-gold/50">
                             <span>Locate Learning Centers</span>
                             <svg class="w-4 h-4 text-deped-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </a>
@@ -332,7 +335,7 @@
             </div>
 
             <!-- ROW OF 4 BENTO METRIC TILES -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mt-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-5 mt-6">
                 <!-- Stat Bento 1 -->
                 <div class="bento-card p-5 bg-white flex flex-col justify-between">
                     <div class="flex items-center justify-between">
@@ -418,7 +421,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
                 <!-- Bento Tile A: Constructivist Modular Philosophy (Span 7) -->
-                <div class="lg:col-span-7 bento-card p-8 bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between space-y-6">
+                <div class="lg:col-span-7 bento-card p-5 sm:p-8 bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between space-y-6">
                     <div class="space-y-4">
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-deped-blue text-xs font-bold">
                             <span>Constructivism Learning Architecture</span>
@@ -452,7 +455,7 @@
                 </div>
 
                 <!-- Bento Tile B: Republic Act 11510 Legal Mandate (Span 5) -->
-                <div class="lg:col-span-5 bento-card bento-dark bg-slate-950 text-white p-8 flex flex-col justify-between relative overflow-hidden bento-grid-dark-bg">
+                <div class="lg:col-span-5 bento-card bento-dark bg-slate-950 text-white p-5 sm:p-8 flex flex-col justify-between relative overflow-hidden bento-grid-dark-bg">
                     <div class="relative z-10 space-y-4">
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-deped-gold text-xs font-bold">
                             <span>Institutionalized Under Philippine Law</span>
@@ -637,7 +640,7 @@
             </div>
 
             <!-- BENTO CURRICULUM STRANDS TILE (Wide Dark Bento) -->
-            <div class="bento-card bento-dark bg-slate-950 text-white p-8 sm:p-10 border border-slate-800 shadow-xl space-y-8 bento-grid-dark-bg">
+            <div class="bento-card bento-dark bg-slate-950 text-white p-5 sm:p-10 border border-slate-800 shadow-xl space-y-6 sm:space-y-8 bento-grid-dark-bg">
                 <div class="border-b border-white/10 pb-4">
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-deped-gold text-xs font-bold mb-2">
                         <span>DepEd K to 12 Basic Education Curriculum for ALS</span>
@@ -761,7 +764,7 @@
             </div>
 
             <!-- Two Ways to Enroll Bento Banner -->
-            <div class="bento-card p-8 bg-gradient-to-r from-amber-50 via-white to-blue-50 border border-slate-200/90 shadow-sm">
+            <div class="bento-card p-5 sm:p-8 bg-gradient-to-r from-amber-50 via-white to-blue-50 border border-slate-200/90 shadow-sm">
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                     <div class="md:col-span-8 space-y-2">
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-extrabold uppercase">
@@ -782,7 +785,7 @@
 
                     <div class="md:col-span-4 flex justify-end">
                         <a href="{{ route('register') }}" 
-                           class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-deped-blue hover:bg-deped-dark text-white font-black text-xs uppercase tracking-wider text-center transition-all shadow-md hover:shadow-lg hover:scale-105">
+                           class="w-full sm:w-auto px-4 sm:px-8 py-4 rounded-2xl bg-deped-blue hover:bg-deped-dark text-white font-black text-xs uppercase tracking-wider text-center transition-all shadow-md hover:shadow-lg hover:scale-105">
                             Start Online Registration &rarr;
                         </a>
                     </div>
@@ -814,9 +817,9 @@
             </div>
 
             <!-- Bento Filter & Search Toolbar (Alpine.js Interactive) -->
-            <div class="bento-card p-4 sm:p-5 bg-white border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="bento-card p-4 sm:p-5 bg-white border border-slate-200 shadow-sm flex flex-col items-stretch lg:flex-row lg:items-center lg:justify-between gap-4">
                 <!-- Search Input -->
-                <div class="relative w-full md:w-96">
+                <div class="relative w-full lg:w-96">
                     <input type="text" 
                            x-model="clcSearch" 
                            placeholder="Search by center name, barangay, or teacher..." 
@@ -827,7 +830,7 @@
                 </div>
 
                 <!-- Category Filter Pills -->
-                <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold">
+                <div class="flex w-full flex-wrap items-center justify-start gap-1.5 text-xs font-bold lg:w-auto">
                     <button @click="clcFilter = 'all'" 
                             :class="clcFilter === 'all' ? 'bg-deped-blue text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
                             class="px-3.5 py-2 rounded-xl transition-all">
@@ -901,7 +904,7 @@
              SECTION 6: FAST INTAKE BENTO CTA BANNER
              ========================================== -->
         @if($pageKey === 'home')
-        <section id="register-cta" class="bento-card bento-dark bg-slate-950 text-white p-8 sm:p-12 relative overflow-hidden bento-grid-dark-bg border border-slate-800 shadow-xl">
+        <section id="register-cta" class="bento-card bento-dark bg-slate-950 text-white p-5 sm:p-12 relative overflow-hidden bento-grid-dark-bg border border-slate-800 shadow-xl">
             <div class="relative z-10 max-w-3xl mx-auto text-center space-y-4">
                 <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-deped-gold text-slate-950 font-black text-xs uppercase tracking-wider">
                     <span>100% Free Public Education &bull; Open Intake</span>
@@ -917,7 +920,7 @@
 
                 <div class="pt-4 flex flex-wrap items-center justify-center gap-4">
                     <a href="{{ route('register') }}" 
-                       class="inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl bg-deped-gold hover:bg-amber-400 text-slate-950 font-black text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95">
+                       class="inline-flex w-full items-center justify-center gap-2.5 px-4 py-4 sm:w-auto sm:px-8 rounded-2xl bg-deped-gold hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95">
                         <span>Fill Out ALS Form 2 Online Now</span>
                         <svg class="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
@@ -1051,7 +1054,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-white/10">
                 <!-- Logos & Title -->
-                <div class="flex items-center gap-3">
+                <div class="flex w-full min-w-0 items-center gap-2 sm:w-auto sm:gap-3">
                     <div class="w-12 h-12 p-1 rounded-xl bg-white flex items-center justify-center">
                         <img src="{{ file_exists(public_path('images/sdosj.svg')) ? asset('images/sdosj.svg') : (file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg')) }}" 
                              alt="SDO San Juan" class="w-full h-full object-contain">
@@ -1060,14 +1063,14 @@
                         <img src="{{ file_exists(public_path('images/als_logo.png')) ? asset('images/als_logo.png') : asset('images/als_logo.svg') }}" 
                              alt="DepEd ALS" class="w-full h-full object-contain">
                     </div>
-                    <div class="leading-tight pl-2">
-                        <div class="text-xs font-black uppercase text-deped-gold">SDO San Juan City &bull; Alternative Learning System</div>
-                        <div class="text-[11px] text-slate-400">Department of Education &bull; National Capital Region</div>
+                    <div class="min-w-0 leading-tight pl-1 sm:pl-2">
+                        <div class="text-[10px] font-black uppercase leading-snug text-deped-gold sm:text-xs">SDO San Juan City &bull; Alternative Learning System</div>
+                        <div class="mt-1 text-[10px] leading-snug text-slate-400 sm:text-[11px]">Department of Education &bull; National Capital Region</div>
                     </div>
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="flex flex-wrap items-center gap-4 text-xs font-bold text-slate-400 uppercase">
+                <div class="flex w-full flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[10px] font-bold text-slate-400 uppercase sm:text-xs md:w-auto">
                     @foreach($publicNavigation as $item)
                         <a href="{{ route($item['route']) }}" class="{{ $item['route'] === 'register' ? 'text-deped-gold hover:underline' : 'hover:text-white transition-colors' }}">
                             {{ $item['label'] === 'Online Registration' ? 'Register' : $item['label'] }}
@@ -1077,7 +1080,7 @@
                 </div>
             </div>
 
-            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-center sm:text-left text-[11px] text-slate-500 gap-2">
                 <p>&copy; 2026 Department of Education &bull; Schools Division Office of San Juan City. All rights reserved.</p>
                 <p class="text-slate-400">Pursuant to Republic Act No. 11510 and the Data Privacy Act of 2012.</p>
             </div>
