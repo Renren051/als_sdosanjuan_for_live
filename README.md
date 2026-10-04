@@ -1,59 +1,209 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SDO San Juan City — Alternative Learning System (ALS)
+### Web-Based Student Information System (SIS) & Android-Based Modular LMS
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![PHP 8.2+](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=flat&logo=php&logoColor=white)](https://www.php.net/)
+[![Laravel 12](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=flat&logo=laravel&logoColor=white)](https://laravel.com/)
+[![Vite](https://img.shields.io/badge/Vite-7.x-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![DepEd RA 11510](https://img.shields.io/badge/DepEd-RA%2011510%20Compliant-0038A8?style=flat)](https://www.deped.gov.ph/)
+[![Tests Passing](https://img.shields.io/badge/PHPUnit-17%20Passed%20(64%20Assertions)-success?style=flat)]()
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📌 Project Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Under the mandate of the **Department of Education (DepEd)** and **Republic Act No. 11510 (The Alternative Learning System Act)**, this system serves the **Schools Division Office (SDO) of San Juan City** to empower Out-of-School Youth and Adults (OSYA) across all 21 barangays.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The platform unifies two essential operational components:
+1. **Web-Based Student Information System (SIS):** Multi-role administrative and student portal handling digital intake (DepEd ALS Form 2), document verification, Community Learning Center (CLC) allocation, module management, and automated DepEd reporting (ALS Form 1 & Form 2).
+2. **Android-Based Modular LMS (Learner-Only):** An offline-first mobile application designed for OSYA learners with limited internet connectivity, featuring local SQLite/Room caching, background telemetry synchronization, and an in-app PDF module reader.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🎨 UI/UX Design Architecture
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+The web application is built on a **Bento Grid UI** inspired by Constructivist educational philosophy:
+- **Asymmetric Bento Compartmentalization:** High-density, rounded modular tiles (`rounded-3xl`), micro-badges, and clean borders.
+- **DepEd Division Color Palette:** Deep DepEd Navy (`#0b193d`), Philippine Blue (`#0038A8`), Golden Yellow (`#FCD116`), and Crimson (`#CE1126`).
+- **Dual-Logo Institutional Branding:** Dedicated containers showcasing both the **SDO San Juan City Logo** and the official **DepEd ALS Logo**.
+- **Interactive Alpine.js Directory:** Real-time search and filter toolbar for locating the 12 Community Learning Centers (CLCs) across San Juan.
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🚀 Key Features
 
-### Premium Partners
+### 1. Public Bento Portal
+- **Home:** Interactive hero with division manifesto, live mobile app preview mockup, and real-time division statistics.
+- **About ALS:** Constructivist learning methodology (Experience, Self-Pacing, Mentorship) and legal mandate under RA 11510.
+- **A & E Program:** Academic tracks for Basic Literacy Program (BLP), Elementary (Grade 6), and Junior High School (Grade 10), plus the 6 Core Learning Strands (LS 1–6).
+- **Enrolment Requirements:** Interactive document checklist (PSA Birth Certificate, Barangay Clearance, 2x2 Photos, Form 137 / SF10) with side-by-side online vs. walk-in comparison.
+- **Learning Centers (CLCs):** Live searchable directory of all 12 San Juan CLCs with assigned mobile teachers and facility filters.
+- **Contact Us:** Division office directory, emergency hotlines, and instant message inquiry form.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 2. Digital Intake Wizard (ALS Form 2)
+- Multi-step intake capturing learner demographics, civil status, educational background, and preferred CLC.
+- Direct digital document uploading (PSA, Barangay Clearance, ID photos) into secure private storage.
 
-## Contributing
+### 3. Admin & Mobile Teacher Portal
+- **Enrollment Queue:** Review pending applications, verify or reject intake documents with remarks, and transition statuses (`submitted`, `under_review`, `enrolled`, `rejected`).
+- **CLC Allocator:** Real-time learner capacity and assignment tracking per barangay center.
+- **Module Repository:** Manage official DepEd Self-Learning Modules (SLMs) categorized by Learning Strands with toggle publishing.
+- **Automated DepEd Exports:**
+  - **ALS Form 1:** Individual Learning Agreement and Masterlist.
+  - **ALS Form 2:** Official Learner Enrolment and Profile Form.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4. Learner Portal
+- Real-time intake status tracker with document compliance checklist.
+- Built-in PDF module viewer modal for self-paced study.
+- Module progress telemetry tracking.
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🛠️ Technology Stack
 
-## Security Vulnerabilities
+| Layer | Technology | Details |
+| :--- | :--- | :--- |
+| **Backend Framework** | Laravel 12.x | PHP 8.2.12 (CLI Visual C++ 2019 x64) |
+| **API Authentication**| Laravel Sanctum | Bearer token authentication for web & mobile |
+| **Frontend UI** | Blade + Vite v7.3.6 | Tailwind CSS 4, Alpine.js, Plus Jakarta Sans |
+| **Database** | MySQL | Port 3306 (`als_sdosanjuan_db`) via XAMPP |
+| **PDF Generation** | Barryvdh DomPDF | DepEd Form 1 & Form 2 printable formats |
+| **Version Control** | Git 2.54.0 | Tracked on branch `main` |
+| **Mobile App (Phase 4)** | Native Android | Kotlin, Room Database, Retrofit 2, WorkManager |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 💻 Local Development Setup
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Prerequisites
+- **PHP 8.2 or higher**
+- **Composer 2.x**
+- **Node.js 18+ and npm**
+- **MySQL / MariaDB** (via XAMPP or standalone)
+- **Git**
+
+### Installation Steps
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Renren051/als_sdosanjuan.git
+   cd als_sdosanjuan
+   ```
+
+2. **Install PHP and Node dependencies:**
+   ```bash
+   composer install
+   npm install
+   ```
+
+3. **Configure Environment:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   *Update your `.env` database parameters:*
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=als_sdosanjuan_db
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+4. **Run Migrations & Seeders:**
+   ```bash
+   php artisan migrate:fresh --seed
+   php artisan storage:link
+   ```
+
+5. **Build Frontend Assets (Vite):**
+   ```bash
+   # For active development with Hot Module Replacement (HMR):
+   npm run dev
+
+   # Or compile production bundle:
+   npm run build
+   ```
+
+6. **Start the Development Server:**
+   ```bash
+   php artisan serve --host=127.0.0.1 --port=8000
+   ```
+   Visit the portal in your browser at: **`http://127.0.0.1:8000`**
+
+---
+
+## 👥 Default Demo Accounts
+
+The database seeder automatically creates the following accounts for evaluation:
+
+| Role | Username / Identifier | Password | Access / Scope |
+| :--- | :--- | :--- | :--- |
+| **Administrator** | `admin_als` | `Password123!` | Full Division Administrative Access |
+| **Mobile Teacher** | `teacher_juan` | `Password123!` | CLC & Learner Verification Portal |
+| **Learner** | `learner_mark` *(LRN: `136542240001`)* | `Password123!` | Learner Dashboard & SLM Modules |
+
+---
+
+## 📡 Core REST API Endpoints
+
+The API is fully secured via Laravel Sanctum and ready for Android LMS integration:
+
+### Authentication
+- `POST /api/v1/auth/login` — Authenticate and receive Sanctum bearer token.
+- `POST /api/v1/auth/register` — Digital learner registration (ALS Form 2).
+- `GET /api/v1/auth/me` — Retrieve active authenticated user profile.
+- `POST /api/v1/auth/logout` — Revoke active token.
+
+### Curriculum & Modules
+- `GET /api/v1/strands` — List the 6 ALS Learning Strands with module counts.
+- `GET /api/v1/modules` — List published self-learning modules (filterable by strand).
+- `GET /api/v1/modules/{id}/download` — Stream or download official module PDF.
+
+### Learner Telemetry & Sync
+- `POST /api/v1/learner/documents/upload` — Upload PSA / Clearance / Photo credentials.
+- `GET /api/v1/learner/enrollment-status` — Check real-time enrollment progress.
+- `POST /api/v1/learner/sync-progress` — Sync offline modular completion data from Android LMS.
+
+### Administrative Reporting
+- `GET /api/v1/admin/reports/form-1` — Export ALS Form 1 masterlist JSON / PDF data.
+- `GET /api/v1/admin/reports/form-2/{id}` — Export ALS Form 2 individual intake data.
+
+---
+
+## 🧪 Automated Testing
+
+The system includes a PHPUnit test suite covering API authentication, module repository, offline telemetry sync, enrollment validation, and web portal access:
+
+```bash
+php artisan test
+```
+
+**Results:**
+```text
+PASS  Tests\Unit\ExampleTest
+PASS  Tests\Feature\AlsApiTest
+PASS  Tests\Feature\ExampleTest
+PASS  Tests\Feature\WebPortalTest
+
+Tests:    17 passed (64 assertions)
+Duration: 1.47s
+```
+
+---
+
+## ⚖️ Legal & Privacy Compliance
+
+- **Republic Act No. 11510:** An Act Institutionalizing the Alternative Learning System in Basic Education for Out-of-School Children in Special Cases and Adults.
+- **Republic Act No. 10173 (Data Privacy Act of 2012):** All learner personal identification documents, contact numbers, and academic records are securely encrypted and protected against unauthorized access.
+
+---
+
+## 🏛️ Acknowledgments & Division Information
+
+- **Department of Education (DepEd)** — Republic of the Philippines
+- **National Capital Region (NCR)**
+- **Schools Division Office of San Juan City** — Alternative Learning System Unit
+- Pinaglabanan Street, Barangay Pedro Cruz, San Juan City, Metro Manila
+- Email: `als.sanjuan@deped.gov.ph`
