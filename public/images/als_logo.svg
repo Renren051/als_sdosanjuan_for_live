@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="alsBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0038A8" />
+      <stop offset="100%" stop-color="#001F5C" />
+    </linearGradient>
+    <linearGradient id="alsGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD116" />
+      <stop offset="100%" stop-color="#EAB308" />
+    </linearGradient>
+    <linearGradient id="alsRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#CE1126" />
+      <stop offset="100%" stop-color="#991B1B" />
+    </linearGradient>
+  </defs>
+  <!-- Circular Badge -->
+  <circle cx="100" cy="100" r="95" fill="#FFFFFF" stroke="url(#alsBlue)" stroke-width="8"/>
+  <circle cx="100" cy="100" r="88" fill="none" stroke="url(#alsGold)" stroke-width="3"/>
+
+  <!-- Top Text: ALTERNATIVE LEARNING SYSTEM -->
+  <path id="alsTopTrack" d="M 28 100 A 72 72 0 0 1 172 100" fill="none"/>
+  <text font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="9" font-weight="900" fill="#0038A8" letter-spacing="1.2">
+    <textPath href="#alsTopTrack" startOffset="50%" text-anchor="middle">ALTERNATIVE LEARNING SYSTEM</textPath>
+  </text>
+  
+  <!-- Bottom Text: DEPED PHILIPPINES -->
+  <path id="alsBottomTrack" d="M 172 100 A 72 72 0 0 1 28 100" fill="none"/>
+  <text font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="9" font-weight="900" fill="#CE1126" letter-spacing="2">
+    <textPath href="#alsBottomTrack" startOffset="50%" text-anchor="middle">DEPED PHILIPPINES</textPath>
+  </text>
+
+  <!-- Central Dynamic Shape -->
+  <circle cx="100" cy="100" r="54" fill="#0F172A"/>
+  
+  <!-- Stylized Rays of Enlightenment -->
+  <g fill="url(#alsGold)">
+    <polygon points="100,56 102,68 98,68"/>
+    <polygon points="125,62 121,72 118,70"/>
+    <polygon points="144,79 135,84 133,81"/>
+    <polygon points="75,62 79,72 82,70"/>
+    <polygon points="56,79 65,84 67,81"/>
+  </g>
+
+  <!-- Giant Constructivist "ALS" letters in center -->
+  <text x="100" y="96" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="28" font-weight="900" fill="#FFFFFF" text-anchor="middle" letter-spacing="3">ALS</text>
+  
+  <!-- Helping Hand / Torch Foundation -->
+  <path d="M 68 132 C 78 120 88 124 96 118 C 104 112 112 114 122 124 C 128 130 120 138 114 134 C 106 128 100 126 94 130 C 88 134 82 136 72 138 Z" fill="url(#alsGold)"/>
+  
+  <!-- Small Torch Flame at Apex -->
+  <path d="M 100 102 C 105 107 104 114 100 118 C 96 114 95 107 100 102 Z" fill="url(#alsRed)"/>
+  <circle cx="100" cy="111" r="2.5" fill="#FCD116"/>
+  
+  <!-- Subtitle Ribbon -->
+  <rect x="65" y="142" width="70" height="12" rx="3" fill="url(#alsBlue)"/>
+  <text x="100" y="151" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="7.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" letter-spacing="1">SAN JUAN</text>
+</svg>
