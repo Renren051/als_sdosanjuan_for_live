@@ -76,7 +76,7 @@
 
     <!-- Top DepEd Official Identification Ribbon -->
     <div class="bg-deped-navy text-white text-[11px] font-semibold py-1.5 border-b border-white/10 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-2">
+        <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2.5">
                 <span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-deped-gold animate-pulse"></span>
                 <span class="tracking-wider uppercase font-bold text-slate-200">Republic of the Philippines &bull; Department of Education</span>
@@ -91,24 +91,26 @@
 
     <!-- Modern Bento Glass Navigation Bar -->
     <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-xs transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div class="max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between min-h-[72px] sm:min-h-[78px] py-2 gap-2 sm:gap-4">
                 
                 <!-- Brand -->
                 <div class="flex min-w-0 flex-1 items-center 2xl:flex-none">
                     <a href="{{ route('home') }}" class="flex min-w-0 items-center gap-1.5 sm:gap-3 group">
                         <!-- School / SDO San Juan Logo Container -->
-                        <div class="w-8 h-8 sm:w-11 sm:h-11 p-1 rounded-lg sm:rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+                        <div class="w-8 h-8 sm:w-11 sm:h-11 p-1 rounded-lg sm:rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 overflow-hidden">
                             <img src="{{ file_exists(public_path('images/sdosj.svg')) ? asset('images/sdosj.svg') : (file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg')) }}" 
                                  alt="SDO San Juan City Logo" 
-                                 class="w-full h-full object-contain">
+                                 width="44" height="44"
+                                 class="w-full h-full object-contain max-w-full max-h-full">
                         </div>
 
                         <!-- DepEd ALS Official Logo Container -->
-                        <div class="w-8 h-8 sm:w-11 sm:h-11 p-1 rounded-lg sm:rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+                        <div class="w-8 h-8 sm:w-11 sm:h-11 p-1 rounded-lg sm:rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 overflow-hidden">
                             <img src="{{ file_exists(public_path('images/als_logo.png')) ? asset('images/als_logo.png') : asset('images/als_logo.svg') }}" 
                                  alt="DepEd ALS Logo" 
-                                 class="w-full h-full object-contain">
+                                 width="44" height="44"
+                                 class="w-full h-full object-contain max-w-full max-h-full">
                         </div>
 
                         <!-- Typography Titles -->
@@ -128,12 +130,12 @@
 
                 <!-- Desktop navigation centered between the brand and portal actions. -->
                 <div class="hidden min-w-0 flex-1 items-center justify-center px-1 2xl:flex">
-                    <nav aria-label="Main navigation" class="flex max-w-full items-center justify-center rounded-full border border-slate-200/90 bg-slate-100/80 p-1 text-[9px] font-bold uppercase tracking-wide text-slate-600 shadow-2xs 2xl:text-[10px]">
+                    <nav aria-label="Main navigation" class="flex max-w-full items-center justify-center gap-0.5 rounded-full border border-slate-200/90 bg-slate-100/80 p-1 text-xs font-bold uppercase tracking-wide text-slate-700 shadow-2xs">
                         @foreach($publicNavigation as $item)
                             @php $isActive = request()->routeIs($item['route']); @endphp
                             <a href="{{ route($item['route']) }}"
                                @if($isActive) aria-current="page" @endif
-                               class="rounded-full px-1.5 py-1.5 transition-all whitespace-nowrap hover:bg-white hover:text-deped-blue focus:outline-none focus:ring-2 focus:ring-deped-blue/30 2xl:px-2 {{ $isActive ? 'bg-white text-deped-blue shadow-sm' : '' }} {{ $item['route'] === 'register' ? 'font-black' : '' }}">
+                               class="shrink-0 rounded-full px-2.5 py-2 transition-all whitespace-nowrap hover:bg-white hover:text-deped-blue focus:outline-none focus:ring-2 focus:ring-deped-blue/30 {{ $isActive ? 'bg-white text-deped-blue shadow-sm' : '' }} {{ $item['route'] === 'register' ? 'font-black' : '' }}">
                                 {{ $item['label'] }}
                             </a>
                         @endforeach
@@ -199,7 +201,7 @@
     </header>
 
     <!-- MAIN BENTO CONTAINER -->
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-7 sm:py-12 space-y-10 sm:space-y-12">
+    <main class="flex-grow max-w-[1920px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-7 sm:py-12 space-y-10 sm:space-y-12">
 
         <!-- ==========================================
              HERO BENTO GRID SECTION (#home)
@@ -939,17 +941,17 @@
 
     <!-- MODERN BENTO-INSPIRED FOOTER -->
     <footer class="mt-12 bg-slate-950 text-white border-t border-slate-800 py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-white/10">
                 <!-- Logos & Title -->
                 <div class="flex w-full min-w-0 items-center gap-2 sm:w-auto sm:gap-3">
-                    <div class="w-12 h-12 p-1 rounded-xl bg-white flex items-center justify-center">
+                    <div class="w-12 h-12 p-1 rounded-xl bg-white flex items-center justify-center shrink-0 overflow-hidden">
                         <img src="{{ file_exists(public_path('images/sdosj.svg')) ? asset('images/sdosj.svg') : (file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg')) }}" 
-                             alt="SDO San Juan" class="w-full h-full object-contain">
+                             alt="SDO San Juan" width="48" height="48" class="w-full h-full object-contain max-w-full max-h-full">
                     </div>
-                    <div class="w-12 h-12 p-1 rounded-xl bg-white flex items-center justify-center">
+                    <div class="w-12 h-12 p-1 rounded-xl bg-white flex items-center justify-center shrink-0 overflow-hidden">
                         <img src="{{ file_exists(public_path('images/als_logo.png')) ? asset('images/als_logo.png') : asset('images/als_logo.svg') }}" 
-                             alt="DepEd ALS" class="w-full h-full object-contain">
+                             alt="DepEd ALS" width="48" height="48" class="w-full h-full object-contain max-w-full max-h-full">
                     </div>
                     <div class="min-w-0 leading-tight pl-1 sm:pl-2">
                         <div class="text-[10px] font-black uppercase leading-snug text-deped-gold sm:text-xs">SDO San Juan City &bull; Alternative Learning System</div>

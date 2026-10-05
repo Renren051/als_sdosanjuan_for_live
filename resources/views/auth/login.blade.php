@@ -27,11 +27,11 @@
 
                     <div class="relative">
                         <div class="flex items-center gap-3">
-                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white p-1.5 shadow-lg">
-                                <img src="{{ file_exists(public_path('images/sdosj.svg')) ? asset('images/sdosj.svg') : (file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg')) }}" alt="SDO San Juan City logo" class="h-full w-full object-contain">
+                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white p-1.5 shadow-lg overflow-hidden">
+                                <img src="{{ file_exists(public_path('images/sdosj.svg')) ? asset('images/sdosj.svg') : (file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('images/school_logo.svg')) }}" alt="SDO San Juan City logo" width="44" height="44" class="h-full w-full object-contain max-h-full max-w-full">
                             </div>
-                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white p-1.5 shadow-lg">
-                                <img src="{{ file_exists(public_path('images/als_logo.png')) ? asset('images/als_logo.png') : asset('images/als_logo.svg') }}" alt="DepEd ALS logo" class="h-full w-full object-contain">
+                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white p-1.5 shadow-lg overflow-hidden">
+                                <img src="{{ file_exists(public_path('images/als_logo.png')) ? asset('images/als_logo.png') : asset('images/als_logo.svg') }}" alt="DepEd ALS logo" width="44" height="44" class="h-full w-full object-contain max-h-full max-w-full">
                             </div>
                             <div class="min-w-0 leading-tight">
                                 <span class="block text-[10px] font-black uppercase tracking-[0.14em] text-deped-gold">SDO San Juan City</span>

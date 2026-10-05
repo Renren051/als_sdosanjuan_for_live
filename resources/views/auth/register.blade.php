@@ -3,7 +3,24 @@
 @section('title', 'ALS Form 2 - Digital Learner Enrolment')
 
 @section('body')
-<div class="min-h-full py-12 px-4 sm:px-6 lg:px-8 bg-slate-100 flex flex-col justify-center items-center">
+<div class="min-h-full py-10 px-4 sm:px-6 lg:px-8 bg-slate-100 flex flex-col justify-center items-center">
+    <!-- Top Action Bar -->
+    <div class="max-w-3xl w-full mb-6 flex items-center justify-between">
+        <a href="{{ route('home') }}" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:text-deped-blue hover:border-deped-blue/40 text-xs sm:text-sm font-bold shadow-2xs transition-all hover:-translate-x-0.5">
+            <svg class="w-4 h-4 text-deped-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7 7-7M3 12h18"/>
+            </svg>
+            <span>Back to Home</span>
+        </a>
+
+        <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-500 font-semibold hidden sm:inline">Already registered?</span>
+            <a href="{{ route('login') }}" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-deped-blue text-xs sm:text-sm font-bold shadow-2xs transition-all">
+                Sign In &rarr;
+            </a>
+        </div>
+    </div>
+
     <!-- Header Banner -->
     <div class="max-w-3xl w-full text-center mb-8">
         <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-deped-blue/10 text-deped-blue text-xs font-bold uppercase tracking-wider mb-2">
@@ -315,25 +332,33 @@
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="pt-6 border-t border-slate-200 flex items-center justify-between">
-                <div>
+            <div class="pt-6 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-3">
+                    <a href="{{ route('home') }}" x-show="step === 1" 
+                       class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold text-xs sm:text-sm transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7 7-7M3 12h18"/></svg>
+                        <span>Back to Home</span>
+                    </a>
                     <button type="button" x-show="step > 1" @click="prevStep()" 
-                            class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50">
-                        &larr; Back
+                            class="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-xs sm:text-sm hover:bg-slate-50 transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7 7-7M3 12h18"/></svg>
+                        <span>Back</span>
                     </button>
-                    <a href="{{ route('login') }}" x-show="step === 1" class="text-xs font-semibold text-slate-500 hover:text-slate-800">
-                        Already have an account? Sign In
+                    <a href="{{ route('login') }}" class="text-xs font-semibold text-slate-500 hover:text-slate-800">
+                        Already have an account? <span class="text-deped-blue font-bold underline">Sign In</span>
                     </a>
                 </div>
 
-                <div>
+                <div class="flex items-center gap-3">
                     <button type="button" x-show="step < totalSteps" @click="nextStep()" 
-                            class="px-6 py-2.5 rounded-xl bg-deped-blue hover:bg-deped-dark text-white font-bold text-sm shadow-md">
-                        Continue &rarr;
+                            class="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-deped-blue hover:bg-deped-dark text-white font-bold text-xs sm:text-sm shadow-md transition-all hover:scale-[1.02] active:scale-[0.98]">
+                        <span>Continue</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </button>
                     <button type="submit" x-show="step === totalSteps" 
-                            class="px-8 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/30">
-                        Submit ALS Form 2 &rarr;
+                            class="inline-flex items-center gap-2 px-8 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/30 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                        <span>Submit ALS Form 2</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                     </button>
                 </div>
             </div>

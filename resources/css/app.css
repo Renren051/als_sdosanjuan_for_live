@@ -6,6 +6,94 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-deped-blue: #0038A8;
+    --color-deped-dark: #002673;
+    --color-deped-navy: #0b193d;
+    --color-deped-gold: #FCD116;
+    --color-deped-amber: #d97706;
+    --color-deped-red: #CE1126;
+}
+
+/* Layer Base Safeguards */
+@layer base {
+    img, svg, video, canvas, audio, iframe, embed, object {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+.glass-panel {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Bento Grid Modern Glass & Ambient Glow Tokens */
+.bento-card {
+    background-color: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 1.5rem;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+.bento-card:hover {
+    border-color: rgba(0, 56, 168, 0.3);
+    box-shadow: 0 16px 36px -10px rgba(0, 56, 168, 0.1);
+    transform: translateY(-2px);
+}
+.bento-card.bento-dark,
+.bento-dark {
+    background-color: #0b193d !important;
+    background: linear-gradient(135deg, #0b193d 0%, #0f172a 60%, #020617 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+}
+.bento-card.bento-dark:hover,
+.bento-dark:hover {
+    border-color: rgba(252, 209, 22, 0.5) !important;
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6) !important;
+}
+.bento-glow-gold {
+    box-shadow: 0 0 50px -15px rgba(252, 209, 22, 0.25);
+}
+.bento-glow-blue {
+    box-shadow: 0 0 50px -15px rgba(0, 56, 168, 0.3);
+}
+.bento-grid-bg {
+    background-size: 28px 28px;
+    background-image: 
+        linear-gradient(to right, rgba(0, 56, 168, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 56, 168, 0.04) 1px, transparent 1px);
+}
+.bento-grid-dark-bg {
+    background-size: 28px 28px;
+    background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+.phone-mockup-frame {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
