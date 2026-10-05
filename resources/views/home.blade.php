@@ -71,8 +71,7 @@
      x-data="{ 
          mobileNav: false,
          clcSearch: '',
-         clcFilter: 'all',
-         inquirySuccess: false
+         clcFilter: 'all'
      }">
 
     <!-- Top DepEd Official Identification Ribbon -->
@@ -406,7 +405,7 @@
                 <div>
                     <span class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-deped-blue">
                         <span class="w-1.5 h-1.5 rounded-full bg-deped-blue"></span>
-                        Section 01 &bull; Mandate &amp; Philosophy
+                        Section 01 &bull; About ALS
                     </span>
                     <h2 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight mt-1">
                         About Alternative Learning System
@@ -417,128 +416,54 @@
                 </div>
             </div>
 
-            <!-- Bento Layout for About -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- Bento Tile A: Constructivist Modular Philosophy (Span 7) -->
-                <div class="lg:col-span-7 bento-card p-5 sm:p-8 bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between space-y-6">
-                    <div class="space-y-4">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-deped-blue text-xs font-bold">
-                            <span>Constructivism Learning Architecture</span>
-                        </div>
-                        <h3 class="text-2xl font-black text-slate-900 tracking-tight">
-                            Learners Construct Meaning from Everyday Life Experiences
-                        </h3>
-                        <p class="text-sm text-slate-600 leading-relaxed font-normal">
-                            ALS is not a traditional passive lecture hall. Rooted in <strong>Constructivist educational philosophy</strong>, learners actively engage with modular materials, bridging their personal background, jobs, and community realities with formal academic competencies.
-                        </p>
-                        <p class="text-sm text-slate-600 leading-relaxed font-normal">
-                            Under the guidance of certified <strong>DepEd Mobile Teachers</strong>, students navigate self-paced modules, attend targeted group consultations at their local Community Learning Center, and prepare for national certification.
-                        </p>
-                    </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+                <article class="lg:col-span-2 bento-card p-6 sm:p-8 bg-gradient-to-r from-blue-50 via-white to-amber-50 border border-slate-200 shadow-sm">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white text-deped-blue text-xs font-bold border border-blue-100">A flexible path to basic education</span>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-3">What is the Alternative Learning System (ALS)?</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mt-2">ALS is a parallel learning system in the Philippines that provides a practical alternative to formal instruction. When a person has not had the opportunity or cannot access schooling, ALS offers another way to learn. It draws on non-formal and informal sources of knowledge and skills.</p>
+                </article>
 
-                    <!-- 3 Constructivist Micro Pillars -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
-                            <span class="text-xs font-black text-deped-blue block">01 &bull; Experience</span>
-                            <p class="text-[11px] text-slate-600 mt-1">Practical problem-solving rooted in real work and family contexts.</p>
-                        </div>
-                        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
-                            <span class="text-xs font-black text-amber-600 block">02 &bull; Self-Pacing</span>
-                            <p class="text-[11px] text-slate-600 mt-1">Learners master competencies at their own speed without shame.</p>
-                        </div>
-                        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
-                            <span class="text-xs font-black text-emerald-600 block">03 &bull; Mentorship</span>
-                            <p class="text-[11px] text-slate-600 mt-1">Continuous coaching from division learning facilitators.</p>
-                        </div>
-                    </div>
-                </div>
+                <article class="bento-card p-6 sm:p-7 bg-white border border-slate-200 shadow-sm">
+                    <h3 class="text-lg font-black text-slate-900 tracking-tight">Why is ALS needed in the Philippines?</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mt-3">Many Filipinos are unable to attend or complete basic education because of different life circumstances, or because a school is not accessible in their community. Since every Filipino has the right to free basic education, ALS gives out-of-school children, youth, and adults a way to continue learning that can fit their situations and needs.</p>
+                </article>
 
-                <!-- Bento Tile B: Republic Act 11510 Legal Mandate (Span 5) -->
-                <div class="lg:col-span-5 bento-card bento-dark bg-slate-950 text-white p-5 sm:p-8 flex flex-col justify-between relative overflow-hidden bento-grid-dark-bg">
-                    <div class="relative z-10 space-y-4">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-deped-gold text-xs font-bold">
-                            <span>Institutionalized Under Philippine Law</span>
-                        </div>
-                        <h3 class="text-2xl font-black text-white tracking-tight">
-                            Republic Act No. 11510 (The ALS Act)
-                        </h3>
-                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            Signed into law to strengthen and institutionalize the Alternative Learning System in basic education. It guarantees that out-of-school youth and adult completers receive standard equivalency recognized by civil service, universities, and private employers.
-                        </p>
+                <article class="bento-card p-6 sm:p-7 bg-white border border-slate-200 shadow-sm">
+                    <h3 class="text-lg font-black text-slate-900 tracking-tight">What is the basis for ALS?</h3>
+                    <div class="space-y-3 mt-3 text-sm text-slate-600 leading-relaxed">
+                        <p>The <strong>1987 Philippine Constitution</strong>, Article XIV, Section 2, recognizes and encourages non-formal, informal, and indigenous learning systems, as well as self-learning and out-of-school study programs that respond to community needs.</p>
+                        <p><strong>Republic Act No. 9155</strong>, the Governance of Basic Education Act, provides for an Alternative Learning System to serve out-of-school children, youth, and adults.</p>
+                    </div>
+                </article>
 
-                        <div class="space-y-2 pt-2 text-xs text-slate-300">
-                            <div class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-deped-gold"></span>
-                                <span>Zero cost to learners — funded by DepEd national budget</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-deped-gold"></span>
-                                <span>Community Learning Centers established in all barangays</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-deped-gold"></span>
-                                <span>Direct equivalency to Elementary and Junior High School</span>
-                            </div>
+                <article class="bento-card p-6 sm:p-7 bg-white border border-slate-200 shadow-sm">
+                    <h3 class="text-lg font-black text-slate-900 tracking-tight">How does ALS work?</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mt-3">The Department of Education offers the <strong>Basic Literacy Program</strong> and the <strong>Continuing Education Program, including Accreditation and Equivalency (A&amp;E)</strong>. Learning materials and activities are modular and flexible, so learning can happen at different times and places according to learners’ needs and the arrangements made with their facilitators.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                        <div class="rounded-xl bg-amber-50 border border-amber-100 p-4">
+                            <h4 class="text-sm font-black text-amber-800">Basic Literacy Program</h4>
+                            <p class="text-xs text-slate-600 mt-1">Builds foundational literacy and numeracy skills.</p>
+                        </div>
+                        <div class="rounded-xl bg-blue-50 border border-blue-100 p-4">
+                            <h4 class="text-sm font-black text-deped-blue">Continuing Education / A&amp;E</h4>
+                            <p class="text-xs text-slate-600 mt-1">Supports continued learning and accreditation and equivalency.</p>
                         </div>
                     </div>
+                </article>
 
-                    <div class="relative z-10 pt-6 mt-6 border-t border-white/10">
-                        <a href="{{ route('register') }}" 
-                           class="w-full py-3.5 px-4 rounded-xl bg-deped-blue hover:bg-blue-600 text-white font-bold text-xs uppercase tracking-wider text-center block transition-all shadow-md">
-                            Register as an ALS Learner Today &rarr;
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Bento Tile C: Flexible Schedules (Span 4) -->
-                <div class="lg:col-span-4 bento-card p-6 bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-black text-lg mb-4">
-                            ⏰
+                <article class="bento-card p-6 sm:p-7 bg-white border border-slate-200 shadow-sm">
+                    <h3 class="text-lg font-black text-slate-900 tracking-tight">How is ALS different from formal education?</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                        <div class="rounded-xl bg-slate-50 border border-slate-200 p-4">
+                            <h4 class="text-sm font-black text-slate-800">Formal education</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed mt-2">Usually takes place in a classroom and is managed by trained formal school teachers.</p>
                         </div>
-                        <h4 class="text-base font-black text-slate-900 uppercase">Flexible Schedules</h4>
-                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-                            No daily 8 AM to 5 PM attendance lock. Study modules at home, during work breaks, or attend weekend and evening consultations with your Mobile Teacher.
-                        </p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] font-bold text-deped-blue">
-                        Works for working youth &amp; parents
-                    </div>
-                </div>
-
-                <!-- Bento Tile D: No Age Ceiling (Span 4) -->
-                <div class="lg:col-span-4 bento-card p-6 bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="w-10 h-10 rounded-2xl bg-blue-50 text-deped-blue flex items-center justify-center font-black text-lg mb-4">
-                            🌱
+                        <div class="rounded-xl bg-emerald-50 border border-emerald-100 p-4">
+                            <h4 class="text-sm font-black text-emerald-800">ALS non-formal education</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed mt-2">Takes place outside the formal classroom in community learning centers, barangay halls, libraries, or learners’ homes. ALS mobile teachers, coordinators, and instructional managers agree with learners on a suitable schedule and venue.</p>
                         </div>
-                        <h4 class="text-base font-black text-slate-900 uppercase">Zero Age Ceiling</h4>
-                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-                            Education is a lifelong right. ALS San Juan welcomes learners aged 12 to 65+, working adults, solo parents, and persons with special educational needs.
-                        </p>
                     </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] font-bold text-deped-blue">
-                        Second-chance pathways for all
-                    </div>
-                </div>
-
-                <!-- Bento Tile E: Dedicated Mobile Teachers (Span 4) -->
-                <div class="lg:col-span-4 bento-card p-6 bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-lg mb-4">
-                            🧑‍🏫
-                        </div>
-                        <h4 class="text-base font-black text-slate-900 uppercase">Dedicated Mobile Teachers</h4>
-                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-                            Fully certified DepEd teachers deploy directly to San Juan barangays, bringing instructional materials, formative assessments, and moral support directly to learners.
-                        </p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] font-bold text-emerald-600">
-                        12 Centers with assigned mentors
-                    </div>
-                </div>
-
+                </article>
             </div>
         </section>
         @endif
@@ -951,98 +876,61 @@
                 </div>
             </div>
 
-            <!-- Bento Contact Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- Contact Details Bento (Span 5) -->
-                <div class="lg:col-span-5 bento-card p-6 sm:p-8 bg-white border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
-                    <div class="space-y-5">
-                        <div>
-                            <span class="text-[10px] font-black uppercase tracking-widest text-deped-blue block">Division Office Address</span>
-                            <h3 class="text-base font-black text-slate-900 mt-1">SDO San Juan City</h3>
-                            <p class="text-xs text-slate-600 mt-1 font-normal leading-relaxed">
-                                Schools Division Office Building, Pinaglabanan Street, Barangay Pedro Cruz, San Juan City, Metro Manila
-                            </p>
-                        </div>
-
-                        <div class="pt-4 border-t border-slate-100">
-                            <span class="text-[10px] font-black uppercase tracking-widest text-deped-blue block">ALS Unit Operating Hours</span>
-                            <p class="text-xs text-slate-800 font-bold mt-1">Monday – Friday: 8:00 AM – 5:00 PM</p>
-                            <p class="text-[11px] text-slate-500 mt-0.5">Weekend CLC consultations vary per center schedule.</p>
-                        </div>
-
-                        <div class="pt-4 border-t border-slate-100">
-                            <span class="text-[10px] font-black uppercase tracking-widest text-deped-blue block">Direct Assistance Channels</span>
-                            <p class="text-xs text-slate-800 font-mono font-bold mt-1">Mobile Teacher Hotline: 0917-123-4567</p>
-                            <p class="text-xs text-slate-800 font-mono font-bold">Email: als.sanjuan@deped.gov.ph</p>
-                        </div>
-                    </div>
-
-                    <div class="pt-4 border-t border-slate-100">
-                        <a href="{{ route('register') }}" class="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-deped-blue font-bold text-xs uppercase tracking-wider text-center block transition-all">
-                            Proceed to Digital Registration &rarr;
-                        </a>
-                    </div>
+                <div class="lg:col-span-7 bento-card bg-white border border-slate-200 shadow-sm overflow-hidden">
+                    <iframe
+                        title="Map to Division of City Schools - San Juan City"
+                        src="https://maps.google.com/maps?q=Division%20of%20City%20Schools%20San%20Juan%20City%2C%20Pinaglabanan%20Street&amp;t=&amp;z=15&amp;ie=UTF8&amp;iwloc=&amp;output=embed"
+                        class="w-full h-72 sm:h-96 border-0"
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        allowfullscreen>
+                    </iframe>
                 </div>
 
-                <!-- Inquiry Form Bento (Span 7) -->
-                <div class="lg:col-span-7 bento-card p-6 sm:p-8 bg-white border border-slate-200 shadow-sm">
-                    <div class="border-b border-slate-100 pb-3 mb-5">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-deped-blue">Send a Message</span>
-                        <h3 class="text-lg font-black text-slate-900 uppercase mt-0.5">
-                            Ask an ALS Mobile Teacher
-                        </h3>
+                <div class="lg:col-span-5 bento-card p-6 sm:p-8 bg-white border border-slate-200 shadow-sm">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-deped-blue">Division Office</span>
+                    <h3 class="text-xl font-black text-slate-900 mt-1">Division of City Schools - San Juan City</h3>
+                    <address class="not-italic text-sm text-slate-600 leading-relaxed mt-3">Pinaglabanan St., San Juan City 1500</address>
+
+                    <div class="space-y-3 mt-5 pt-5 border-t border-slate-100 text-sm">
+                        <p><span class="font-bold text-slate-700">Telephone:</span> <a class="text-deped-blue hover:underline" href="tel:+6324512699">+63 2 451 2699</a></p>
+                        <p><span class="font-bold text-slate-700">Fax:</span> <a class="text-deped-blue hover:underline" href="tel:+6324512383">+63 2 451 2383</a></p>
+                        <p><span class="font-bold text-slate-700">Email:</span> <a class="break-all text-deped-blue hover:underline" href="mailto:depedsanjuanrecords@gmail.com">depedsanjuanrecords@gmail.com</a></p>
                     </div>
 
-                    <form @submit.prevent="inquirySuccess = true" class="space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase">Your Name *</label>
-                                <input type="text" required placeholder="Full Name" 
-                                       class="mt-1 w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-deped-blue/30 focus:border-deped-blue transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase">Mobile Number *</label>
-                                <input type="text" required placeholder="0917XXXXXXX" 
-                                       class="mt-1 w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-deped-blue/30 focus:border-deped-blue transition-all">
-                            </div>
-                        </div>
+                    <a href="https://www.google.com/maps/search/?api=1&amp;query=Division%20of%20City%20Schools%20San%20Juan%20City%20Pinaglabanan%20St" target="_blank" rel="noopener noreferrer" class="inline-flex mt-6 px-4 py-3 rounded-xl bg-blue-50 text-deped-blue font-bold text-xs uppercase tracking-wide hover:bg-blue-100 transition-colors">
+                        Open directions in Google Maps &rarr;
+                    </a>
+                </div>
+            </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase">Your San Juan Barangay</label>
-                            <select class="mt-1 w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-deped-blue/30 focus:border-deped-blue transition-all">
-                                <option value="">Select your barangay...</option>
-                                @foreach([
-                                    'Addition Hills', 'Balong-Bato', 'Batis', 'Corazon de Jesus', 'Ermitaño',
-                                    'Salapan', 'San Perfecto', 'Santa Lucia', 'Tibagan', 'Progreso',
-                                    'Rivera', 'Pedro Cruz', 'Maytunas', 'Isabelita', 'Kabayanan',
-                                    'St. Joseph (Halo-halo)', 'Pasadena', 'Little Baguio', 'Greenhills',
-                                    'West Crame', 'Onse'
-                                ] as $b)
-                                    <option value="{{ $b }}">{{ $b }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase">Your Question / Inquiry *</label>
-                            <textarea rows="3" required placeholder="Tell us about your educational background or ask about nearest center schedules..." 
-                                      class="mt-1 w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold focus:bg-white focus:ring-2 focus:ring-deped-blue/30 focus:border-deped-blue transition-all"></textarea>
-                        </div>
-
-                        <!-- Feedback Notification -->
-                        <div x-show="inquirySuccess" x-cloak class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2">
-                            <span>✓</span>
-                            <span>Thank you! An ALS Mobile Teacher from SDO San Juan City will contact you shortly via SMS.</span>
-                        </div>
-
-                        <button type="submit" 
-                                class="w-full py-3.5 rounded-xl bg-deped-blue hover:bg-deped-dark text-white font-black text-xs uppercase tracking-wider transition-all shadow-sm hover:shadow-md">
-                            Submit Inquiry to ALS Mobile Teacher
-                        </button>
-                    </form>
+            <div class="space-y-4">
+                <div class="border-b border-slate-200 pb-3">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-deped-blue">ALS Contact Persons</span>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-900 mt-1">Get in touch with the San Juan City ALS team</h3>
                 </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                    @foreach([
+                        ['name' => 'Mr. Anselmo B. Joven', 'role' => 'Education Program Supervisor – ALS', 'phone' => '0917-053-0466', 'email' => 'anselmo.joven001@deped.gov.ph'],
+                        ['name' => 'Mr. Erwin C. dela Cruz', 'role' => 'Education Program Specialist II – ALS', 'phone' => '0922-219-3356', 'email' => 'erwin.delacruz@deped.gov.ph'],
+                        ['name' => 'Mrs. Michelle Faye V. Salamera', 'role' => 'ALS Mobile Teacher II', 'phone' => '0915-624-6983'],
+                        ['name' => 'Mrs. Hergelyn G. Cerredo', 'role' => 'ALS Mobile Teacher I', 'phone' => '0933-820-0019'],
+                        ['name' => 'Mr. Emil O. Melchor', 'role' => 'ALS Mobile Teacher I', 'phone' => '0975-983-9507'],
+                        ['name' => 'Mr. Arniel Lago', 'role' => 'Instructional Manager', 'phone' => '0938-251-1138'],
+                        ['name' => 'Mr. Charles Andrew Cacajon', 'role' => 'Instructional Manager', 'phone' => '0908-878-5235'],
+                    ] as $person)
+                        <article class="bento-card p-5 bg-white border border-slate-200 shadow-sm">
+                            <h4 class="text-sm font-black text-slate-900">{{ $person['name'] }}</h4>
+                            <p class="text-xs text-slate-500 mt-1">{{ $person['role'] }}</p>
+                            <a class="inline-flex mt-4 text-sm font-bold text-deped-blue hover:underline" href="tel:{{ preg_replace('/[^+0-9]/', '', $person['phone']) }}">{{ $person['phone'] }}</a>
+                            @if(isset($person['email']))
+                                <a class="block break-all text-xs text-slate-600 hover:text-deped-blue hover:underline mt-1" href="mailto:{{ $person['email'] }}">{{ $person['email'] }}</a>
+                            @endif
+                        </article>
+                    @endforeach
+                </div>
             </div>
         </section>
         @endif
