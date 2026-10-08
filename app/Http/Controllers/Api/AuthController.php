@@ -125,7 +125,7 @@ class AuthController extends Controller
             ]);
 
             // 3. Find CLC & assigned teacher
-            $clc = CommunityLearningCenter::find($validated['clc_id']);
+            $clc = CommunityLearningCenter::findOrFail($validated['clc_id']);
 
             // 4. Create Initial Enrollment Record
             Enrollment::create([
@@ -137,7 +137,7 @@ class AuthController extends Controller
                 'enrollment_status' => Enrollment::STATUS_PENDING,
                 'delivery_mode' => $validated['delivery_mode'] ?? 'modular_offline',
                 'schedule_preference' => $validated['schedule_preference'] ?? 'flexible',
-                'remarks' => 'Online ALS Form 2 submission received. Awaiting teacher document review.',
+                'remarks' => 'Online ALS Form 2 intake submitted on ' . now()->timezone('Asia/Manila')->format('F d, Y h:i A') . '. Initial Status: Pending document verification.',
             ]);
 
             return $user;

@@ -37,6 +37,11 @@ class Enrollment extends Model
         'completed_at',
     ];
 
+    protected $appends = [
+        'tracking_number',
+        'track_label',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -78,6 +83,11 @@ class Enrollment extends Model
             self::TRACK_AE_JUNIOR_HIGH => 'A&E Junior High School',
             default => $this->program_track,
         };
+    }
+
+    public function getTrackingNumberAttribute(): string
+    {
+        return 'ALS-' . ($this->calendar_year ?: '2026') . '-' . str_pad((string)$this->id, 5, '0', STR_PAD_LEFT);
     }
 
     public function getStatusBadgeAttribute(): string

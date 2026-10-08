@@ -75,22 +75,40 @@
             </a>
         </div>
     @else
-        <div class="p-6 rounded-3xl bg-amber-500/10 border border-amber-300 text-amber-900 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
+        <div class="p-6 sm:p-7 rounded-3xl bg-amber-500/10 border border-amber-300 text-amber-950 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="flex items-start gap-4">
                 <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
-                <div>
-                    <h2 class="text-base font-bold text-slate-900">{{ $enrollment->status_label }}</h2>
-                    <p class="text-xs text-slate-600 mt-0.5">Your ALS Form 2 intake has been received. Your assigned Mobile Teacher is reviewing your credentials.</p>
+                <div class="space-y-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full bg-amber-200/80 text-amber-800 text-[11px] font-bold uppercase tracking-wider">
+                            Pending Document Verification
+                        </span>
+                        @if($enrollment?->tracking_number)
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white border border-amber-300 text-slate-800 text-xs font-mono font-bold shadow-2xs">
+                                <span class="text-slate-400 font-sans text-[10px] font-semibold">REF:</span>
+                                <span>{{ $enrollment->tracking_number }}</span>
+                            </span>
+                        @endif
+                    </div>
+                    <h2 class="text-base sm:text-lg font-black text-slate-900">Enrolment Application Under Review</h2>
+                    <p class="text-xs text-slate-600 max-w-xl">
+                        Your ALS Form 2 intake has been received. Your assigned Mobile Teacher will verify your PSA Birth Certificate and Barangay Clearance before official enrollment confirmation.
+                    </p>
+                    @if($enrollment?->created_at)
+                        <div class="text-[11px] text-amber-800/80 font-medium pt-0.5">
+                            Submitted on {{ $enrollment->created_at->timezone('Asia/Manila')->format('F d, Y \a\t h:i A') }}
+                        </div>
+                    @endif
                 </div>
             </div>
-            <div class="flex items-center gap-2 self-start sm:self-center shrink-0">
-                <a href="{{ route('learner.enrollment') }}" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs shadow-sm">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
+                <a href="{{ route('learner.enrollment') }}" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs shadow-sm text-center">
                     Track Journey
                 </a>
-                <a href="{{ route('learner.documents') }}" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm">
-                    Check Documents &rarr;
+                <a href="{{ route('learner.documents') }}" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs uppercase tracking-wider shadow-sm text-center transition-all hover:scale-[1.02] active:scale-[0.98]">
+                    Upload Documents &rarr;
                 </a>
             </div>
         </div>

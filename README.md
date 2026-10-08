@@ -6,7 +6,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7.x-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![DepEd RA 11510](https://img.shields.io/badge/DepEd-RA%2011510%20Compliant-0038A8?style=flat)](https://www.deped.gov.ph/)
-[![Tests Passing](https://img.shields.io/badge/PHPUnit-21%20Passed%20(82%20Assertions)-success?style=flat)]()
+[![Tests Passing](https://img.shields.io/badge/PHPUnit-28%20Passed%20(161%20Assertions)-success?style=flat)]()
 
 ---
 
@@ -42,9 +42,26 @@ The web application is built on a **Bento Grid UI** inspired by Constructivist e
 - **Learning Centers (CLCs):** Live searchable directory of all 12 San Juan CLCs with assigned mobile teachers and facility filters.
 - **Contact Us:** Division office directory, emergency hotlines, and instant message inquiry form.
 
-### 2. Digital Intake Wizard (ALS Form 2)
-- Multi-step intake capturing learner demographics, civil status, educational background, and preferred CLC.
-- Direct digital document uploading (PSA, Barangay Clearance, ID photos) into secure private storage.
+### 2. Digital Intake Wizard (ALS Form 2 — Complete Learner Record)
+- **Part I — Learner Demographics & Address:**
+  - PSA legal name verification: First name, middle name, last name, name extension.
+  - Birthdate, sex/gender, civil status, active mobile contact, Facebook profile, street address, and 21 San Juan City barangays.
+- **Part II — Educational Background & Social Inclusion:**
+  - Highest prior grade completed (No Formal Schooling through Junior/Senior High).
+  - Mother tongue and 4Ps (Pantawid Pamilyang Pilipino Program) beneficiary tracking.
+  - Indigenous Peoples (IP) identification with conditional IP community/ethnicity name requirement.
+  - Person with Disability (PWD) identification with conditional disability type/specification.
+  - Complete parents and legal guardian profile: Father's full name, Mother's maiden name, Legal guardian name, relationship, and emergency contact details.
+- **Part III — Program Track & Center Allocation:**
+  - Academic tracks: Basic Literacy Program (BLP), A&E Elementary, A&E Junior High School.
+  - Preferred Community Learning Center (CLC) in San Juan City with auto-assignment of Barangay Mobile Teacher.
+  - Learning delivery modes (Modular Offline App, Modular Print, Blended, Face-to-Face) and schedule preferences.
+- **Part IV — Account Credentials & Intake Safety:**
+  - Unique username & email validation with clear duplicate guidance and direct sign-in links.
+  - Client-side validation per step via `reportValidity()` preventing skipped sections.
+  - Dynamic initial step restoration (`$initialStep`) jumping straight to erroneous inputs upon server validation with full `old(...)` preservation.
+  - Double-click submission protection (`isSubmitting` flag with loading spinner).
+  - Traceable enrollment reference generation (`ALS-YYYY-0000X`) displayed directly on the Learner Dashboard in the pending review banner.
 
 ### 3. Admin & Mobile Teacher Portal
 - **Enrollment Queue:** Review pending applications, verify or reject intake documents with remarks, and transition statuses (`submitted`, `under_review`, `enrolled`, `rejected`).
