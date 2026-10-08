@@ -20,6 +20,16 @@ class RegisterRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
+        $gender = $this->gender ? mb_strtolower(trim($this->gender)) : null;
+        $civilStatus = $this->civil_status ? mb_strtolower(trim($this->civil_status)) : null;
+        if ($civilStatus) {
+            if (str_contains($civilStatus, 'widow')) {
+                $civilStatus = 'widowed';
+            } elseif (str_contains($civilStatus, 'solo')) {
+                $civilStatus = 'solo_parent';
+            }
+        }
+
         $this->merge([
             'username' => $this->username ? trim(mb_strtolower($this->username)) : null,
             'email' => $this->email ? trim(mb_strtolower($this->email)) : null,
@@ -27,6 +37,10 @@ class RegisterRequest extends FormRequest
             'middle_name' => $this->middle_name ? trim($this->middle_name) : null,
             'last_name' => $this->last_name ? trim($this->last_name) : null,
             'name_extension' => $this->name_extension ? trim($this->name_extension) : null,
+            'gender' => $gender,
+            'civil_status' => $civilStatus,
+            'religion' => $this->religion ? trim($this->religion) : null,
+            'age' => $this->age ? intval($this->age) : null,
             'contact_number' => $this->contact_number ? trim($this->contact_number) : null,
             'facebook_name' => $this->facebook_name ? trim($this->facebook_name) : null,
             'street_address' => $this->street_address ? trim($this->street_address) : null,
@@ -75,25 +89,36 @@ class RegisterRequest extends FormRequest
                 'confirmed',
             ],
 
-            // Demographics (ALS Form 2 Part I)
+            // Demographics (Part 1: Personal Information)
             'first_name' => ['required', 'string', 'max:100'],
             'middle_name' => ['nullable', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
             'name_extension' => ['nullable', 'string', 'max:10'],
             'birthdate' => ['required', 'date', 'before:today'],
+            'age' => ['nullable', 'numeric', 'min:5', 'max:120'],
             'gender' => ['required', 'in:male,female,other'],
             'civil_status' => ['required', 'in:single,married,widowed,separated,solo_parent,other'],
+            'religion' => ['nullable', 'string', 'max:100'],
+            'mother_tongue' => ['nullable', 'string', 'max:100'],
+            'is_pwd' => ['nullable', 'boolean'],
             'contact_number' => ['required', 'string', 'max:25'],
             'facebook_name' => ['nullable', 'string', 'max:100'],
             'street_address' => ['required', 'string', 'max:255'],
             'barangay' => ['required', 'string', 'max:100'],
             'city' => ['nullable', 'string', 'max:100'],
 
-            // Educational Background (ALS Form 2 Part II)
+            // Parents Information (Part 1)
+            'father_name' => ['nullable', 'string', 'max:150'],
+            'mother_name' => ['nullable', 'string', 'max:150'],
+            'guardian_name' => ['nullable', 'string', 'max:150'],
+            'guardian_relationship' => ['nullable', 'string', 'max:100'],
+            'emergency_contact_name' => ['nullable', 'string', 'max:150'],
+            'emergency_contact_number' => ['nullable', 'string', 'max:25'],
+
+            // Educational Background (Part 2)
             'highest_education_attained' => ['required', 'string', 'max:150'],
 
-            // Social Inclusion & Family Details (ALS Form 2 Part I & II)
-            'mother_tongue' => ['nullable', 'string', 'max:100'],
+            // Social Inclusion (Part 2)
             'is_4ps_beneficiary' => ['nullable', 'boolean'],
             'is_ip' => ['nullable', 'boolean'],
             'ip_community_name' => [
@@ -102,19 +127,12 @@ class RegisterRequest extends FormRequest
                 'max:100',
                 \Illuminate\Validation\Rule::requiredIf(fn () => (bool) $this->is_ip),
             ],
-            'is_pwd' => ['nullable', 'boolean'],
             'pwd_disability_type' => [
                 'nullable',
                 'string',
                 'max:150',
                 \Illuminate\Validation\Rule::requiredIf(fn () => (bool) $this->is_pwd),
             ],
-            'father_name' => ['nullable', 'string', 'max:150'],
-            'mother_name' => ['nullable', 'string', 'max:150'],
-            'guardian_name' => ['nullable', 'string', 'max:150'],
-            'guardian_relationship' => ['nullable', 'string', 'max:100'],
-            'emergency_contact_name' => ['nullable', 'string', 'max:150'],
-            'emergency_contact_number' => ['nullable', 'string', 'max:25'],
 
             // Program Track & CLC Allocation (ALS Form 2 Part III)
             'program_track' => ['required', 'in:' . implode(',', [

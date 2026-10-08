@@ -21,6 +21,7 @@ class UserProfile extends Model
         'birthdate',
         'gender',
         'civil_status',
+        'religion',
         'contact_number',
         'facebook_name',
         'street_address',

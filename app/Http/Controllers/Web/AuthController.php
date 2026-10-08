@@ -103,6 +103,7 @@ class AuthController extends Controller
                 'birthdate' => $validated['birthdate'],
                 'gender' => $validated['gender'],
                 'civil_status' => $validated['civil_status'],
+                'religion' => $validated['religion'] ?? null,
                 'contact_number' => $validated['contact_number'],
                 'facebook_name' => $validated['facebook_name'] ?? null,
                 'street_address' => $validated['street_address'],

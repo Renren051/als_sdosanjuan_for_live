@@ -67,16 +67,17 @@ class RegistrationIntakeTest extends TestCase
         $response = $this->get('/register');
 
         $response->assertStatus(200)
-            ->assertSee('ALS Form 2')
-            ->assertSee('Digital Learner Enrolment Intake')
-            ->assertSee('Step 1: Learner Personal Information')
-            ->assertSee('Step 2: Educational Background & Special Inclusions', false)
-            ->assertSee('Step 3: ALS Program Track & Community Learning Center', false)
-            ->assertSee('Step 4: Create Portal Account')
+            ->assertSee('ALS Online Registration')
+            ->assertSee('Personal Information')
+            ->assertSee('Part 1')
+            ->assertSee('Part 2')
+            ->assertSee('COMPLETE HOME ADDRESS')
+            ->assertSee('PARENTS INFORMATION')
+            ->assertSee('last_name')
+            ->assertSee('first_name')
             ->assertSee('father_name')
             ->assertSee('mother_name')
-            ->assertSee('guardian_relationship')
-            ->assertSee('emergency_contact_name');
+            ->assertSee('contact_number');
     }
 
     public function test_successful_registration_creates_traceable_pending_enrollment_and_complete_profile(): void

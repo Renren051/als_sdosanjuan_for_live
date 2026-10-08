@@ -19,8 +19,9 @@ class WebPortalTest extends TestCase
     {
         $response = $this->get('/register');
         $response->assertStatus(200)
-            ->assertSee('Digital Learner Enrolment Intake')
-            ->assertSee('Step 1: Learner Personal Information');
+            ->assertSee('ALS Online Registration')
+            ->assertSee('Personal Information')
+            ->assertSee('Part 1');
     }
 
     public function test_admin_can_login_and_access_admin_dashboard(): void
