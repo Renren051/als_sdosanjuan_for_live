@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\Admin\DashboardController;
 use App\Http\Controllers\Web\Admin\EnrollmentController;
 use App\Http\Controllers\Web\Admin\ModuleController as AdminModuleController;
 use App\Http\Controllers\Web\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\Learner\LearnerPortalController;
@@ -22,6 +23,9 @@ Route::get('/programs', [HomeController::class, 'showPage'])->defaults('pageKey'
 Route::get('/requirements', [HomeController::class, 'showPage'])->defaults('pageKey', 'requirements')->name('requirements');
 Route::get('/learning-centers', [HomeController::class, 'showPage'])->defaults('pageKey', 'centers')->name('centers');
 Route::get('/contact', [HomeController::class, 'showPage'])->defaults('pageKey', 'contact')->name('contact');
+
+// ALS AI Virtual Assistant (Gemini)
+Route::post('/chat', [ChatController::class, 'sendMessage'])->name('chat.message');
 
 // Authentication & Registration
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

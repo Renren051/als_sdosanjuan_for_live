@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LearnerController;
 use App\Http\Controllers\Api\ModuleController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +18,9 @@ Route::prefix('v1')->group(function () {
     // Authentication Endpoints
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/register', [AuthController::class, 'register']);
+
+    // ALS AI Assistant
+    Route::post('/chat', [ChatController::class, 'sendMessage']);
 
     // Learning Strands & Published Modules (Publicly accessible for preview/offline app cache)
     Route::get('/strands', [ModuleController::class, 'getStrands']);

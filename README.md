@@ -6,7 +6,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7.x-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![DepEd RA 11510](https://img.shields.io/badge/DepEd-RA%2011510%20Compliant-0038A8?style=flat)](https://www.deped.gov.ph/)
-[![Tests Passing](https://img.shields.io/badge/PHPUnit-17%20Passed%20(64%20Assertions)-success?style=flat)]()
+[![Tests Passing](https://img.shields.io/badge/PHPUnit-21%20Passed%20(82%20Assertions)-success?style=flat)]()
 
 ---
 
@@ -27,6 +27,8 @@ The web application is built on a **Bento Grid UI** inspired by Constructivist e
 - **DepEd Division Color Palette:** Deep DepEd Navy (`#0b193d`), Philippine Blue (`#0038A8`), Golden Yellow (`#FCD116`), and Crimson (`#CE1126`).
 - **Dual-Logo Institutional Branding:** Dedicated containers showcasing both the **SDO San Juan City Logo** and the official **DepEd ALS Logo**.
 - **Interactive Alpine.js Directory:** Real-time search and filter toolbar for locating the 12 Community Learning Centers (CLCs) across San Juan.
+- **Modern Sticky Frosted-Glass Navbar:** Dynamic `backdrop-blur-md` navigation header with border blur transitions on window scroll.
+- **Floating AI Assistant Widget (ALSJay):** Anchored circular launcher at bottom-right with gentle slow-motion jumping animation, speech bubble callout, and bottom-anchored pop-up chat window.
 
 ---
 
@@ -57,6 +59,21 @@ The web application is built on a **Bento Grid UI** inspired by Constructivist e
 - Built-in PDF module viewer modal for self-paced study.
 - Module progress telemetry tracking.
 
+### 5. ALSJay — Official AI Virtual Assistant
+- **AI Persona & Institutional Role:** Official AI assistant for DepEd SDO San Juan City Alternative Learning System named **ALSJay**.
+- **1-to-1 Language Mirroring:**
+  - Queries in Tagalog/Filipino yield **100% pure Tagalog/Filipino** replies with polite honorifics (`po` and `opo`).
+  - Queries in English yield **100% clean, professional English** replies.
+- **Strict School-Only Guardrails:**
+  - Dedicated exclusively to DepEd ALS educational programs (BLP, A&E Elementary and Junior High School), enrollment requirements, Community Learning Centers, and official division announcements.
+  - Strictly refuses requests regarding **coding & software programming**, **student homework & assignment solving**, harassment, or non-school topics with polite redirection to ALS.
+- **Live Weather & Class Suspension Advisories:** Powered by Google Gemini with live Google Search Grounding for real-time DOST-PAGASA forecasts and official San Juan City class suspensions (Mayor Francis Zamora / San Juan City PIO).
+- **Anchored Floating Widget (`<x-chat-widget />`):**
+  - Gentle slow-motion jumping launcher button anchored at the bottom-right (`bottom-5 right-5`).
+  - Speech callout bubble (*"Ano ang maitutulong ko sa’yo ngayon?"*) with `ALSJay` badge.
+  - Clicking the bubble keeps it anchored in place while the chat dialog pops up directly above it; bubble smoothly transforms into an `✕` close button.
+- **Resilient Multi-Tier Architecture:** High-availability `/chat` endpoint with CSRF validation exemption and an offline smart local knowledge-base fallback.
+
 ---
 
 ## 🛠️ Technology Stack
@@ -64,6 +81,7 @@ The web application is built on a **Bento Grid UI** inspired by Constructivist e
 | Layer | Technology | Details |
 | :--- | :--- | :--- |
 | **Backend Framework** | Laravel 12.x | PHP 8.2.12 (CLI Visual C++ 2019 x64) |
+| **AI Virtual Assistant** | Google Gemini 2.5 Flash | Real-time Search Grounding, Language Mirroring, School Guardrails |
 | **API Authentication**| Laravel Sanctum | Bearer token authentication for web & mobile |
 | **Frontend UI** | Blade + Vite v7.3.6 | Tailwind CSS 4, Alpine.js, Plus Jakarta Sans |
 | **Database** | MySQL | Port 3306 (`als_sdosanjuan_db`) via XAMPP |
@@ -163,7 +181,7 @@ git config --global user.email "your.email@example.com"
    cp .env.example .env
    php artisan key:generate
    ```
-   *Update your `.env` database parameters:*
+   *Update your `.env` database and AI assistant parameters:*
    ```env
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
@@ -171,6 +189,11 @@ git config --global user.email "your.email@example.com"
    DB_DATABASE=als_sdosanjuan_db
    DB_USERNAME=root
    DB_PASSWORD=
+
+   # Google Gemini AI Virtual Assistant (ALSJay)
+   GEMINI_API_KEY=your_gemini_api_key_here
+   GEMINI_MODEL=gemini-2.5-flash
+   GEMINI_SEARCH_GROUNDING=true
    ```
 
 4. **Run Migrations & Seeders:**
@@ -262,6 +285,9 @@ The API is fully secured via Laravel Sanctum and ready for Android LMS integrati
 - `GET /api/v1/auth/me` — Retrieve active authenticated user profile.
 - `POST /api/v1/auth/logout` — Revoke active token.
 
+### AI Virtual Assistant (ALSJay)
+- `POST /chat` — Send query to ALSJay (Gemini API with Google Search grounding and smart local fallback).
+
 ### Curriculum & Modules
 - `GET /api/v1/strands` — List the 6 ALS Learning Strands with module counts.
 - `GET /api/v1/modules` — List published self-learning modules (filterable by strand).
@@ -290,11 +316,11 @@ php artisan test
 ```text
 PASS  Tests\Unit\ExampleTest
 PASS  Tests\Feature\AlsApiTest
+PASS  Tests\Feature\ChatControllerTest
 PASS  Tests\Feature\ExampleTest
 PASS  Tests\Feature\WebPortalTest
 
-Tests:    17 passed (64 assertions)
-Duration: 1.47s
+Tests:    21 passed (82 assertions)
 ```
 
 ---

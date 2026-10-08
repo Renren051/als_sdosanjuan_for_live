@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SDO San Juan City - Alternative Learning System (ALS)')</title>
     <meta name="description" content="Web-Based Student Information & Android-Based Modular LMS for DepEd SDO San Juan Alternative Learning System">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <!-- Favicon (SDO San Juan City Logo: sdosj.svg) -->
     <link rel="icon" type="image/svg+xml" href="{{ file_exists(public_path('images/sdosj.svg')) ? asset('images/sdosj.svg') : (file_exists(public_path('images/school_logo.png')) ? asset('images/school_logo.png') : asset('favicon.svg')) }}">
@@ -76,6 +77,8 @@
 </head>
 <body class="h-full flex flex-col font-sans text-slate-800 antialiased selection:bg-deped-blue selection:text-white">
     @yield('body')
+
+    @include('components.chat-widget')
 
     @stack('scripts')
 </body>

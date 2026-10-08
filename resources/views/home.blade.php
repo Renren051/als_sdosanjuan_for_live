@@ -71,26 +71,14 @@
      x-data="{ 
          mobileNav: false,
          clcSearch: '',
-         clcFilter: 'all'
-     }">
+         clcFilter: 'all',
+         scrolled: false
+     }"
+     @scroll.window="scrolled = (window.pageYOffset > 15)">
 
-    <!-- Top DepEd Official Identification Ribbon -->
-    <div class="bg-deped-navy text-white text-[11px] font-semibold py-1.5 border-b border-white/10 z-50">
-        <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center gap-2.5">
-                <span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-deped-gold animate-pulse"></span>
-                <span class="tracking-wider uppercase font-bold text-slate-200">Republic of the Philippines &bull; Department of Education</span>
-            </div>
-            <div class="flex items-center gap-4 text-slate-300">
-                <span>Schools Division Office of San Juan City</span>
-                <span class="hidden sm:inline text-slate-500">&bull;</span>
-                <span class="hidden sm:inline font-bold text-deped-gold">Republic Act 11510 (The ALS Act)</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modern Bento Glass Navigation Bar -->
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-slate-200/90 shadow-xs transition-all duration-300">
+    <!-- Modern Bento Frosted Glass Navigation Bar -->
+    <header class="sticky top-0 z-40 transition-all duration-300 backdrop-blur-md backdrop-saturate-150"
+            :class="scrolled ? 'bg-white/75 border-b border-slate-200/80 shadow-sm' : 'bg-white/85 border-b border-slate-200/60 shadow-xs'">
         <div class="max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between min-h-[72px] sm:min-h-[78px] py-2 gap-2 sm:gap-4">
                 
