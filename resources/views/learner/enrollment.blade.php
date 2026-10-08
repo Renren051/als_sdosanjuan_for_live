@@ -99,6 +99,28 @@
                     Correct Documents Now &rarr;
                 </a>
             </div>
+        @elseif($enrollment->isRejected())
+            <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-rose-800 to-red-900 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                <div class="flex items-start gap-5">
+                    <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center font-bold text-white shrink-0">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </div>
+                    <div>
+                        <span class="px-2.5 py-0.5 rounded-full bg-white/20 text-xs font-bold uppercase tracking-wider">
+                            Application Disapproved / Rejected
+                        </span>
+                        <h2 class="text-xl font-black mt-1">Application Disapproved</h2>
+                        <p class="text-xs text-rose-100 mt-1 max-w-2xl">
+                            Your intake application could not be approved for the selected cycle. Please review the evaluator's explanation below.
+                        </p>
+                        @if($enrollment->remarks)
+                            <div class="mt-3 p-3.5 rounded-2xl bg-black/25 border border-white/15 text-xs text-rose-100 max-w-2xl">
+                                <strong>Teacher / Evaluator Remarks:</strong> {{ $enrollment->remarks }}
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
         @elseif($enrollment->isUnderReview())
             <div class="p-6 rounded-3xl bg-blue-50 border border-blue-200 text-blue-950 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">

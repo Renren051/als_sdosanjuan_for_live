@@ -18,13 +18,21 @@
                     'under_review' => 'Under Review',
                     'enrolled' => 'Officially Enrolled',
                     'needs_correction' => 'Needs Correction',
+                    'rejected' => 'Rejected',
                     'completed' => 'Completed',
                 ];
             @endphp
             @foreach($statuses as $key => $label)
+                @php
+                    $count = $statusCounts[$key] ?? 0;
+                    $isActive = ($currentStatus === $key || (!$currentStatus && $key === ''));
+                @endphp
                 <a href="{{ request()->fullUrlWithQuery(['status' => $key ?: null, 'page' => null]) }}" 
-                   class="px-3.5 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all {{ ($currentStatus === $key || (!$currentStatus && $key === '')) ? 'bg-deped-blue text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
-                    {{ $label }}
+                   class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all {{ $isActive ? 'bg-deped-blue text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                    <span>{{ $label }}</span>
+                    <span class="px-1.5 py-0.5 rounded-full text-[10px] font-mono {{ $isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700' }}">
+                        {{ $count }}
+                    </span>
                 </a>
             @endforeach
         </div>
@@ -99,6 +107,7 @@
                                 @else
                                     <span class="text-amber-600 font-bold italic">Unassigned</span>
                                 @endif
+                                <div class="text-[10px] text-slate-400 font-mono mt-0.5">{{ $enr->tracking_number }}</div>
                             </td>
 
                             <!-- Name -->

@@ -24,6 +24,7 @@
                     </span>
                 </div>
                 <div class="text-xs text-slate-500 mt-0.5">
+                    Ref: <span class="font-mono font-bold text-deped-blue">{{ $enrollment->tracking_number }}</span> &bull; 
                     Username: <span class="font-mono font-bold">{{ $user->username }}</span> &bull; 
                     Applied: {{ $enrollment->created_at->format('M d, Y h:i A') }}
                 </div>
@@ -268,6 +269,7 @@
                             <option value="under_review" {{ $enrollment->enrollment_status === 'under_review' ? 'selected' : '' }}>Under Review</option>
                             <option value="needs_correction" {{ $enrollment->enrollment_status === 'needs_correction' ? 'selected' : '' }}>Needs Correction</option>
                             <option value="pending" {{ $enrollment->enrollment_status === 'pending' ? 'selected' : '' }}>Pending Review</option>
+                            <option value="rejected" {{ $enrollment->enrollment_status === 'rejected' ? 'selected' : '' }}>Application Rejected</option>
                             <option value="completed" {{ $enrollment->enrollment_status === 'completed' ? 'selected' : '' }}>Completed Program</option>
                             <option value="withdrawn" {{ $enrollment->enrollment_status === 'withdrawn' ? 'selected' : '' }}>Withdrawn</option>
                         </select>

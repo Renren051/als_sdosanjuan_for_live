@@ -316,7 +316,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase">Birthdate *</label>
                             <input type="date" name="birthdate" required class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
@@ -326,6 +326,16 @@
                             <select name="gender" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Civil Status *</label>
+                            <select name="civil_status" required class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                                <option value="single">Single</option>
+                                <option value="married">Married</option>
+                                <option value="solo_parent">Solo Parent</option>
+                                <option value="widowed">Widowed</option>
+                                <option value="separated">Separated</option>
                             </select>
                         </div>
                         <div>
@@ -382,13 +392,29 @@
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Delivery Mode</label>
+                            <select name="delivery_mode" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                                <option value="modular_offline">Modular (Offline LMS / Print)</option>
+                                <option value="modular_print">Modular (Printed DepEd Modules)</option>
+                                <option value="blended">Blended Learning</option>
+                                <option value="face_to_face">Face-to-Face Consultation</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Initial Status *</label>
+                            <select name="enrollment_status" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                                <option value="enrolled">Officially Enrolled</option>
+                                <option value="under_review">Under Review / Verification</option>
+                                <option value="pending">Pending Document Submission</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase">Initial Status</label>
-                        <select name="enrollment_status" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
-                            <option value="enrolled">Officially Enrolled</option>
-                            <option value="under_review">Under Review / Verification</option>
-                            <option value="pending">Pending Document Submission</option>
-                        </select>
+                        <label class="block text-xs font-bold text-slate-700 uppercase">Intake Remarks / Notes</label>
+                        <input type="text" name="remarks" placeholder="Optional notes regarding walk-in registration" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
                     </div>
 
                     <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">

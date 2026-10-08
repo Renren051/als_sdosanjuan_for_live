@@ -74,6 +74,40 @@
                 Re-upload Documents &rarr;
             </a>
         </div>
+    @elseif($enrollment->isRejected())
+        <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-rose-800 to-red-900 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div class="flex items-start gap-5">
+                <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center font-bold text-white shrink-0">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </div>
+                <div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded-full bg-white/20 text-xs font-bold uppercase tracking-wider">
+                            Application Disapproved / Rejected
+                        </span>
+                        @if($enrollment?->tracking_number)
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-black/25 text-white text-xs font-mono font-bold">
+                                <span>REF: {{ $enrollment->tracking_number }}</span>
+                            </span>
+                        @endif
+                    </div>
+                    <h2 class="text-xl font-black mt-1">Enrolment Application Rejected</h2>
+                    <p class="text-xs text-rose-100 mt-1 max-w-xl">
+                        Your application could not be approved at this time. Please review the official review remarks below or consult with your designated ALS Mobile Teacher.
+                    </p>
+                    @if($enrollment->remarks)
+                        <div class="mt-3 p-3.5 rounded-2xl bg-black/25 border border-white/15 text-xs text-rose-100 max-w-2xl">
+                            <strong>Teacher / Evaluator Remarks:</strong> {{ $enrollment->remarks }}
+                        </div>
+                    @endif
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
+                <a href="{{ route('learner.enrollment') }}" class="px-5 py-3 rounded-xl bg-white text-rose-800 hover:bg-rose-50 font-bold text-xs uppercase tracking-wider shadow-lg shrink-0 text-center">
+                    Review Dossier
+                </a>
+            </div>
+        </div>
     @else
         <div class="p-6 sm:p-7 rounded-3xl bg-amber-500/10 border border-amber-300 text-amber-950 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div class="flex items-start gap-4">

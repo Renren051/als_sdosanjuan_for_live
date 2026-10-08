@@ -20,6 +20,7 @@ class Enrollment extends Model
     public const STATUS_UNDER_REVIEW = 'under_review';
     public const STATUS_ENROLLED = 'enrolled';
     public const STATUS_NEEDS_CORRECTION = 'needs_correction';
+    public const STATUS_REJECTED = 'rejected';
     public const STATUS_WITHDRAWN = 'withdrawn';
     public const STATUS_COMPLETED = 'completed';
 
@@ -97,6 +98,7 @@ class Enrollment extends Model
             self::STATUS_PENDING => 'bg-amber-100 text-amber-800 border-amber-300',
             self::STATUS_UNDER_REVIEW => 'bg-blue-100 text-blue-800 border-blue-300',
             self::STATUS_NEEDS_CORRECTION => 'bg-rose-100 text-rose-800 border-rose-300',
+            self::STATUS_REJECTED => 'bg-red-100 text-red-800 border-red-300',
             self::STATUS_COMPLETED => 'bg-purple-100 text-purple-800 border-purple-300',
             self::STATUS_WITHDRAWN => 'bg-gray-100 text-gray-800 border-gray-300',
             default => 'bg-gray-100 text-gray-800 border-gray-300',
@@ -110,6 +112,7 @@ class Enrollment extends Model
             self::STATUS_PENDING => 'Pending Intake Verification',
             self::STATUS_UNDER_REVIEW => 'Under Staff Review',
             self::STATUS_NEEDS_CORRECTION => 'Needs Correction',
+            self::STATUS_REJECTED => 'Application Rejected',
             self::STATUS_COMPLETED => 'Program Completed',
             self::STATUS_WITHDRAWN => 'Withdrawn',
             default => ucfirst(str_replace('_', ' ', $this->enrollment_status)),
@@ -137,6 +140,11 @@ class Enrollment extends Model
         return $this->enrollment_status === self::STATUS_NEEDS_CORRECTION;
     }
 
+    public function isRejected(): bool
+    {
+        return $this->enrollment_status === self::STATUS_REJECTED;
+    }
+
     public function isUnderReview(): bool
     {
         return $this->enrollment_status === self::STATUS_UNDER_REVIEW;
@@ -145,6 +153,61 @@ class Enrollment extends Model
     public function isPending(): bool
     {
         return $this->enrollment_status === self::STATUS_PENDING;
+    }
+
+    /**
+     * Allowed status transitions in the DepEd ALS intake and enrollment pipeline.
+     */
+    public static function validTransitions(): array
+    {
+        return [
+            self::STATUS_PENDING => [
+                self::STATUS_PENDING,
+                self::STATUS_UNDER_REVIEW,
+                self::STATUS_ENROLLED,
+                self::STATUS_NEEDS_CORRECTION,
+                self::STATUS_REJECTED,
+                self::STATUS_WITHDRAWN,
+            ],
+            self::STATUS_UNDER_REVIEW => [
+                self::STATUS_UNDER_REVIEW,
+                self::STATUS_ENROLLED,
+                self::STATUS_NEEDS_CORRECTION,
+                self::STATUS_REJECTED,
+                self::STATUS_PENDING,
+                self::STATUS_WITHDRAWN,
+            ],
+            self::STATUS_NEEDS_CORRECTION => [
+                self::STATUS_NEEDS_CORRECTION,
+                self::STATUS_UNDER_REVIEW,
+                self::STATUS_ENROLLED,
+                self::STATUS_REJECTED,
+                self::STATUS_WITHDRAWN,
+            ],
+            self::STATUS_ENROLLED => [
+                self::STATUS_ENROLLED,
+                self::STATUS_COMPLETED,
+                self::STATUS_WITHDRAWN,
+                self::STATUS_UNDER_REVIEW,
+            ],
+            self::STATUS_REJECTED => [
+                self::STATUS_REJECTED,
+                self::STATUS_UNDER_REVIEW,
+            ],
+            self::STATUS_COMPLETED => [
+                self::STATUS_COMPLETED,
+            ],
+            self::STATUS_WITHDRAWN => [
+                self::STATUS_WITHDRAWN,
+                self::STATUS_UNDER_REVIEW,
+            ],
+        ];
+    }
+
+    public function canTransitionTo(string $targetStatus): bool
+    {
+        $valid = self::validTransitions()[$this->enrollment_status] ?? [];
+        return in_array($targetStatus, $valid, true);
     }
 
     public function scopeForYear($query, string $year)
