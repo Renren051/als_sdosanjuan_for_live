@@ -54,14 +54,34 @@ class ModuleProgress extends Model
         return $this->belongsTo(Module::class, 'module_id');
     }
 
+    public function isCompleted(): bool
+    {
+        return $this->completion_status === self::STATUS_COMPLETED;
+    }
+
+    public function isInProgress(): bool
+    {
+        return $this->completion_status === self::STATUS_IN_PROGRESS;
+    }
+
+    public function isDownloaded(): bool
+    {
+        return $this->completion_status === self::STATUS_DOWNLOADED;
+    }
+
     public function getProgressPercentAttribute(): int
     {
         if ($this->completion_status === self::STATUS_COMPLETED) {
             return 100;
         }
 
+        if ($this->completion_status === self::STATUS_DOWNLOADED) {
+            return 0;
+        }
+
         if ($this->total_pages && $this->total_pages > 0) {
-            return min(100, (int) round(($this->last_page_read / $this->total_pages) * 100));
+            $percent = (int) round(($this->last_page_read / $this->total_pages) * 100);
+            return min(100, max(0, $percent));
         }
 
         return $this->completion_status === self::STATUS_IN_PROGRESS ? 50 : 0;

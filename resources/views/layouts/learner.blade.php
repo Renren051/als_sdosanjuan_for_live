@@ -22,23 +22,31 @@
                 <!-- Desktop Navigation Links -->
                 <nav class="hidden md:flex items-center gap-1">
                     <a href="{{ route('learner.dashboard') }}" 
-                       class="px-4 py-2 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('learner.dashboard') ? 'bg-deped-blue text-white shadow-md' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
+                       class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('learner.dashboard') ? 'bg-deped-blue text-white shadow-md' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
                         Dashboard
                     </a>
+                    <a href="{{ route('learner.enrollment') }}" 
+                       class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('learner.enrollment') ? 'bg-deped-blue text-white shadow-md' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
+                        My Enrollment
+                    </a>
                     <a href="{{ route('learner.documents') }}" 
-                       class="px-4 py-2 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('learner.documents') ? 'bg-deped-blue text-white shadow-md' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
+                       class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('learner.documents*') ? 'bg-deped-blue text-white shadow-md' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
                         My Documents
                     </a>
                     <a href="{{ route('learner.modules') }}" 
-                       class="px-4 py-2 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('learner.modules') ? 'bg-deped-blue text-white shadow-md' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
+                       class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('learner.modules*') ? 'bg-deped-blue text-white shadow-md' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
                         ALS Modules
+                    </a>
+                    <a href="{{ route('learner.profile') }}" 
+                       class="px-3.5 py-2 rounded-xl text-sm font-semibold transition-all {{ request()->routeIs('learner.profile') ? 'bg-deped-blue text-white shadow-md' : 'text-slate-300 hover:text-white hover:bg-white/5' }}">
+                        Profile
                     </a>
                 </nav>
 
                 <!-- User Profile & Logout -->
                 <div class="hidden md:flex items-center gap-4">
-                    <div class="text-right">
-                        <div class="text-sm font-bold text-white">{{ auth()->user()->full_name }}</div>
+                    <a href="{{ route('learner.profile') }}" class="text-right group hover:opacity-90 transition-opacity">
+                        <div class="text-sm font-bold text-white group-hover:text-deped-gold transition-colors">{{ auth()->user()->full_name }}</div>
                         <div class="text-xs text-slate-300 flex items-center justify-end gap-1.5">
                             @if(auth()->user()->lrn)
                                 <span class="font-mono text-deped-gold font-bold">LRN: {{ auth()->user()->lrn }}</span>
@@ -47,7 +55,7 @@
                                 <span>Intake Pending</span>
                             @endif
                         </div>
-                    </div>
+                    </a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" title="Logout" class="p-2 rounded-xl bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 transition-colors">
@@ -72,8 +80,10 @@
         <!-- Mobile Drawer -->
         <div x-show="mobileMenuOpen" class="md:hidden border-t border-white/10 px-4 pt-3 pb-4 space-y-2 bg-slate-900" x-cloak>
             <a href="{{ route('learner.dashboard') }}" class="block px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('learner.dashboard') ? 'bg-deped-blue text-white' : 'text-slate-300' }}">Dashboard</a>
-            <a href="{{ route('learner.documents') }}" class="block px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('learner.documents') ? 'bg-deped-blue text-white' : 'text-slate-300' }}">My Documents</a>
-            <a href="{{ route('learner.modules') }}" class="block px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('learner.modules') ? 'bg-deped-blue text-white' : 'text-slate-300' }}">ALS Modules</a>
+            <a href="{{ route('learner.enrollment') }}" class="block px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('learner.enrollment') ? 'bg-deped-blue text-white' : 'text-slate-300' }}">My Enrollment</a>
+            <a href="{{ route('learner.documents') }}" class="block px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('learner.documents*') ? 'bg-deped-blue text-white' : 'text-slate-300' }}">My Documents</a>
+            <a href="{{ route('learner.modules') }}" class="block px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('learner.modules*') ? 'bg-deped-blue text-white' : 'text-slate-300' }}">ALS Modules</a>
+            <a href="{{ route('learner.profile') }}" class="block px-3 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('learner.profile') ? 'bg-deped-blue text-white' : 'text-slate-300' }}">My Profile</a>
             <div class="pt-3 border-t border-white/10 flex items-center justify-between">
                 <span class="text-xs text-slate-400">{{ auth()->user()->full_name }}</span>
                 <form action="{{ route('logout') }}" method="POST">

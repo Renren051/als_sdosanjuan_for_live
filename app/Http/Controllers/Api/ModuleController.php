@@ -110,20 +110,23 @@ class ModuleController extends Controller
         }
 
         // Track download for authenticated learner
-        $user = $request->user('sanctum');
+        $user = $request->user('sanctum') ?? $request->user('web');
         if ($user && $user->isLearner()) {
-            ModuleProgress::updateOrCreate(
-                [
+            $existing = ModuleProgress::where('user_id', $user->id)->where('module_id', $module->id)->first();
+            if (!$existing) {
+                ModuleProgress::create([
                     'user_id' => $user->id,
                     'module_id' => $module->id,
-                ],
-                [
                     'downloaded_at' => now(),
                     'completion_status' => ModuleProgress::STATUS_DOWNLOADED,
                     'device_identifier' => $request->header('User-Agent') ?? 'Web/Mobile Client',
                     'synced_at' => now(),
-                ]
-            );
+                ]);
+            } else {
+                $existing->update([
+                    'downloaded_at' => $existing->downloaded_at ?: now(),
+                ]);
+            }
         }
 
         $headers = [

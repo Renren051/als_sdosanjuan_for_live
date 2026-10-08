@@ -66,7 +66,12 @@ Route::middleware(['auth', 'role:admin,mobile_teacher'])->prefix('admin')->name(
 // Learner Protected Portal
 Route::middleware(['auth', 'role:learner,admin,mobile_teacher'])->prefix('learner')->name('learner.')->group(function () {
     Route::get('/dashboard', [LearnerPortalController::class, 'dashboard'])->name('dashboard');
+    Route::get('/enrollment', [LearnerPortalController::class, 'enrollment'])->name('enrollment');
+    Route::get('/profile', [LearnerPortalController::class, 'profile'])->name('profile');
     Route::get('/documents', [LearnerPortalController::class, 'documents'])->name('documents');
     Route::post('/documents', [LearnerPortalController::class, 'uploadDocument'])->name('documents.upload');
+    Route::get('/documents/{id}/file', [LearnerPortalController::class, 'viewDocument'])->name('documents.file');
     Route::get('/modules', [LearnerPortalController::class, 'modules'])->name('modules');
+    Route::get('/modules/{id}/read', [LearnerPortalController::class, 'readModule'])->name('modules.read');
+    Route::post('/modules/{id}/progress', [LearnerPortalController::class, 'updateProgress'])->name('modules.progress');
 });

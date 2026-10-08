@@ -8,13 +8,16 @@
     <!-- Header -->
     <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-deped-blue/10 text-deped-blue text-[11px] font-bold uppercase tracking-wider mb-2">
+                <span>DepEd ALS Credentials &bull; Staff Review Verification</span>
+            </div>
             <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Credential Documents & Verification</h1>
             <p class="text-xs text-slate-500 mt-1">
                 Upload clear scans or photos of your required official documents for Mobile Teacher verification.
             </p>
         </div>
         <div class="text-xs text-slate-400">
-            Formats accepted: <strong class="text-slate-700">PDF, JPG, PNG</strong> (Max 10MB per file)
+            Accepted: <strong class="text-slate-700">PDF, JPG, PNG</strong> (Max 10MB per file)
         </div>
     </div>
 
@@ -28,7 +31,7 @@
                 <div>
                     <div class="flex items-start justify-between gap-3">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-10 h-10 rounded-2xl {{ $doc ? ($doc->verification_status === 'verified' ? 'bg-emerald-100 text-emerald-700' : ($doc->verification_status === 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700')) : 'bg-slate-100 text-slate-400' }} flex items-center justify-center font-bold">
+                            <div class="w-10 h-10 rounded-2xl {{ $doc ? ($doc->verification_status === 'verified' ? 'bg-emerald-100 text-emerald-700' : ($doc->verification_status === 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700')) : 'bg-slate-100 text-slate-400' }} flex items-center justify-center font-bold shrink-0">
                                 @if($doc && $doc->verification_status === 'verified')
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                 @elseif($doc && $doc->verification_status === 'rejected')
@@ -39,7 +42,7 @@
                             </div>
                             <div>
                                 <h3 class="text-sm font-bold text-slate-900">{{ $info['title'] }}</h3>
-                                <div class="text-[10px] uppercase font-bold {{ $info['required'] ? 'text-deped-blue' : 'text-slate-400' }}">
+                                <div class="text-[10px] uppercase font-bold {{ $info['required'] ? 'text-amber-700' : 'text-slate-400' }}">
                                     {{ $info['required'] ? 'Mandatory Requirement' : 'Optional Credential' }}
                                 </div>
                             </div>
@@ -48,11 +51,11 @@
                         <!-- Status Badge -->
                         <div>
                             @if($doc)
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ $doc->verification_status === 'verified' ? 'bg-emerald-100 text-emerald-800' : ($doc->verification_status === 'rejected' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800') }}">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold {{ $doc->verification_status === 'verified' ? 'bg-emerald-100 text-emerald-800' : ($doc->verification_status === 'rejected' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-800') }}">
                                     {{ ucfirst($doc->verification_status) }}
                                 </span>
                             @else
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500">
                                     Not Uploaded
                                 </span>
                             @endif
@@ -64,14 +67,27 @@
                     </p>
 
                     @if($doc)
-                        <div class="mt-4 p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
+                        <div class="mt-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
                             <div class="flex items-center justify-between text-slate-600">
-                                <span class="font-medium truncate max-w-[200px]">{{ $doc->file_name }}</span>
+                                <span class="font-medium truncate max-w-[200px]" title="{{ $doc->file_name }}">{{ $doc->file_name }}</span>
                                 <span class="font-mono text-[10px] text-slate-400">{{ $doc->formatted_file_size }}</span>
                             </div>
-                            @if($doc->verification_notes)
-                                <div class="mt-2 p-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
-                                    <strong>Teacher Note:</strong> {{ $doc->verification_notes }}
+
+                            @if($doc->verification_status === 'rejected' && $doc->verification_notes)
+                                <div class="mt-2.5 p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+                                    <strong class="block text-[11px] uppercase font-bold">Correction Note from Reviewer:</strong>
+                                    {{ $doc->verification_notes }}
+                                </div>
+                            @elseif($doc->verification_status === 'verified' && $doc->reviewer)
+                                <div class="mt-2 text-[11px] text-emerald-700 font-medium">
+                                    Verified by {{ $doc->reviewer->full_name }}
+                                    @if($doc->reviewed_at)
+                                        <span class="text-slate-400">on {{ $doc->reviewed_at->format('M d, Y') }}</span>
+                                    @endif
+                                </div>
+                            @elseif($doc->verification_status === 'pending')
+                                <div class="mt-2 text-[11px] text-amber-700 font-medium">
+                                    Queued for Mobile Teacher verification
                                 </div>
                             @endif
                         </div>
@@ -80,9 +96,10 @@
 
                 <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
                     @if($doc)
-                        <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" 
-                           class="text-xs font-bold text-deped-blue hover:underline">
-                            View Uploaded File &rarr;
+                        <a href="{{ route('learner.documents.file', $doc->id) }}" target="_blank" 
+                           class="text-xs font-bold text-deped-blue hover:underline flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            <span>View Document</span>
                         </a>
                     @else
                         <span></span>
@@ -90,8 +107,8 @@
 
                     <button type="button" 
                             @click="activeDocType = '{{ $type }}'; activeDocTitle = '{{ $info['title'] }}'; uploadModal = true"
-                            class="px-4 py-2 rounded-xl {{ $doc ? 'bg-slate-100 hover:bg-slate-200 text-slate-700' : 'bg-deped-blue hover:bg-deped-dark text-white shadow-sm' }} font-bold text-xs transition-colors">
-                        {{ $doc ? 'Re-upload / Replace' : 'Upload Document' }}
+                            class="px-4 py-2 rounded-xl {{ $doc ? ($doc->verification_status === 'rejected' ? 'bg-rose-600 hover:bg-rose-700 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700') : 'bg-deped-blue hover:bg-deped-dark text-white shadow-sm' }} font-bold text-xs transition-colors">
+                        {{ $doc ? ($doc->verification_status === 'rejected' ? 'Re-upload Corrected File' : 'Replace File') : 'Upload Document' }}
                     </button>
                 </div>
             </div>
@@ -114,7 +131,7 @@
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Select File (PDF, JPG, PNG)</label>
-                        <p class="text-[11px] text-slate-500 mb-2">Ensure text and seal/signatures are clear and legible.</p>
+                        <p class="text-[11px] text-slate-500 mb-2">Ensure text, dry seal, and signatures are legible.</p>
                         <input type="file" name="document_file" required accept=".pdf,.jpg,.jpeg,.png"
                                class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-deped-blue/10 file:text-deped-blue hover:file:bg-deped-blue/20">
                     </div>

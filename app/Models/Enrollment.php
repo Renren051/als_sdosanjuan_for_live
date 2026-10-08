@@ -88,8 +88,53 @@ class Enrollment extends Model
             self::STATUS_UNDER_REVIEW => 'bg-blue-100 text-blue-800 border-blue-300',
             self::STATUS_NEEDS_CORRECTION => 'bg-rose-100 text-rose-800 border-rose-300',
             self::STATUS_COMPLETED => 'bg-purple-100 text-purple-800 border-purple-300',
+            self::STATUS_WITHDRAWN => 'bg-gray-100 text-gray-800 border-gray-300',
             default => 'bg-gray-100 text-gray-800 border-gray-300',
         };
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->enrollment_status) {
+            self::STATUS_ENROLLED => 'Officially Enrolled',
+            self::STATUS_PENDING => 'Pending Intake Verification',
+            self::STATUS_UNDER_REVIEW => 'Under Staff Review',
+            self::STATUS_NEEDS_CORRECTION => 'Needs Correction',
+            self::STATUS_COMPLETED => 'Program Completed',
+            self::STATUS_WITHDRAWN => 'Withdrawn',
+            default => ucfirst(str_replace('_', ' ', $this->enrollment_status)),
+        };
+    }
+
+    public function getDeliveryModeLabelAttribute(): string
+    {
+        return match ($this->delivery_mode) {
+            'modular_offline' => 'Modular (Print & Offline LMS)',
+            'modular_digital' => 'Modular (Digital & Online)',
+            'blended' => 'Blended Learning',
+            'face_to_face' => 'Face-to-Face Consultation',
+            default => ucfirst(str_replace('_', ' ', $this->delivery_mode ?: 'modular_offline')),
+        };
+    }
+
+    public function isEnrolled(): bool
+    {
+        return $this->enrollment_status === self::STATUS_ENROLLED;
+    }
+
+    public function needsCorrection(): bool
+    {
+        return $this->enrollment_status === self::STATUS_NEEDS_CORRECTION;
+    }
+
+    public function isUnderReview(): bool
+    {
+        return $this->enrollment_status === self::STATUS_UNDER_REVIEW;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->enrollment_status === self::STATUS_PENDING;
     }
 
     public function scopeForYear($query, string $year)
