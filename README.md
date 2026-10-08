@@ -38,7 +38,7 @@ The web application is built on a **Bento Grid UI** inspired by Constructivist e
 - **Home:** Interactive hero with division manifesto, live mobile app preview mockup, and real-time division statistics.
 - **About ALS:** Constructivist learning methodology (Experience, Self-Pacing, Mentorship) and legal mandate under RA 11510.
 - **A & E Program:** Academic tracks for Basic Literacy Program (BLP), Elementary (Grade 6), and Junior High School (Grade 10), plus the 6 Core Learning Strands (LS 1–6).
-- **Enrolment Requirements:** Interactive document checklist (PSA Birth Certificate, Barangay Clearance, 2x2 Photos, Form 137 / SF10) with side-by-side online vs. walk-in comparison.
+- **Enrolment Requirements & DepEd Qualifications:** Official DepEd A&E requirement checklist (2 pcs 1x1 photo with name tag `SURNAME, FIRST NAME & MIDDLE NAME`, PSA Birth Certificate, Barangay Certificate of Residency, 1 Valid ID), age qualification matrices (Elementary: ages 12+, Secondary/JHS: ages 16+), retakers & overage learner policies, and sectoral eligibility breakdown (OSYAs, workers, IPs, inmates) referencing `DepEd.gov.ph`.
 - **Learning Centers (CLCs):** Live searchable directory of all 12 San Juan CLCs with assigned mobile teachers and facility filters.
 - **Contact Us:** Division office directory, emergency hotlines, and instant message inquiry form.
 

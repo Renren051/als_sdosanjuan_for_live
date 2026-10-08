@@ -596,90 +596,323 @@
              SECTION 4: REQUIREMENTS BENTO (#requirements)
              ========================================== -->
         @if($pageKey === 'requirements')
-        <section id="requirements" class="scroll-mt-28 space-y-6">
+        <section id="requirements" class="scroll-mt-28 space-y-8">
             <!-- Section Header -->
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-200 pb-4">
                 <div>
                     <span class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-deped-blue">
                         <span class="w-1.5 h-1.5 rounded-full bg-deped-blue"></span>
-                        Section 03 &bull; Intake Checklist
+                        Section 03 &bull; DepEd Intake Checklist & Qualifications
                     </span>
                     <h2 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight mt-1">
                         Enrolment Requirements
                     </h2>
+                    <p class="text-xs sm:text-sm text-slate-600 mt-1">
+                        Opisyal na pamantayan at mga dokumentong kinakailangan para sa ALS Accreditation & Equivalency (A&E).
+                    </p>
                 </div>
-                <div class="text-xs font-bold text-slate-500 uppercase">
-                    Mandatory for ALS Form 2 Validation
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>Reference: <strong>DepEd.gov.ph</strong></span>
                 </div>
             </div>
 
-            <!-- 4 Requirement Bento Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                
-                <!-- Req 1: PSA Birth Cert -->
-                <div class="bento-card p-6 bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
+            <!-- PART 1: REQUIREMENTS (MGA DOKUMENTONG KINAKAILANGAN) -->
+            <div class="space-y-4">
+                <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-deped-navy to-deped-blue text-white shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                        <div class="text-xs font-mono font-bold text-deped-blue mb-1">REQ-01</div>
-                        <h3 class="text-base font-black text-slate-900 uppercase">PSA Birth Certificate</h3>
-                        <p class="text-xs text-slate-600 mt-2 font-normal leading-relaxed">
-                            Original or clear copy of Philippine Statistics Authority (PSA) Birth Certificate (or Local Civil Registrar copy if PSA is unavailable).
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-[10px] font-black uppercase tracking-wider text-deped-gold">
+                            Opisyal na Dokumento
+                        </span>
+                        <h3 class="text-lg sm:text-xl font-black mt-1">Requirements sa Pagpaparehistro</h3>
+                        <p class="text-xs text-white/90 mt-0.5">
+                            Ang mga magpapa-register para sa ALS A&E Test ay kinakailangang magpasa ng mga sumusunod na documents:
                         </p>
                     </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-emerald-700">
-                        <span>Mandatory Document</span>
-                        <span>✓</span>
+                    <span class="text-xs font-bold px-3 py-1 rounded-xl bg-white/10 border border-white/20 text-white shrink-0 self-start sm:self-center">
+                        4 Mandatory Items
+                    </span>
+                </div>
+
+                <!-- 4 Requirement Bento Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    
+                    <!-- Req 1: 1x1 Pictures with Name Tag -->
+                    <div class="bento-card p-6 bg-white border-2 border-deped-blue/30 rounded-3xl shadow-sm flex flex-col justify-between hover:border-deped-blue transition-all">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="text-xs font-mono font-bold text-deped-blue bg-blue-50 px-2.5 py-0.5 rounded-md">DOC-01</span>
+                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">2 Piraso</span>
+                            </div>
+                            <h4 class="text-base font-black text-slate-900">
+                                Dalawang (2) Piraso ng (1x1) Picture with Name Tag
+                            </h4>
+                            <p class="text-xs text-slate-600 mt-2 font-medium leading-relaxed">
+                                White background na may nakalimbag na name tag sa ilalim:
+                            </p>
+                            <div class="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 text-[11px] font-mono leading-tight">
+                                <div class="font-bold text-slate-500 text-[10px] uppercase">Format:</div>
+                                <div class="font-black text-slate-900 mt-0.5">SURNAME, FIRST NAME &amp; MIDDLE NAME</div>
+                                <div class="text-slate-500 text-[10px] mt-1.5">Example:</div>
+                                <div class="font-bold text-deped-blue">DELA CRUZ, JUAN SANTOS</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-emerald-700">
+                            <span>White Background</span>
+                            <span>✓</span>
+                        </div>
+                    </div>
+
+                    <!-- Req 2: PSA Birth Certificate -->
+                    <div class="bento-card p-6 bg-white border border-slate-200 rounded-3xl shadow-sm flex flex-col justify-between hover:border-deped-blue/50 transition-all">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="text-xs font-mono font-bold text-deped-blue bg-blue-50 px-2.5 py-0.5 rounded-md">DOC-02</span>
+                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Mandatory</span>
+                            </div>
+                            <h4 class="text-base font-black text-slate-900">
+                                PSA Birth Certificate
+                            </h4>
+                            <p class="text-xs text-slate-600 mt-2 font-normal leading-relaxed">
+                                Philippine Statistics Authority (PSA) Birth Certificate.
+                            </p>
+                            <div class="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium">
+                                <div class="flex items-center gap-1.5 text-slate-900 font-bold">
+                                    <svg class="w-4 h-4 text-deped-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span>Original and Photocopy</span>
+                                </div>
+                                <div class="text-[11px] text-slate-500 mt-1">
+                                    (O kopya mula sa Local Civil Registrar kung wala pa ang PSA)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-emerald-700">
+                            <span>Proof of Identity &amp; Age</span>
+                            <span>✓</span>
+                        </div>
+                    </div>
+
+                    <!-- Req 3: Brgy. Certificate of Residency -->
+                    <div class="bento-card p-6 bg-white border border-slate-200 rounded-3xl shadow-sm flex flex-col justify-between hover:border-deped-blue/50 transition-all">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="text-xs font-mono font-bold text-deped-blue bg-blue-50 px-2.5 py-0.5 rounded-md">DOC-03</span>
+                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Mandatory</span>
+                            </div>
+                            <h4 class="text-base font-black text-slate-900">
+                                Brgy. Certificate of Residency
+                            </h4>
+                            <p class="text-xs text-slate-600 mt-2 font-normal leading-relaxed">
+                                Katunayan ng paninirahan mula sa inyong kasalukuyang barangay sa San Juan City.
+                            </p>
+                            <div class="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium">
+                                <div class="flex items-center gap-1.5 text-slate-900 font-bold">
+                                    <svg class="w-4 h-4 text-deped-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+                                    <span>Certificate of Residency</span>
+                                </div>
+                                <div class="text-[11px] text-slate-500 mt-1">
+                                    Naglalaman ng kasalukuyang tirahan sa alinman sa 21 barangay ng San Juan.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-emerald-700">
+                            <span>Proof of Residence</span>
+                            <span>✓</span>
+                        </div>
+                    </div>
+
+                    <!-- Req 4: 1 Valid ID -->
+                    <div class="bento-card p-6 bg-white border border-slate-200 rounded-3xl shadow-sm flex flex-col justify-between hover:border-deped-blue/50 transition-all">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="text-xs font-mono font-bold text-deped-blue bg-blue-50 px-2.5 py-0.5 rounded-md">DOC-04</span>
+                                <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Mandatory</span>
+                            </div>
+                            <h4 class="text-base font-black text-slate-900">
+                                1 Valid ID
+                            </h4>
+                            <p class="text-xs text-slate-600 mt-2 font-normal leading-relaxed">
+                                Isang (1) opisyal o valid identification card.
+                            </p>
+                            <div class="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium">
+                                <div class="flex items-center gap-1.5 text-slate-900 font-bold">
+                                    <svg class="w-4 h-4 text-deped-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>
+                                    <span>Original and Photocopy</span>
+                                </div>
+                                <div class="text-[11px] text-slate-500 mt-1">
+                                    Halimbawa: Postal ID, PhilSys / National ID, Barangay ID, Student / School ID, Voter's Certificate, o Company ID.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-emerald-700">
+                            <span>Official Identification</span>
+                            <span>✓</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- PART 2: SIMPLIFIED VERSION (ANTAS AT EDAD SA ALS A&E TEST) -->
+            <div class="space-y-4 pt-2">
+                <div class="flex items-center gap-2 border-b border-slate-200 pb-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-deped-gold"></span>
+                    <h3 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
+                        Simplified Version: Antas at Kuwalipikasyon ayon sa Edad
+                    </h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    
+                    <!-- Elementary Level Card -->
+                    <div class="bento-card p-6 sm:p-7 bg-white border border-slate-200 rounded-3xl shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-black uppercase tracking-wider mb-3">
+                                <span>12 Taong Gulang Pataas</span>
+                            </div>
+                            <h4 class="text-xl font-black text-slate-900">
+                                Elementary Level ALS A&E Test
+                            </h4>
+                            <div class="mt-3 p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
+                                Kung hindi mo natapos ang elementary sa anumang kadahilanan at ikaw ay <strong>12 taong gulang pataas</strong> bago ang takdang araw ng itinakdang petsa ng Accreditation and Equivalency (A&E) Test, ikaw ay <strong>qualified kumuha ng Elementary Level ALS A&E Test</strong>.
+                            </div>
+                        </div>
+
+                        <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
+                            <span>Kwalipikasyon: Hindi nakatapos ng Grade 6</span>
+                            <span class="text-emerald-700">Qualified ✓</span>
+                        </div>
+                    </div>
+
+                    <!-- Secondary Level Card -->
+                    <div class="bento-card p-6 sm:p-7 bg-white border border-slate-200 rounded-3xl shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-deped-blue/10 text-deped-blue text-xs font-black uppercase tracking-wider mb-3">
+                                <span>16 Taong Gulang Pataas</span>
+                            </div>
+                            <h4 class="text-xl font-black text-slate-900">
+                                Secondary Level ALS A&E Test (Junior High School)
+                            </h4>
+                            <div class="mt-3 p-4 rounded-2xl bg-blue-50/60 border border-blue-200 text-xs sm:text-sm text-slate-800 leading-relaxed font-normal">
+                                Kung ikaw ay nakatapos ng elementary ngunit hindi nakapagpatuloy ng Junior High School sa anumang kadahilanan at ikaw ay <strong>16 taong gulang pataas</strong> bago ang itinakdang petsa ng Accreditation and Equivalency (A&E) Test, ikaw ay <strong>qualified kumuha ng Junior High School ALS A&E Test</strong>.
+                            </div>
+
+                            <ul class="mt-3 space-y-2 text-xs text-slate-700">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-deped-blue font-bold">•</span>
+                                    <span><strong>Retakers:</strong> Ang mga hindi pinalad makapasa sa mga nakaraang taon ng ALS Test ay pinapahintulutang mag-retake.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-deped-blue font-bold">•</span>
+                                    <span><strong>Nakaraang Reviewees:</strong> Ang mga nagpa-register at nag-review sa nakaraang ALS program, ngunit hindi nakapunta sa itinakdang petsa ng ALS test ay inaanyayahang magpa-register muli.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-deped-blue font-bold">•</span>
+                                    <span><strong>Overage Learners:</strong> Sinumang mga kabataan o mga matatanda na kasalukuyang nag-aaral ngunit overage para sa elementary level (mahigit sa 12 taong gulang) o para sa Junior High School (mahigit 16 taong gulang) ay inaanyayahang magpa-register.</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-500">
+                            <span>Kwalipikasyon: Elementarya graduate / JHS drop-out</span>
+                            <span class="text-deped-blue">Qualified ✓</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- PART 3: SINU-SINO ANG MGA QUALIFIED KUMUHA NG TEST? -->
+            <div class="bento-card p-6 sm:p-8 bg-white border border-slate-200 rounded-3xl shadow-sm space-y-5">
+                <div class="border-b border-slate-100 pb-3">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-black uppercase tracking-wider mb-2">
+                        DepEd SDO San Juan City Scope
+                    </span>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        Sinu-sino ang mga Qualified Kumuha ng Test?
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-600 mt-1">
+                        Ang mga sumusunod ay inaanyayahang mag-register para sa ALS A&E Test:
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-700">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                        <div class="flex items-center gap-2 font-bold text-slate-900">
+                            <span class="w-2 h-2 rounded-full bg-deped-blue"></span>
+                            <span>Out-of-School Children, Youth and Adults</span>
+                        </div>
+                        <p class="text-xs text-slate-600 pl-4 leading-relaxed">
+                            School leavers o non-attendees ng formal school system na nagnanais makatapos ng kanilang pag-aaral.
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                        <div class="flex items-center gap-2 font-bold text-slate-900">
+                            <span class="w-2 h-2 rounded-full bg-deped-blue"></span>
+                            <span>Visually-Impaired Learners</span>
+                        </div>
+                        <p class="text-xs text-slate-600 pl-4 leading-relaxed">
+                            Out-of-school youth and adults / school leavers / non-attendees of the formal school system who are visually-impaired but braille literate (contracted).
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                        <div class="flex items-center gap-2 font-bold text-slate-900">
+                            <span class="w-2 h-2 rounded-full bg-deped-blue"></span>
+                            <span>Homeschoolers &amp; Home Education</span>
+                        </div>
+                        <p class="text-xs text-slate-600 pl-4 leading-relaxed">
+                            Learners of home education or homeschoolers na nangangailangan ng accreditation at opisyal na equivalency rating.
+                        </p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                        <div class="flex items-center gap-2 font-bold text-slate-900">
+                            <span class="w-2 h-2 rounded-full bg-deped-blue"></span>
+                            <span>Non-Passers ng Nakaraang A&E Test</span>
+                        </div>
+                        <p class="text-xs text-slate-600 pl-4 leading-relaxed">
+                            Non-passer of previous years' A&E Test na handang sumubok muli at kumuha ng remediation sessions.
+                        </p>
                     </div>
                 </div>
 
-                <!-- Req 2: Barangay Clearance -->
-                <div class="bento-card p-6 bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="text-xs font-mono font-bold text-deped-blue mb-1">REQ-02</div>
-                        <h3 class="text-base font-black text-slate-900 uppercase">Barangay Clearance</h3>
-                        <p class="text-xs text-slate-600 mt-2 font-normal leading-relaxed">
-                            Certificate of Residency from your current San Juan City barangay verifying local address within the division's catchment area.
-                        </p>
+                <!-- Others who may be -->
+                <div class="p-5 rounded-2xl bg-gradient-to-r from-blue-50/50 to-slate-50 border border-blue-100">
+                    <div class="font-bold text-slate-900 text-xs sm:text-sm uppercase tracking-wider mb-2">
+                        Others who may be eligible:
                     </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-emerald-700">
-                        <span>Mandatory Document</span>
-                        <span>✓</span>
-                    </div>
-                </div>
-
-                <!-- Req 3: 2x2 ID Photos -->
-                <div class="bento-card p-6 bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="text-xs font-mono font-bold text-deped-blue mb-1">REQ-03</div>
-                        <h3 class="text-base font-black text-slate-900 uppercase">2x2 ID Photos</h3>
-                        <p class="text-xs text-slate-600 mt-2 font-normal leading-relaxed">
-                            2 copies of recent colored 2x2 ID pictures with white background and printed name tag (LastName, FirstName, MI).
-                        </p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-emerald-700">
-                        <span>Mandatory Document</span>
-                        <span>✓</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs text-slate-700">
+                        <div class="p-3 rounded-xl bg-white border border-slate-200">
+                            <strong class="text-slate-900 block mb-0.5">Unemployed OSYAs</strong>
+                            Unemployed out-of-school youth and adults.
+                        </div>
+                        <div class="p-3 rounded-xl bg-white border border-slate-200">
+                            <strong class="text-slate-900 block mb-0.5">Manggagawa &amp; Mothers</strong>
+                            Industry-based workers, housewives, kasambahay/maids, factory workers, drivers, etc.
+                        </div>
+                        <div class="p-3 rounded-xl bg-white border border-slate-200">
+                            <strong class="text-slate-900 block mb-0.5">Cultural Minorities / IPs</strong>
+                            Members of cultural minorities / indigenous peoples (IPs).
+                        </div>
+                        <div class="p-3 rounded-xl bg-white border border-slate-200">
+                            <strong class="text-slate-900 block mb-0.5">Inmates &amp; Integrees</strong>
+                            Inmates sa piitan (BJMP), rebel / soldier integrees.
+                        </div>
                     </div>
                 </div>
 
-                <!-- Req 4: Form 137 / SF10 -->
-                <div class="bento-card p-6 bg-white border border-slate-200 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="text-xs font-mono font-bold text-slate-400 mb-1">REQ-04</div>
-                        <h3 class="text-base font-black text-slate-900 uppercase">Form 137 / SF10</h3>
-                        <p class="text-xs text-slate-600 mt-2 font-normal leading-relaxed">
-                            School permanent record from the last formal elementary or high school attended (if applicable for school dropouts).
-                        </p>
-                    </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-500">
-                        <span>Optional / If Applicable</span>
-                        <span>○</span>
-                    </div>
+                <div class="pt-2 flex items-center justify-between text-xs text-slate-500">
+                    <span class="italic font-medium">Department of Education &bull; Alternative Learning System (ALS)</span>
+                    <a href="https://www.deped.gov.ph" target="_blank" rel="noopener noreferrer" class="font-bold text-deped-blue hover:underline">
+                        Reference: DepEd.gov.ph &rarr;
+                    </a>
                 </div>
-
             </div>
 
             <!-- Two Ways to Enroll Bento Banner -->
-            <div class="bento-card p-5 sm:p-8 bg-gradient-to-r from-amber-50 via-white to-blue-50 border border-slate-200/90 shadow-sm">
+            <div class="bento-card p-5 sm:p-8 bg-gradient-to-r from-amber-50 via-white to-blue-50 border border-slate-200/90 rounded-3xl shadow-sm">
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                     <div class="md:col-span-8 space-y-2">
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-extrabold uppercase">
@@ -689,7 +922,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs text-slate-700">
                             <div class="p-3.5 rounded-xl bg-white/90 border border-slate-200">
                                 <strong class="text-deped-blue block mb-1 text-sm font-black">1. Online Digital Intake</strong>
-                                Complete the 5-step registration wizard on your phone or PC, select your CLC, and upload PDF/photos directly.
+                                Complete the 4-step registration wizard on your phone or PC, select your CLC, and submit your initial ALS Form 2.
                             </div>
                             <div class="p-3.5 rounded-xl bg-white/90 border border-slate-200">
                                 <strong class="text-amber-700 block mb-1 text-sm font-black">2. In-Person Walk-In</strong>

@@ -252,16 +252,37 @@ OFFICIAL ALS SDO SAN JUAN KNOWLEDGE:
    - LS5: Understanding the Self and Society
    - LS6: Digital Citizenship
 
-5. ENROLLMENT REQUIREMENTS (ALS Form 2 Intake):
-   - Mandatory Documents:
-     1. PSA Birth Certificate (or Local Civil Registrar / Baptismal certificate if unavailable)
-     2. Barangay Clearance / Certificate of Residency from a San Juan City barangay
-     3. 2x2 ID Photos (2 copies, white background, with printed name tag: LastName, FirstName, MI)
-   - If Applicable:
-     4. Form 137 / SF10 (School permanent record from the last formal elementary or high school attended)
+5. ENROLLMENT & A&E TEST REQUIREMENTS:
+   - Mandatory Documents for ALS A&E Registration (Official DepEd.gov.ph):
+     1. Dalawang (2) piraso ng (1x1) picture with name tag (white background)
+        * Format ng name tag: SURNAME, FIRST NAME & MIDDLE NAME (Halimbawa: DELA CRUZ, JUAN SANTOS)
+     2. PSA Birth Certificate (original and photocopy) - or Local Civil Registrar copy if unavailable
+     3. Brgy. Certificate of Residency (patunay ng paninirahan sa San Juan City)
+     4. 1 valid ID (original and photocopy) - e.g. National ID, Barangay ID, School ID, Postal ID, etc.
+   - Official Reference: DepEd.gov.ph
+
+   - Simplified Version (Antas at Kwalipikasyon ayon sa Edad):
+     * Elementary Level ALS A&E Test:
+       - Kung hindi mo natapos ang elementary sa anumang kadahilanan at ikaw ay 12 taong gulang pataas bago ang takdang araw ng pagsusulit, ikaw ay qualified kumuha ng Elementary Level ALS A&E Test.
+     * Secondary Level ALS A&E Test (Junior High School):
+       - Kung ikaw ay nakatapos ng elementary ngunit hindi nakapagpatuloy ng Junior High School sa anumang kadahilanan at ikaw ay 16 taong gulang pataas bago ang takdang petsa ng A&E Test, ikaw ay qualified kumuha ng Junior High School ALS A&E Test.
+       - Retakers: Ang mga hindi pinalad makapasa sa mga nakaraang taon ng ALS Test ay pinapahintulutang mag-retake.
+       - Nakaraang Reviewees: Ang mga nagpa-register at nag-review sa nakaraang ALS program ngunit hindi nakapunta sa itinakdang petsa ng ALS test ay inaanyayahang magpa-register muli.
+       - Overage Learners: Sinumang kabataan o matatanda na kasalukuyang nag-aaral ngunit overage para sa elementary level (>12 taon) o JHS (>16 taon) ay inaanyayahang magpa-register.
+
+   - Sinu-sino ang mga Qualified Kumuha ng ALS A&E Test:
+     * Out-of-school children, youth and adults / school leavers / non-attendees ng formal school system
+     * Out-of-school youth and adults / school leavers / non-attendees who are visually-impaired but braille literate (contracted)
+     * Learners of home education or homeschoolers
+     * Non-passers of previous years' A&E Test
+     * Others who may be:
+       - Unemployed out-of-school youth and adults
+       - Industry-based workers, housewives, maids/kasambahay, factory workers, drivers, etc.
+       - Members of cultural minorities / indigenous peoples (IPs)
+       - Inmates, rebel / soldier integrees
 
 6. HOW TO REGISTER:
-   - Option 1: Online via the portal's Register page (/register) by completing the 5-step intake wizard.
+   - Option 1: Online via the portal's Register page (/register) by completing the digital ALS Form 2.
    - Option 2: In-Person Walk-in at any Community Learning Center (CLC) or the Division Office.
 
 7. COMMUNITY LEARNING CENTERS (CLCs) IN SAN JUAN CITY (12 Active Centers):
@@ -327,20 +348,62 @@ PROMPT;
             return "Magandang araw po! Ako si **ALSJay**, ang opisyal na AI Virtual Assistant para sa DepEd Schools Division Office (SDO) ng San Juan City — Alternative Learning System (ALS). Narito po ako upang gabayan kayo tungkol sa mga programa (BLP at A&E), requirements sa pag-enroll, at mga Community Learning Center sa San Juan. Ano po ang maitutulong ko sa inyo ngayon?" . $apiNote;
         }
 
-        if (str_contains($q, 'requirement') || str_contains($q, 'kailangan') || str_contains($q, 'dokument') || str_contains($q, 'document') || str_contains($q, 'psa') || str_contains($q, 'id photo')) {
+        // Qualifications / Sino ang Qualified
+        if (preg_match('/\b(qualified|qualify|qualification|kuwalipikado|sinu-sino|sino-sino|sinong qualified|sino ang pwede|sino pwede)\b/i', $q)) {
             if ($isEnglish) {
-                return "📋 **Enrollment Requirements for ALS San Juan City:**\n\n" .
-                    "1. **PSA Birth Certificate** (or Local Civil Registrar Copy / Baptismal Certificate if unavailable)\n" .
-                    "2. **Barangay Clearance / Certificate of Residency** (verifying residence in San Juan City)\n" .
-                    "3. **2x2 ID Photos** (2 copies, white background, with printed name tag)\n" .
-                    "4. **Form 137 / SF10** (Permanent school record from the last school attended, if available)\n\n" .
+                return "🎓 **Who are Qualified to Take the ALS A&E Test? (DepEd.gov.ph)**\n\n" .
+                    "**Simplified Version by Age & Level:**\n" .
+                    "• **Elementary Level (Ages 12 & Above):** Out-of-school learners who did not finish elementary education before the test date.\n" .
+                    "• **Secondary Level / JHS (Ages 16 & Above):** Completed elementary but were unable to continue Junior High School.\n" .
+                    "• **Retakers & Reviewees:** Previous test non-passers and registered reviewees who missed the exam date are welcomed to register.\n" .
+                    "• **Overage Learners:** Currently enrolled students who are overage for elementary (>12) or JHS (>16).\n\n" .
+                    "**Eligible Groups:**\n" .
+                    "• Out-of-school children, youth, and adults\n" .
+                    "• Visually-impaired learners who are braille literate (contracted)\n" .
+                    "• Homeschoolers and home education learners\n" .
+                    "• Industry workers, housewives, housemaids, factory workers, drivers, and unemployed OSYAs\n" .
+                    "• Indigenous Peoples (IPs) & cultural minorities\n" .
+                    "• Inmates (BJMP) and rebel/soldier integrees\n\n" .
+                    "Reference: DepEd.gov.ph" . $apiNote;
+            }
+            return "🎓 **Sinu-sino ang mga Qualified Kumuha ng ALS A&E Test? (DepEd.gov.ph)**\n\n" .
+                "**Simplified Version ayon sa Edad:**\n" .
+                "• **Elementary Level (12 taong gulang pataas):** Kung hindi mo natapos ang elementary sa anumang kadahilanan bago ang araw ng pagsusulit.\n" .
+                "• **Secondary Level / Junior High School (16 taong gulang pataas):** Nakatapos ng elementary ngunit hindi nakapagpatuloy ng JHS.\n" .
+                "• **Retakers & Reviewees:** Ang mga hindi pumasa sa nakaraang ALS test o nag-review pero hindi nakapunta sa test date ay pinapahintulutang mag-register muli.\n" .
+                "• **Overage Learners:** Mga nag-aaral ngunit overage para sa elementary (>12 taon) o JHS (>16 taon).\n\n" .
+                "**Mga Sektor na Qualified:**\n" .
+                "• Out-of-school children, youth and adults / school leavers\n" .
+                "• Visually-impaired learners na braille literate (contracted)\n" .
+                "• Homeschoolers o home education learners\n" .
+                "• Unemployed OSYAs, manggagawa, housewives, kasambahay, factory workers, drivers\n" .
+                "• Indigenous Peoples (IPs) at cultural minorities\n" .
+                "• Inmates (BJMP) at rebel/soldier integrees\n\n" .
+                "Sanggunian: DepEd.gov.ph" . $apiNote;
+        }
+
+        if (str_contains($q, 'requirement') || str_contains($q, 'kailangan') || str_contains($q, 'dokument') || str_contains($q, 'document') || str_contains($q, 'psa') || str_contains($q, 'id photo') || str_contains($q, '1x1') || str_contains($q, '2x2')) {
+            if ($isEnglish) {
+                return "📋 **Official Enrollment Requirements for ALS A&E Test (DepEd.gov.ph):**\n\n" .
+                    "Applicants must submit the following 4 official documents:\n" .
+                    "1. **Two (2) pieces of (1x1) picture with name tag (white background)**\n" .
+                    "   • Format: `SURNAME, FIRST NAME & MIDDLE NAME`\n" .
+                    "   • Example: `DELA CRUZ, JUAN SANTOS`\n" .
+                    "2. **PSA Birth Certificate** (original and photocopy) — or Local Civil Registrar copy if unavailable\n" .
+                    "3. **Brgy. Certificate of Residency** (verifying residence in San Juan City)\n" .
+                    "4. **1 Valid ID** (original and photocopy, e.g. National ID, Barangay ID, Student ID, Postal ID)\n\n" .
+                    "Reference: DepEd.gov.ph\n\n" .
                     "You may register online via our [Online Registration](/register) page or visit your nearest Community Learning Center!" . $apiNote;
             }
-            return "📋 **Mga Requirements sa Pag-enroll sa ALS San Juan:**\n\n" .
-                "1. **PSA Birth Certificate** (o Local Civil Registrar Copy / Baptismal Certificate kung wala)\n" .
-                "2. **Barangay Clearance / Certificate of Residency** (nagpapatunay ng tirahan sa San Juan City)\n" .
-                "3. **2x2 ID Photos** (2 kopya, puti ang background, may name tag)\n" .
-                "4. **Form 137 / SF10** (Permanent record mula sa huling paaralang pinasukan, kung mayroon)\n\n" .
+            return "📋 **Mga Requirements sa Pag-register para sa ALS A&E Test (DepEd.gov.ph):**\n\n" .
+                "Kinakailangang magpasa ng mga sumusunod na 4 na dokumento:\n" .
+                "1. **Dalawang (2) piraso ng (1x1) picture with name tag (white background)**\n" .
+                "   • Format: `SURNAME, FIRST NAME & MIDDLE NAME`\n" .
+                "   • Halimbawa: `DELA CRUZ, JUAN SANTOS`\n" .
+                "2. **PSA Birth Certificate** (original at photocopy) — o Local Civil Registrar copy kung wala pa\n" .
+                "3. **Brgy. Certificate of Residency** (nagpapatunay ng paninirahan sa San Juan City)\n" .
+                "4. **1 Valid ID** (original at photocopy, hal. Barangay ID, School ID, PhilSys National ID, Postal ID)\n\n" .
+                "Sanggunian: DepEd.gov.ph\n\n" .
                 "Maaari kayong mag-register online sa ating [Online Registration](/register) o magtungo sa pinakamalapit na Community Learning Center!" . $apiNote;
         }
 
@@ -420,13 +483,13 @@ PROMPT;
                     "Two easy methods:\n" .
                     "1. **Online**: Visit our [Online Registration](/register) page and complete the digital ALS Form 2 (5-10 minutes).\n" .
                     "2. **In-Person**: Walk in to any Community Learning Center (CLC) or the Division Office at Pinaglabanan St.\n\n" .
-                    "Prepare your PSA Birth Certificate, Barangay Clearance, and 2x2 ID photo!" . $apiNote;
+                    "Prepare your (1x1) ID pictures with name tag, PSA Birth Certificate, Barangay Certificate of Residency, and 1 Valid ID!" . $apiNote;
             }
             return "📝 **Paano Mag-enroll sa ALS San Juan City:**\n\n" .
                 "May dalawang madaling paraan:\n" .
                 "1. **Online**: I-click lamang ang [Online Registration](/register) at punan ang ALS Form 2 (5-10 minuto lang).\n" .
                 "2. **Walk-in**: Pumunta sa pinakamalapit na Community Learning Center (CLC) o sa San Juan Division Office sa Pinaglabanan St.\n\n" .
-                "Ihanda lamang ang PSA Birth Certificate, Barangay Clearance, at 2x2 picture!" . $apiNote;
+                "Ihanda lamang ang (1x1) ID picture na may name tag, PSA Birth Certificate, Brgy. Certificate of Residency, at 1 Valid ID!" . $apiNote;
         }
 
         if (str_contains($q, 'weather') || str_contains($q, 'panahon') || str_contains($q, 'ulan') || str_contains($q, 'bagyo') || str_contains($q, 'suspension') || str_contains($q, 'pasok') || str_contains($q, 'suspensyon') || str_contains($q, 'forecast')) {

@@ -56,4 +56,36 @@ class ChatControllerTest extends TestCase
         $this->assertStringContainsString('ALSJay', $reply);
         $this->assertStringContainsString('Hindi po ako', $reply);
     }
+
+    public function test_requirements_fallback_returns_official_deped_documents(): void
+    {
+        config(['services.gemini.api_key' => null]);
+
+        $response = $this->postJson('/chat', [
+            'message' => 'ano ang mga requirements sa pag-enroll?',
+        ]);
+
+        $response->assertStatus(200);
+        $reply = $response->json('reply');
+        $this->assertStringContainsString('1x1', $reply);
+        $this->assertStringContainsString('PSA Birth Certificate', $reply);
+        $this->assertStringContainsString('Brgy. Certificate of Residency', $reply);
+        $this->assertStringContainsString('1 Valid ID', $reply);
+        $this->assertStringContainsString('DepEd.gov.ph', $reply);
+    }
+
+    public function test_qualifications_fallback_returns_age_and_eligibility(): void
+    {
+        config(['services.gemini.api_key' => null]);
+
+        $response = $this->postJson('/chat', [
+            'message' => 'sinu-sino ang mga qualified kumuha ng test?',
+        ]);
+
+        $response->assertStatus(200);
+        $reply = $response->json('reply');
+        $this->assertStringContainsString('Elementary Level', $reply);
+        $this->assertStringContainsString('Secondary Level', $reply);
+        $this->assertStringContainsString('DepEd.gov.ph', $reply);
+    }
 }
