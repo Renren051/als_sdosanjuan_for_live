@@ -6,7 +6,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7.x-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![DepEd RA 11510](https://img.shields.io/badge/DepEd-RA%2011510%20Compliant-0038A8?style=flat)](https://www.deped.gov.ph/)
-[![Tests Passing](https://img.shields.io/badge/PHPUnit-45%20Passed%20(236%20Assertions)-success?style=flat)]()
+[![Tests Passing](https://img.shields.io/badge/PHPUnit-73%20Passed%20(440%20Assertions)-success?style=flat)]()
 
 ---
 
