@@ -175,6 +175,25 @@ git config --global user.email "your.email@example.com"
 
 ### Installation Steps
 
+#### ⚡ Quick Start for Windows (1-Click Automation)
+
+If you are on Windows with XAMPP, you can use the bundled automated batch scripts:
+
+1. **First-Time Setup:** Run or double-click [`setup.bat`](file:///c:/xampp/htdocs/als_sdosanjuan/setup.bat)
+   - Checks PHP, Composer, Node.js prerequisites
+   - Automatically installs PHP dependencies (`composer install`) and Node packages (`npm install`)
+   - Initializes `.env` with a generated application key
+   - Creates public storage symlink (`php artisan storage:link`)
+   - Prompts to migrate & seed the database with all CLCs, SLM modules, demo accounts, and Kingster hero banners
+   - Compiles initial assets (`npm run build`)
+
+2. **Daily Development Launch:** Double-click [`run.bat`](file:///c:/xampp/htdocs/als_sdosanjuan/run.bat)
+   - Instantly starts the Laravel API server (`http://127.0.0.1:8000`) and the Vite dev server (`http://localhost:5173`) in separate windows with zero waiting time.
+
+---
+
+#### 🛠️ Manual Installation Steps
+
 1. **Clone the branch you want:** Run one of these commands to clone into `als_sdosanjuan`:
    ```powershell
    # Main branch
