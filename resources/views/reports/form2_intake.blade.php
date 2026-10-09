@@ -96,6 +96,7 @@
             margin-top: 15px;
             width: 100%;
             border-collapse: collapse;
+            page-break-inside: avoid;
         }
         .signature-block td {
             width: 50%;
@@ -114,6 +115,13 @@
             border-top: 1px solid #e5e7eb;
             padding-top: 4px;
             margin-top: 10px;
+            page-break-inside: avoid;
+        }
+        .doc-check {
+            display: inline-block;
+            font-family: DejaVu Sans, sans-serif;
+            font-weight: bold;
+            color: #0038A8;
         }
     </style>
 </head>
@@ -281,6 +289,47 @@
             <td colspan="2">
                 <span class="label">Enrollment Status & Assessment Remarks</span>
                 <span class="val">{{ $enrollment ? ucfirst($enrollment->enrollment_status) . ' - ' . ($enrollment->remarks ?: 'Application submitted via ALS San Juan Portal') : 'Pending verification' }}</span>
+            </td>
+        </tr>
+    </table>
+
+    @php
+        $submittedDocTypes = isset($documents) ? $documents->pluck('document_type')->toArray() : [];
+        $hasPsa = in_array(\App\Models\LearnerDocument::TYPE_PSA_BIRTH_CERT, $submittedDocTypes);
+        $hasBrgy = in_array(\App\Models\LearnerDocument::TYPE_BARANGAY_CLEARANCE, $submittedDocTypes);
+        $hasSf10 = in_array(\App\Models\LearnerDocument::TYPE_FORM_137_SF10, $submittedDocTypes);
+        $hasPhoto = in_array(\App\Models\LearnerDocument::TYPE_PHOTO_ID, $submittedDocTypes);
+    @endphp
+    <div class="section-header">Part IV: Submitted Document Requirements & Verification Status</div>
+    <table class="info-table">
+        <tr>
+            <td style="width: 25%;">
+                <span class="label">PSA Birth Certificate</span>
+                <span class="val">
+                    <span class="check-box">{!! $hasPsa ? '&#10003;' : '&nbsp;' !!}</span>
+                    {{ $hasPsa ? 'Submitted' : 'Pending' }}
+                </span>
+            </td>
+            <td style="width: 25%;">
+                <span class="label">Barangay Clearance</span>
+                <span class="val">
+                    <span class="check-box">{!! $hasBrgy ? '&#10003;' : '&nbsp;' !!}</span>
+                    {{ $hasBrgy ? 'Submitted' : 'Pending' }}
+                </span>
+            </td>
+            <td style="width: 25%;">
+                <span class="label">Form 137 / SF10</span>
+                <span class="val">
+                    <span class="check-box">{!! $hasSf10 ? '&#10003;' : '&nbsp;' !!}</span>
+                    {{ $hasSf10 ? 'Submitted' : 'Pending' }}
+                </span>
+            </td>
+            <td style="width: 25%;">
+                <span class="label">2x2 ID Photo</span>
+                <span class="val">
+                    <span class="check-box">{!! $hasPhoto ? '&#10003;' : '&nbsp;' !!}</span>
+                    {{ $hasPhoto ? 'Submitted' : 'Pending' }}
+                </span>
             </td>
         </tr>
     </table>

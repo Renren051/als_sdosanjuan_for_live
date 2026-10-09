@@ -28,8 +28,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/modules/{id}', [ModuleController::class, 'show']);
     Route::get('/modules/{id}/download', [ModuleController::class, 'download']);
 
-    // Protected Routes (Requires Bearer Token)
-    Route::middleware('auth:sanctum')->group(function () {
+    // Protected Routes (Requires Bearer Token or Authenticated Session)
+    Route::middleware(['auth:sanctum,web'])->group(function () {
         // Authenticated Session
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);

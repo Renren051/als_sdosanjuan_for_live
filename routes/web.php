@@ -60,7 +60,9 @@ Route::middleware(['auth', 'role:admin,mobile_teacher'])->prefix('admin')->name(
 
     // DepEd Report Generators
     Route::get('/reports/form-1', [AdminReportController::class, 'form1'])->name('reports.form1');
+    Route::get('/reports/form-1/pdf', [AdminReportController::class, 'exportForm1Pdf'])->name('reports.form1.pdf');
     Route::get('/reports/form-2', [AdminReportController::class, 'form2'])->name('reports.form2');
+    Route::get('/reports/form-2/{learner_id}/pdf', [AdminReportController::class, 'exportForm2Pdf'])->name('reports.form2.pdf');
 });
 
 // Learner Protected Portal
