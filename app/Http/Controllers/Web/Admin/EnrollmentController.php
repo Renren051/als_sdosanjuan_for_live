@@ -335,7 +335,7 @@ class EnrollmentController extends Controller
                 'enrollment_status' => $validated['enrollment_status'],
                 'delivery_mode' => $validated['delivery_mode'] ?? 'modular_offline',
                 'schedule_preference' => $validated['schedule_preference'] ?? 'flexible',
-                'remarks' => $validated['remarks'] ?: ("Walk-in registration encoded by " . Auth::user()->full_name . " on " . now()->timezone('Asia/Manila')->format('F d, Y h:i A')),
+                'remarks' => ($validated['remarks'] ?? null) ?: ("Walk-in registration encoded by " . Auth::user()->full_name . " on " . now()->timezone('Asia/Manila')->format('F d, Y h:i A')),
                 'enrolled_at' => $validated['enrollment_status'] === 'enrolled' ? now() : null,
             ]);
         });

@@ -290,8 +290,8 @@ class AdminDashboardMetricsTest extends TestCase
 
     public function test_dashboard_filters_by_community_learning_center(): void
     {
-        $clc1Record = $this->createLearnerEnrollment($this->clc1, $this->teacher1, Enrollment::STATUS_PENDING);
-        $clc2Record = $this->createLearnerEnrollment($this->clc2, $this->teacher2, Enrollment::STATUS_PENDING);
+        $clc1Record = $this->createLearnerEnrollment($this->clc1, $this->teacher1, Enrollment::STATUS_PENDING, Enrollment::TRACK_AE_JUNIOR_HIGH, '2026', now()->addSeconds(5));
+        $clc2Record = $this->createLearnerEnrollment($this->clc2, $this->teacher2, Enrollment::STATUS_PENDING, Enrollment::TRACK_AE_JUNIOR_HIGH, '2026', now()->addSeconds(5));
 
         $response = $this->actingAs($this->admin)->get(route('admin.dashboard', ['clc_id' => $this->clc1->id]));
         $response->assertStatus(200);
@@ -299,6 +299,7 @@ class AdminDashboardMetricsTest extends TestCase
         $recent = $response->viewData('recentEnrollments');
         $this->assertTrue($recent->contains('id', $clc1Record->id));
         $this->assertFalse($recent->contains('id', $clc2Record->id));
+        $this->assertTrue($recent->every(fn ($e) => $e->clc_id == $this->clc1->id));
 
         // CLC Summary should only show CLC1
         $clcsSummary = $response->viewData('clcsSummary');
