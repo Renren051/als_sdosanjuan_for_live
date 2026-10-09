@@ -118,148 +118,222 @@ The web application combines an institutional **Kingster University-Style Photog
 
 ## 💻 Local Development Setup
 
-### Prerequisites
-- **PHP 8.2 or higher**
+### 📋 Prerequisites Across All Platforms
+- **PHP 8.2 or higher** (Required extensions: `pdo_mysql`, `mbstring`, `openssl`, `fileinfo`, `gd`, `zip`)
 - **Composer 2.x**
 - **Node.js 18+ and npm**
-- **MySQL / MariaDB** (via XAMPP or standalone)
+- **MySQL 8.0+ / MariaDB** (Port 3306)
 - **Git**
 
 ---
 
-### 📥 How to Download & Install Git
+### 📥 Platform-Specific Installation Guides
 
-If Git is not yet installed on your system, follow the steps for your Operating System:
+Select your operating system:
+* [🪟 Windows Setup Guide](#-windows-installation-guide)
+* [🍎 macOS Setup Guide](#-macos-installation-guide)
+* [🐧 Linux (Ubuntu / Debian) Setup Guide](#-linux-ubuntu--debian-installation-guide)
 
-#### 🪟 Windows (Recommended)
-1. **Direct Download:**
-   - Go to the official Git download page: **[https://git-scm.com/download/win](https://git-scm.com/download/win)**
-   - Click **"Click here to download"** (64-bit Git for Windows Setup).
-   - Run the downloaded `.exe` file.
-   - Keep the default recommended options selected during setup (ensure *"Git from the command line and also from 3rd-party software"* and *"Git Bash"* are checked).
-   - Click **Next** until the installation completes, then click **Finish**.
+---
 
-2. **Or Install via Windows Terminal / PowerShell (Using winget):**
-   ```powershell
-   winget install --id Git.Git -e --source winget
-   ```
+#### 🪟 Windows Installation Guide
 
-#### 🍎 macOS
-- If you use **Homebrew**:
-  ```bash
-  brew install git
-  ```
-- Or download the binary installer from: **[https://git-scm.com/download/mac](https://git-scm.com/download/mac)**
+##### 1. Prerequisites Setup
+- **Git:** Download the 64-bit installer from [git-scm.com/download/win](https://git-scm.com/download/win) or run `winget install --id Git.Git -e --source winget`.
+- **PHP & MySQL (XAMPP):** Download and install [XAMPP for Windows](https://www.apachefriends.org/) (PHP 8.2+).
+  - Open the **XAMPP Control Panel** and start **Apache** and **MySQL**.
+  - Ensure PHP is in your Windows System PATH (`C:\xampp\php`).
+- **Composer:** Download and run the installer from [getcomposer.org/download](https://getcomposer.org/download/).
+- **Node.js & npm:** Download and run the LTS installer from [nodejs.org](https://nodejs.org/).
 
-#### 🐧 Linux (Ubuntu / Debian)
+##### 2. Clone the Repository
+Open PowerShell or Git Bash:
+```powershell
+git clone --branch preview-deployment --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan
+cd als_sdosanjuan
+```
+
+##### 3. Automated 1-Click Setup (Recommended)
+Double-click or run:
+```powershell
+.\setup.bat
+```
+This automated script will:
+1. Verify PHP, Composer, and Node.js in your system PATH.
+2. Install PHP dependencies (`composer install`) and Node packages (`npm install`).
+3. Create `.env` from `.env.example` and generate the `APP_KEY`.
+4. Link public storage (`php artisan storage:link`) for hero banners and uploaded documents.
+5. Prompt to run database migrations and seed default demo data (`php artisan migrate --seed --force`).
+6. Compile production frontend assets (`npm run build`).
+
+##### 4. Daily Development Launch
+Double-click or run:
+```powershell
+.\run.bat
+```
+This instantly launches:
+- **Laravel API Server:** `http://127.0.0.1:8000`
+- **Vite Dev Server:** `http://localhost:5173`
+
+*(Alternatively, run manually in PowerShell: `php artisan serve --host=127.0.0.1 --port=8000` and `npm run dev`.)*
+
+---
+
+#### 🍎 macOS Installation Guide
+
+##### 1. Prerequisites via Homebrew
+If you do not have [Homebrew](https://brew.sh/) installed:
 ```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+Install Git, PHP 8.2, Composer, Node.js, and MySQL:
+```bash
+brew install git php@8.2 composer node mysql
+```
+
+Start the local MySQL service:
+```bash
+brew services start mysql
+```
+
+##### 2. Clone the Repository
+```bash
+git clone --branch preview-deployment --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan
+cd als_sdosanjuan
+```
+
+##### 3. Install Dependencies
+```bash
+composer install --no-interaction --prefer-dist
+npm install
+```
+
+##### 4. Configure Environment & Storage
+```bash
+cp .env.example .env
+php artisan key:generate
+php artisan storage:link
+```
+
+Ensure your `.env` database parameters match your local MySQL configuration:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=als_sdosanjuan_db
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+##### 5. Create Database, Migrate & Seed
+```bash
+mysql -u root -e "CREATE DATABASE IF NOT EXISTS als_sdosanjuan_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+php artisan migrate:fresh --seed
+npm run build
+```
+
+##### 6. Start Development Servers
+Open two terminal tabs in the project directory:
+
+**Tab 1 (Laravel server):**
+```bash
+php artisan serve --host=127.0.0.1 --port=8000
+```
+
+**Tab 2 (Vite HMR):**
+```bash
+npm run dev
+```
+
+Visit the portal at: **`http://127.0.0.1:8000`**
+
+---
+
+#### 🐧 Linux (Ubuntu / Debian) Installation Guide
+
+##### 1. Prerequisites via APT
+Update package lists and install required tools, PHP 8.2 with extensions, Composer, Node.js, and MySQL:
+```bash
+sudo apt update && sudo apt install -y software-properties-common curl git unzip
+sudo add-apt-repository ppa:ondrej/php -y
 sudo apt update
-sudo apt install git -y
+
+sudo apt install -y php8.2 php8.2-cli php8.2-mysql php8.2-mbstring \
+    php8.2-xml php8.2-curl php8.2-zip php8.2-gd php8.2-intl \
+    mysql-server composer
 ```
 
-#### ✅ Verify Installation
-After installing, open a new terminal (Command Prompt, PowerShell, or Git Bash) and run:
+Install Node.js (LTS v20+ via NodeSource):
 ```bash
-git --version
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
 ```
-*Expected output: `git version 2.x.x`*
 
-#### ⚙️ Initial Git Configuration (First-Time Setup)
-Set your name and email address in Git:
+Start and enable MySQL service:
 ```bash
-git config --global user.name "Your Name"
-git config --global user.email "your.email@example.com"
+sudo systemctl enable --now mysql
 ```
+
+##### 2. Clone the Repository
+```bash
+git clone --branch preview-deployment --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan
+cd als_sdosanjuan
+```
+
+##### 3. Configure Directory Permissions
+Grant write permissions to the storage and bootstrap cache directories:
+```bash
+sudo chown -R $USER:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
+```
+
+##### 4. Install Dependencies
+```bash
+composer install --no-interaction --prefer-dist
+npm install
+```
+
+##### 5. Configure Environment & Storage
+```bash
+cp .env.example .env
+php artisan key:generate
+php artisan storage:link
+```
+
+Update your `.env` with database settings:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=als_sdosanjuan_db
+DB_USERNAME=root
+DB_PASSWORD=your_mysql_password
+```
+
+##### 6. Create Database, Migrate & Seed
+```bash
+sudo mysql -e "CREATE DATABASE IF NOT EXISTS als_sdosanjuan_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+php artisan migrate:fresh --seed
+npm run build
+```
+
+##### 7. Start Development Servers
+Open two terminal sessions:
+
+**Session 1 (Laravel server):**
+```bash
+php artisan serve --host=0.0.0.0 --port=8000
+```
+
+**Session 2 (Vite HMR):**
+```bash
+npm run dev
+```
+
+Visit the portal at: **`http://localhost:8000`** (or your server's IP address).
 
 ---
-
-### Installation Steps
-
-#### ⚡ Quick Start for Windows (1-Click Automation)
-
-If you are on Windows with XAMPP, you can use the bundled automated batch scripts:
-
-1. **First-Time Setup:** Run or double-click [`setup.bat`](file:///c:/xampp/htdocs/als_sdosanjuan/setup.bat)
-   - Checks PHP, Composer, Node.js prerequisites
-   - Automatically installs PHP dependencies (`composer install`) and Node packages (`npm install`)
-   - Initializes `.env` with a generated application key
-   - Creates public storage symlink (`php artisan storage:link`)
-   - Prompts to migrate & seed the database with all CLCs, SLM modules, demo accounts, and Kingster hero banners
-   - Compiles initial assets (`npm run build`)
-
-2. **Daily Development Launch:** Double-click [`run.bat`](file:///c:/xampp/htdocs/als_sdosanjuan/run.bat)
-   - Instantly starts the Laravel API server (`http://127.0.0.1:8000`) and the Vite dev server (`http://localhost:5173`) in separate windows with zero waiting time.
-
----
-
-#### 🛠️ Manual Installation Steps
-
-1. **Clone the branch you want:** Run one of these commands to clone into `als_sdosanjuan`:
-   ```powershell
-   # Main branch
-   git clone --branch main --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan
-   ```
-   ```powershell
-   # Preview branch
-   git clone --branch preview-deployment --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan
-   ```
-   Then enter the project folder:
-   ```powershell
-   cd als_sdosanjuan
-   ```
-
-   To clone both branches into separate folders, use different destination names:
-   ```powershell
-   git clone --branch main --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan-main
-   git clone --branch preview-deployment --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan-preview
-   ```
-
-2. **Install PHP and Node dependencies:**
-   ```bash
-   composer install
-   npm install
-   ```
-
-3. **Configure Environment:**
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
-   *Update your `.env` database and AI assistant parameters:*
-   ```env
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=als_sdosanjuan_db
-   DB_USERNAME=root
-   DB_PASSWORD=
-
-   # Google Gemini AI Virtual Assistant (ALSJay)
-   GEMINI_API_KEY=your_gemini_api_key_here
-   GEMINI_MODEL=gemini-2.5-flash
-   GEMINI_SEARCH_GROUNDING=true
-   ```
-
-4. **Run Migrations & Seeders:**
-   ```bash
-   php artisan migrate:fresh --seed
-   php artisan storage:link
-   ```
-
-5. **Build Frontend Assets (Vite):**
-   ```bash
-   # For active development with Hot Module Replacement (HMR):
-   npm run dev
-
-   # Or compile production bundle:
-   npm run build
-   ```
-
-6. **Start the Development Server:**
-   ```bash
-   php artisan serve --host=127.0.0.1 --port=8000
-   ```
-   Visit the portal in your browser at: **`http://127.0.0.1:8000`**
 
 ### Run `main` and `preview-deployment`
 
