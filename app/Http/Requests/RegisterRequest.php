@@ -46,13 +46,19 @@ class RegisterRequest extends FormRequest
             'street_address' => $this->street_address ? trim($this->street_address) : null,
             'barangay' => $this->barangay ? trim($this->barangay) : null,
             'city' => $this->city ? trim($this->city) : 'San Juan City',
-            'mother_tongue' => $this->mother_tongue ? trim($this->mother_tongue) : 'Tagalog / Filipino',
+            'mother_tongue' => $this->mother_tongue ? trim($this->mother_tongue) : null,
             'father_name' => $this->father_name ? trim($this->father_name) : null,
             'mother_name' => $this->mother_name ? trim($this->mother_name) : null,
             'guardian_name' => $this->guardian_name ? trim($this->guardian_name) : null,
             'guardian_relationship' => $this->guardian_relationship ? trim($this->guardian_relationship) : null,
             'emergency_contact_name' => $this->emergency_contact_name ? trim($this->emergency_contact_name) : null,
             'emergency_contact_number' => $this->emergency_contact_number ? trim($this->emergency_contact_number) : null,
+            'dropout_reason' => $this->dropout_reason ? trim($this->dropout_reason) : null,
+            'has_attended_als' => filter_var($this->has_attended_als, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false,
+            'previous_als_program' => $this->previous_als_program ? trim($this->previous_als_program) : null,
+            'previous_als_year' => $this->previous_als_year ? trim($this->previous_als_year) : null,
+            'previous_als_completed' => filter_var($this->previous_als_completed, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+            'previous_als_incomplete_reason' => $this->previous_als_incomplete_reason ? trim($this->previous_als_incomplete_reason) : null,
             'ip_community_name' => $this->ip_community_name ? trim($this->ip_community_name) : null,
             'pwd_disability_type' => $this->pwd_disability_type ? trim($this->pwd_disability_type) : null,
             'is_4ps_beneficiary' => filter_var($this->is_4ps_beneficiary, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false,
@@ -115,8 +121,14 @@ class RegisterRequest extends FormRequest
             'emergency_contact_name' => ['nullable', 'string', 'max:150'],
             'emergency_contact_number' => ['nullable', 'string', 'max:25'],
 
-            // Educational Background (Part 2)
+            // Educational Background (Part 2: Educational Information)
             'highest_education_attained' => ['required', 'string', 'max:150'],
+            'dropout_reason' => ['nullable', 'string', 'max:255'],
+            'has_attended_als' => ['nullable', 'boolean'],
+            'previous_als_program' => ['nullable', 'string', 'max:100'],
+            'previous_als_year' => ['nullable', 'string', 'max:50'],
+            'previous_als_completed' => ['nullable', 'boolean'],
+            'previous_als_incomplete_reason' => ['nullable', 'string', 'max:255'],
 
             // Social Inclusion (Part 2)
             'is_4ps_beneficiary' => ['nullable', 'boolean'],

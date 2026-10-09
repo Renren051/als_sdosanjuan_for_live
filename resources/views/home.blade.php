@@ -72,7 +72,8 @@
          mobileNav: false,
          clcSearch: '',
          clcFilter: 'all',
-         scrolled: false
+         scrolled: false,
+         selectedNews: null
      }"
      @scroll.window="scrolled = (window.pageYOffset > 15)">
 
@@ -196,130 +197,164 @@
              ========================================== -->
         @if($pageKey === 'home')
         <section id="home" class="scroll-mt-28">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- BENTO HERO CARD 1: PRIMARY MANIFESTO (Span 8) -->
-                <div class="lg:col-span-8 bento-card bento-dark bento-glow-blue p-5 sm:p-12 flex flex-col justify-between relative overflow-hidden bento-grid-dark-bg min-h-[440px] sm:min-h-[480px]">
-                    <!-- Ambient Glow Blobs -->
-                    <div class="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-deped-blue/30 blur-3xl pointer-events-none"></div>
-                    <div class="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-deped-gold/15 blur-3xl pointer-events-none"></div>
+            <!-- ==========================================
+                 KINGSTER-STYLE HERO BANNER CAROUSEL
+                 Photo Banner with Slow Fade Transitions & Left Navy Overlay
+                 ========================================== -->
+            @php
+                $activeBanners = $heroBanners->count() > 0 ? $heroBanners : collect([
+                    (object)[
+                        'title' => 'Alternative Learning System',
+                        'subtitle' => 'The Best Parallel Learning System Of San Juan City',
+                        'image_url' => asset('images/banners/hero-slide-1.jpg'),
+                        'button_text' => 'Take A Tour',
+                        'button_url' => route('register'),
+                    ]
+                ]);
+            @endphp
 
-                    <!-- Header Badges -->
-                    <div class="relative z-10 space-y-4">
-                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-deped-gold">
-                            <span class="w-2 h-2 rounded-full bg-deped-gold animate-ping"></span>
-                            <span>SDO San Juan City &bull; Division ALS Network</span>
-                        </div>
+            <div x-data="{
+                activeSlide: 0,
+                totalSlides: {{ $activeBanners->count() }},
+                timer: null,
+                startTimer() {
+                    if (this.totalSlides > 1) {
+                        this.timer = setInterval(() => {
+                            this.next();
+                        }, 6000);
+                    }
+                },
+                stopTimer() {
+                    if (this.timer) clearInterval(this.timer);
+                },
+                restartTimer() {
+                    this.stopTimer();
+                    this.startTimer();
+                },
+                next() {
+                    this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
+                    this.restartTimer();
+                },
+                prev() {
+                    this.activeSlide = (this.activeSlide - 1 + this.totalSlides) % this.totalSlides;
+                    this.restartTimer();
+                },
+                goTo(index) {
+                    this.activeSlide = index;
+                    this.restartTimer();
+                }
+            }"
+            x-init="startTimer()"
+            @mouseenter="stopTimer()"
+            @mouseleave="startTimer()"
+            class="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 bg-slate-950 min-h-[480px] sm:min-h-[540px] md:min-h-[600px] flex items-center select-none group">
 
-                        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.08] uppercase">
-                            Build Knowledge.<br/>
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-deped-gold via-amber-300 to-amber-500">
-                                Rebuild Your Future.
-                            </span>
-                        </h1>
+                <!-- Top Green Accent Line (Kingster University Signature Style) -->
+                <div class="absolute top-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
+                    <div class="w-24 sm:w-32 h-1.5 bg-emerald-600 rounded-b-full shadow-sm"></div>
+                </div>
 
-                        <p class="text-sm sm:text-base text-slate-300 font-normal max-w-2xl leading-relaxed pt-1">
-                            The Alternative Learning System (ALS) provides out-of-school youth and adults in San Juan City with quality, 100% tuition-free modular education, neighborhood Community Learning Centers, and official DepEd accreditation.
-                        </p>
+                <!-- SLOW FADE PHOTO CAROUSEL LAYERS -->
+                <div class="absolute inset-0 w-full h-full">
+                    @foreach($activeBanners as $bannerIdx => $banner)
+                    <div class="absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out pointer-events-none {{ $bannerIdx === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0' }}"
+                         :class="activeSlide === {{ $bannerIdx }} ? 'opacity-100 z-10' : 'opacity-0 z-0'">
+                        <img src="{{ $banner->image_url }}" 
+                             alt="{{ $banner->title }}" 
+                             class="w-full h-full object-cover object-center transform transition-transform duration-[7000ms] ease-out"
+                             :class="activeSlide === {{ $bannerIdx }} ? 'scale-105' : 'scale-100'" />
+                        <!-- High visual quality gradient vignette for text legibility -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/40 to-transparent sm:from-slate-950/70 sm:via-slate-950/25 sm:to-transparent"></div>
                     </div>
+                    @endforeach
+                </div>
 
-                    <!-- Call To Action & Pill Badges -->
-                    <div class="relative z-10 pt-8 sm:pt-10 flex flex-wrap items-center gap-4">
-                        <a href="{{ route('register') }}" 
-                           class="inline-flex w-full items-center justify-center gap-2.5 px-4 py-3.5 sm:w-auto sm:px-7 sm:py-4 rounded-2xl bg-deped-gold hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98]">
-                            <span>ALS Online Registration (Form 2)</span>
-                            <svg class="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                        </a>
+                <!-- KINGSTER-STYLE LEFT OVERLAY CARD (Navy Blue Card with Serif Heading & White Button) -->
+                <div class="relative z-20 w-full max-w-xl sm:ml-6 md:ml-10 lg:ml-12 px-4 py-8 sm:py-12">
+                    <div class="bg-[#0b1938]/95 sm:bg-[#0c1a3b]/90 backdrop-blur-md p-6 sm:p-9 md:p-11 rounded-2xl sm:rounded-3xl border border-white/10 shadow-2xl">
+                        
+                        <!-- Grid container to hold all slide texts in the exact same spot -->
+                        <div class="grid grid-cols-1 grid-rows-1">
+                            @foreach($activeBanners as $contentIdx => $banner)
+                            <div x-show="activeSlide === {{ $contentIdx }}"
+                                 x-cloak
+                                 style="{{ $contentIdx === 0 ? '' : 'display: none;' }}"
+                                 x-transition:enter="transition-opacity duration-700 ease-out"
+                                 x-transition:enter-start="opacity-0"
+                                 x-transition:enter-end="opacity-100"
+                                 x-transition:leave="transition-opacity duration-400 ease-in"
+                                 x-transition:leave-start="opacity-100"
+                                 x-transition:leave-end="opacity-0"
+                                 class="col-start-1 row-start-1 space-y-4 sm:space-y-6">
+                                
+                                <!-- Subtitle: Elegant clean light text (e.g. 'The Best University Of The State') -->
+                                <div class="text-xs sm:text-sm md:text-base font-light text-slate-200 tracking-wider">
+                                    {{ $banner->subtitle ?: 'SDO San Juan City • Division ALS Network' }}
+                                </div>
 
-                        <a href="{{ route('centers') }}" 
-                           class="inline-flex w-full items-center justify-center gap-2 px-4 py-3.5 sm:w-auto sm:px-6 sm:py-4 rounded-2xl bg-slate-900/80 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm uppercase tracking-wider border border-white/30 backdrop-blur-md transition-all shadow-md hover:border-deped-gold/50">
-                            <span>Locate Learning Centers</span>
-                            <svg class="w-4 h-4 text-deped-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                        </a>
-                    </div>
+                                <!-- Title: Prominent Serif Font (e.g. 'Kingster University') -->
+                                <div class="bg-[#07132b]/85 px-4 py-3 sm:px-5 sm:py-4 rounded-xl border border-white/10 inline-block w-full">
+                                    <h1 class="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-white tracking-tight leading-[1.12]">
+                                        {{ $banner->title }}
+                                    </h1>
+                                </div>
 
-                    <!-- Bottom Trust Strip -->
-                    <div class="relative z-10 pt-8 mt-6 border-t border-white/10 flex flex-wrap items-center gap-y-2 gap-x-6 text-[11px] font-semibold text-slate-300">
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-emerald-400">✓</span> 100% Free Tuition &amp; Modules
+                                <!-- White Button with Emerald Accent Stripe (e.g. 'Take A Tour') -->
+                                <div class="pt-1 sm:pt-2">
+                                    <a href="{{ $banner->button_url ?: route('register') }}" 
+                                       class="inline-flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs sm:text-sm tracking-wider uppercase border-l-4 border-emerald-500 shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02] active:scale-[0.98] group/btn">
+                                        <span>{{ $banner->button_text ?: 'Take A Tour' }}</span>
+                                        <svg class="w-4 h-4 text-emerald-600 transition-transform group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                                        </svg>
+                                    </a>
+                                </div>
+
+                            </div>
+                            @endforeach
                         </div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-emerald-400">✓</span> Official DepEd A&amp;E Diploma
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-emerald-400">✓</span> 21 Barangays Covered
-                        </div>
+
                     </div>
                 </div>
 
-                <!-- BENTO HERO CARD 2: ANDROID MODULAR LMS SHOWCASE (Span 4) -->
-                <div class="lg:col-span-4 bento-card p-6 sm:p-7 flex flex-col justify-between bg-gradient-to-b from-white to-slate-50 border border-slate-200/90 shadow-sm group">
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                Android LMS
-                            </span>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase">Offline-First Engine</span>
-                        </div>
+                <!-- PREVIOUS & NEXT ARROWS -->
+                @if($activeBanners->count() > 1)
+                <button type="button" 
+                        @click="prev()" 
+                        class="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-900/50 hover:bg-slate-900/80 text-white backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
+                        title="Previous Slide">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                </button>
 
-                        <h3 class="text-xl font-black text-slate-900 tracking-tight">
-                            Learn Anytime. Anywhere. Even Without Internet.
-                        </h3>
-                        <p class="text-xs text-slate-500 mt-2 leading-relaxed">
-                            Modular LMS app designed specifically for learners with limited connectivity. Download modules at your CLC and study completely offline.
-                        </p>
-                    </div>
+                <button type="button" 
+                        @click="next()" 
+                        class="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-900/50 hover:bg-slate-900/80 text-white backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
+                        title="Next Slide">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                </button>
 
-                    <!-- Realistic Mobile Phone Screen Mockup -->
-                    <div class="my-5 p-4 rounded-2xl bg-slate-950 text-white phone-mockup-frame border border-slate-800 transition-transform group-hover:scale-[1.01]">
-                        <!-- Simulated Android Top Status Bar -->
-                        <div class="flex items-center justify-between text-[9px] text-slate-400 font-mono pb-2.5 border-b border-slate-800">
-                            <span>ALS San Juan Mobile</span>
-                            <div class="flex items-center gap-1.5">
-                                <span class="text-emerald-400">● Offline Active</span>
-                                <span>100%</span>
-                            </div>
-                        </div>
-
-                        <!-- Simulated App Content -->
-                        <div class="pt-3 space-y-2.5">
-                            <div class="flex items-center justify-between">
-                                <div class="text-[11px] font-black text-white">Learner Mark (LRN: 136542...)</div>
-                                <span class="text-[9px] px-1.5 py-0.5 rounded bg-deped-blue/40 text-blue-300 font-bold">Grade 10</span>
-                            </div>
-
-                            <!-- Progress Bar -->
-                            <div>
-                                <div class="flex justify-between text-[10px] text-slate-300 font-semibold mb-1">
-                                    <span>Modular Completion</span>
-                                    <span class="text-deped-gold font-bold">78%</span>
-                                </div>
-                                <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                                    <div class="h-full bg-gradient-to-r from-deped-blue via-deped-gold to-emerald-400 rounded-full" style="width: 78%"></div>
-                                </div>
-                            </div>
-
-                            <!-- Cached Modules Snippets -->
-                            <div class="space-y-1.5 pt-1">
-                                <div class="p-2 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between text-[10px]">
-                                    <span class="font-bold text-slate-200">LS1: Communication Arts</span>
-                                    <span class="text-[9px] text-emerald-400 font-semibold">Cached</span>
-                                </div>
-                                <div class="p-2 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between text-[10px]">
-                                    <span class="font-bold text-slate-200">LS3: Math Problem Solving</span>
-                                    <span class="text-[9px] text-emerald-400 font-semibold">Cached</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Bottom Feature Pill -->
-                    <div class="flex items-center justify-between pt-3 border-t border-slate-200/80 text-xs font-bold text-slate-600">
-                        <span>Background Telemetry Sync</span>
-                        <span class="text-deped-blue">Zero Mobile Data &rarr;</span>
-                    </div>
+                <!-- SLIDE DOT INDICATORS -->
+                <div class="absolute bottom-4 right-5 sm:bottom-6 sm:right-8 z-30 flex items-center gap-2 bg-slate-950/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+                    @foreach($activeBanners as $dotIdx => $b)
+                    <button type="button" 
+                            @click="goTo({{ $dotIdx }})" 
+                            class="h-2 rounded-full transition-all duration-300"
+                            :class="activeSlide === {{ $dotIdx }} ? 'w-6 bg-deped-gold' : 'w-2 bg-white/40 hover:bg-white/80'"
+                            title="Slide {{ $dotIdx + 1 }}"></button>
+                    @endforeach
                 </div>
+                @endif
+
+                <!-- QUICK ADMIN ACCESS PILL (Visible to Coordinators/Admins) -->
+                @auth
+                    @if(auth()->user()->isAdmin())
+                    <a href="{{ route('admin.banners.index') }}" 
+                       class="absolute top-4 right-4 z-30 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-deped-blue text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/20 shadow-lg transition-all opacity-70 hover:opacity-100">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        <span>Manage Hero Photos</span>
+                    </a>
+                    @endif
+                @endauth
 
             </div>
 
@@ -381,6 +416,184 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ========================================================
+                 WELCOME SECTION (Official DepEd ALS SDO San Juan Overview)
+                 ======================================================== -->
+            <div class="bento-card p-6 sm:p-9 bg-gradient-to-r from-amber-500/10 via-white to-blue-50/40 border border-amber-200/90 shadow-sm relative overflow-hidden mt-8">
+                <div class="absolute -right-16 -top-16 w-56 h-56 rounded-full bg-amber-400/15 blur-2xl pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                    <div class="max-w-4xl space-y-3">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700 text-[11px] font-black uppercase tracking-widest">
+                            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                            Official DepEd Mandate
+                        </div>
+                        
+                        <h2 class="text-3xl sm:text-4xl font-black text-amber-600 tracking-tight uppercase">
+                            WELCOME
+                        </h2>
+                        
+                        <p class="text-base sm:text-lg text-slate-700 leading-relaxed font-medium">
+                            It is a parallel learning system in the Philippines that provides a practical option to the existing formal instruction. When one does not have or cannot access formal education in schools, ALS is an alternate or substitute. ALS includes both the non-formal and informal sources of knowledge and skills.
+                        </p>
+
+                        <div class="flex flex-wrap items-center gap-3 pt-2 text-xs font-bold text-slate-600">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">
+                                <span class="text-emerald-500">✓</span> Basic Literacy (BLP)
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">
+                                <span class="text-emerald-500">✓</span> A&amp;E Elementary &amp; Junior High
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs">
+                                <span class="text-emerald-500">✓</span> 100% Free Tuition &amp; Modules
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="shrink-0 flex flex-col sm:flex-row lg:flex-col gap-3">
+                        <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-deped-blue hover:bg-deped-dark text-white font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all hover:scale-[1.02] text-center">
+                            <span>ALS Online Registration</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
+                        <a href="{{ route('about') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold text-xs uppercase tracking-wider shadow-2xs transition-all text-center">
+                            <span>Learn More About ALS</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================================
+                 ALTERNATIVE LEARNING SYSTEM (ALS) NEWS UPDATES SECTION
+                 ======================================================== -->
+            <div class="mt-10 sm:mt-12 space-y-5">
+                <!-- Section Header (Orange / Amber Title Matching User Screenshot) -->
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200/80 pb-3">
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">
+                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                            Division Bulletin &bull; San Juan City
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-amber-600 tracking-tight">
+                            Alternative Learning System(ALS) News Updates
+                        </h2>
+                    </div>
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        DepEd SDO San Juan City Archives
+                    </div>
+                </div>
+
+                <!-- Dark Navy News Updates Container with Rivet Accents (Inspired by Screenshot) -->
+                <div class="relative rounded-3xl bg-gradient-to-b from-[#0a1838] via-[#0d1e44] to-[#08132d] border-2 border-slate-700/60 shadow-2xl overflow-hidden p-6 sm:p-9 lg:p-11 text-white">
+                    
+                    <!-- Corner Rivet Accents (Matching Screenshot Screws) -->
+                    <div class="absolute top-3 left-3 w-3 h-3 rounded-full bg-slate-400/40 border border-slate-300/50 flex items-center justify-center pointer-events-none">
+                        <span class="w-1.5 h-0.5 bg-slate-300/80 block rotate-45"></span>
+                    </div>
+                    <div class="absolute top-3 right-3 w-3 h-3 rounded-full bg-slate-400/40 border border-slate-300/50 flex items-center justify-center pointer-events-none">
+                        <span class="w-1.5 h-0.5 bg-slate-300/80 block rotate-45"></span>
+                    </div>
+                    <div class="absolute bottom-3 left-3 w-3 h-3 rounded-full bg-slate-400/40 border border-slate-300/50 flex items-center justify-center pointer-events-none">
+                        <span class="w-1.5 h-0.5 bg-slate-300/80 block rotate-45"></span>
+                    </div>
+                    <div class="absolute bottom-3 right-3 w-3 h-3 rounded-full bg-slate-400/40 border border-slate-300/50 flex items-center justify-center pointer-events-none">
+                        <span class="w-1.5 h-0.5 bg-slate-300/80 block rotate-45"></span>
+                    </div>
+
+                    <!-- Ambient Background Glow -->
+                    <div class="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-amber-500/10 blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-blue-600/15 blur-3xl pointer-events-none"></div>
+
+                    <div class="relative z-10 space-y-10">
+
+                        <!-- ==============================================
+                             NEWS ARTICLE 1: KARITON KLASRUM IN SAN JUAN CITY
+                             ============================================== -->
+                        <article class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center pb-10 border-b border-white/10 group">
+                            <!-- Visual Banner Column (Span 4) -->
+                            <div class="lg:col-span-4 rounded-2xl bg-white p-4 sm:p-5 shadow-lg border border-white/20 transition-all duration-300 group-hover:scale-[1.02] flex items-center justify-center min-h-[220px] overflow-hidden">
+                                <img src="{{ asset('images/kariton-klasrum-logo.svg') }}" 
+                                     alt="Kariton Klasrum Official Logo" 
+                                     class="w-full max-h-[190px] object-contain transition-transform duration-300 group-hover:scale-105"
+                                     onerror="this.src='{{ asset('images/kariton-klasrum.jpg') }}';">
+                            </div>
+
+                            <!-- Text Content Column (Span 8) -->
+                            <div class="lg:col-span-8 space-y-3">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-black uppercase tracking-wider">
+                                        Community Outreach Initiative
+                                    </span>
+                                    <span class="text-xs font-semibold italic text-blue-200/80">
+                                        October 2015
+                                    </span>
+                                </div>
+
+                                <h3 class="text-xl sm:text-2xl font-black text-amber-400 group-hover:text-amber-300 tracking-tight leading-snug transition-colors">
+                                    Kariton Klasrum in San Juan City Rolls Out for the Out-Of-School Children
+                                </h3>
+
+                                <p class="text-xs sm:text-sm text-slate-200/90 leading-relaxed font-normal">
+                                    The Department of Education has intensified its campaign to provide education for all, especially to the marginalized sector or the so-called the least, the lost, and the last members of the society. It adopted the K4 Program of CNN Hero Efren Penaflorida whom he had initially implemented in Cavite with resounding success. The program stands for Kariton, Klasrum, Kantin at Klinik, popularly known as Kariton Klasrum (KK) which caters to street children aged 5 to 14 years. It runs for six months in a once-a-week learning intervention scheme until the children get prepared for formal school.
+                                </p>
+
+                                <div class="pt-2">
+                                    <button type="button" 
+                                            @click="selectedNews = 'kariton'" 
+                                            class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer">
+                                        <span>Read More</span>
+                                        <svg class="w-3.5 h-3.5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+
+
+                        <!-- ==============================================
+                             NEWS ARTICLE 2: ALIVE PROGRAM NEWS UPDATE
+                             ============================================== -->
+                        <article class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center group">
+                            <!-- Visual Banner Column (Span 4) -->
+                            <div class="lg:col-span-4 rounded-2xl bg-white p-3 sm:p-4 shadow-lg border border-white/20 transition-all duration-300 group-hover:scale-[1.02] flex items-center justify-center min-h-[220px] overflow-hidden">
+                                <img src="{{ asset('images/alive-masthead.svg') }}" 
+                                     alt="ALIVE News Update Official Masthead" 
+                                     class="w-full max-h-[190px] object-contain transition-transform duration-300 group-hover:scale-105"
+                                     onerror="this.src='{{ asset('images/alive-news-banner.jpg') }}';">
+                            </div>
+
+                            <!-- Text Content Column (Span 8) -->
+                            <div class="lg:col-span-8 space-y-3">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[10px] font-black uppercase tracking-wider">
+                                        ALIVE Program &bull; SDO San Juan City
+                                    </span>
+                                    <span class="text-xs font-semibold italic text-blue-200/80">
+                                        October 2015
+                                    </span>
+                                </div>
+
+                                <h3 class="text-xl sm:text-2xl font-black text-amber-400 group-hover:text-amber-300 tracking-tight leading-snug transition-colors">
+                                    Pandaigdigang Taon ng Kalupaan 2015 Tema: Masaganang Lupa para sa Malusog na Pamumuhay.
+                                </h3>
+
+                                <p class="text-xs sm:text-sm text-slate-200/90 leading-relaxed font-normal">
+                                    October every year is known all over the world as the United Nations Month. This is also being celebrated in the Philippines especially at the elementary and secondary levels in the different schools across the country.
+                                </p>
+
+                                <div class="pt-2">
+                                    <button type="button" 
+                                            @click="selectedNews = 'alive'" 
+                                            class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer">
+                                        <span>Read More</span>
+                                        <svg class="w-3.5 h-3.5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+
+                    </div>
+                </div>
+            </div>
+
         </section>
         @endif
 
@@ -1048,34 +1261,6 @@
         @endif
 
 
-        <!-- ==========================================
-             SECTION 6: FAST INTAKE BENTO CTA BANNER
-             ========================================== -->
-        @if($pageKey === 'home')
-        <section id="register-cta" class="bento-card bento-dark bg-slate-950 text-white p-5 sm:p-12 relative overflow-hidden bento-grid-dark-bg border border-slate-800 shadow-xl">
-            <div class="relative z-10 max-w-3xl mx-auto text-center space-y-4">
-                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-deped-gold text-slate-950 font-black text-xs uppercase tracking-wider">
-                    <span>100% Free Public Education &bull; Open Intake</span>
-                </span>
-
-                <h2 class="text-3xl sm:text-5xl font-black uppercase text-white tracking-tight leading-tight">
-                    Start Your DepEd Journey in San Juan Today
-                </h2>
-
-                <p class="text-sm sm:text-base text-slate-300 font-normal max-w-xl mx-auto leading-relaxed">
-                    Complete your learner intake form online in 5 minutes. No tuition fees, no rigid schedules, and full division support from certified ALS teachers.
-                </p>
-
-                <div class="pt-4 flex flex-wrap items-center justify-center gap-4">
-                    <a href="{{ route('register') }}" 
-                       class="inline-flex w-full items-center justify-center gap-2.5 px-4 py-4 sm:w-auto sm:px-8 rounded-2xl bg-deped-gold hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95">
-                        <span>Fill Out ALS Form 2 Online Now</span>
-                        <svg class="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                    </a>
-                </div>
-            </div>
-        </section>
-        @endif
 
 
         <!-- ==========================================
@@ -1157,6 +1342,142 @@
             </div>
         </section>
         @endif
+
+        <!-- ========================================================
+             INTERACTIVE NEWS DETAILS MODAL (Kariton Klasrum & ALIVE)
+             ======================================================== -->
+        <div x-show="selectedNews !== null" 
+             x-cloak
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-sm"
+             @keydown.escape.window="selectedNews = null">
+            
+            <div class="w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden relative max-h-[90vh] flex flex-col"
+                 @click.away="selectedNews = null">
+                
+                <!-- Modal Header -->
+                <div class="px-6 pt-6 pb-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                        <span class="text-xs font-black uppercase tracking-wider text-slate-700" 
+                              x-text="selectedNews === 'kariton' ? 'Kariton Klasrum Archive' : 'ALIVE Program News Archive'"></span>
+                    </div>
+                    <button type="button" 
+                            @click="selectedNews = null" 
+                            class="w-8 h-8 rounded-full bg-white border border-slate-200 hover:bg-slate-100 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <!-- Modal Scrollable Content -->
+                <div class="p-6 sm:p-8 overflow-y-auto space-y-6">
+                    
+                    <!-- KARITON KLASRUM MODAL DETAILS -->
+                    <template x-if="selectedNews === 'kariton'">
+                        <div class="space-y-5">
+                            <div class="rounded-2xl bg-slate-50 p-4 border border-slate-200/80 flex items-center justify-center">
+                                <img src="{{ asset('images/kariton-klasrum-logo.svg') }}" 
+                                     alt="Kariton Klasrum" 
+                                     class="max-h-36 object-contain"
+                                     onerror="this.src='{{ asset('images/kariton-klasrum.jpg') }}';">
+                            </div>
+
+                            <div class="space-y-2">
+                                <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">Division of City Schools San Juan City &bull; October 2015</span>
+                                <h3 class="text-xl sm:text-2xl font-black text-slate-900 leading-snug">
+                                    Kariton Klasrum in San Juan City Rolls Out for the Out-Of-School Children
+                                </h3>
+                            </div>
+
+                            <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+                                <p>
+                                    The Department of Education has intensified its campaign to provide education for all, especially to the marginalized sector or the so-called the least, the lost, and the last members of the society. It adopted the K4 Program of CNN Hero Efren Penaflorida whom he had initially implemented in Cavite with resounding success.
+                                </p>
+                                <p>
+                                    The program stands for <strong>Kariton, Klasrum, Kantin at Klinik</strong>, popularly known as <strong>Kariton Klasrum (KK)</strong> which caters to street children aged 5 to 14 years. It runs for six months in a once-a-week learning intervention scheme until the children get prepared for formal school.
+                                </p>
+                            </div>
+
+                            <!-- 4 Key Pillars Grid -->
+                            <div class="grid grid-cols-2 gap-3 pt-2">
+                                <div class="p-3 rounded-xl bg-blue-50 border border-blue-100">
+                                    <div class="text-xs font-black text-deped-blue">🛒 Kariton (Pushcart)</div>
+                                    <div class="text-[11px] text-slate-600 mt-0.5">Mobile cart with books &amp; learning tools.</div>
+                                </div>
+                                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-100">
+                                    <div class="text-xs font-black text-emerald-700">📖 Klasrum (Instruction)</div>
+                                    <div class="text-[11px] text-slate-600 mt-0.5">Basic literacy &amp; arithmetic tutoring.</div>
+                                </div>
+                                <div class="p-3 rounded-xl bg-amber-50 border border-amber-100">
+                                    <div class="text-xs font-black text-amber-700">🍲 Kantin (Nutrition)</div>
+                                    <div class="text-[11px] text-slate-600 mt-0.5">Nutritious meals for every learner.</div>
+                                </div>
+                                <div class="p-3 rounded-xl bg-rose-50 border border-rose-100">
+                                    <div class="text-xs font-black text-rose-700">🩺 Klinik (Healthcare)</div>
+                                    <div class="text-[11px] text-slate-600 mt-0.5">Basic hygiene and medical support.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- ALIVE PROGRAM MODAL DETAILS -->
+                    <template x-if="selectedNews === 'alive'">
+                        <div class="space-y-5">
+                            <div class="rounded-2xl bg-slate-50 p-4 border border-slate-200/80 flex items-center justify-center">
+                                <img src="{{ asset('images/alive-masthead.svg') }}" 
+                                     alt="ALIVE News Update" 
+                                     class="max-h-36 object-contain"
+                                     onerror="this.src='{{ asset('images/alive-news-banner.jpg') }}';">
+                            </div>
+
+                            <div class="space-y-2">
+                                <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider">ALIVE News Update &bull; Vol 1. No. 3 &bull; October 2015</span>
+                                <h3 class="text-xl sm:text-2xl font-black text-slate-900 leading-snug">
+                                    Pandaigdigang Taon ng Kalupaan 2015 Tema: Masaganang Lupa para sa Malusog na Pamumuhay.
+                                </h3>
+                            </div>
+
+                            <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+                                <p>
+                                    October every year is known all over the world as the United Nations Month. This is also being celebrated in the Philippines especially at the elementary and secondary levels in the different schools across the country.
+                                </p>
+                                <p>
+                                    As part of the international celebration for the <em>Pandaigdigang Taon ng Kalupaan (International Year of Soils)</em> with the theme <strong>"Masaganang Lupa para sa Malusog na Pamumuhay"</strong>, DepEd SDO San Juan City and the ALIVE (Arabic Language and Islamic Values Education) Program promote environmental stewardship, community gardening, and sustainable practices across learning centers.
+                                </p>
+                                <p>
+                                    The ALIVE Program serves as an integral pillar of DepEd's inclusive education agenda, ensuring that diverse cultural and values-based learning opportunities are accessible to all learners throughout San Juan City.
+                                </p>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 font-semibold space-y-1">
+                                <div>🌱 Promoting Sustainable Soil &amp; Healthy Living in San Juan City</div>
+                                <div class="text-emerald-700 font-normal">Celebrating United Nations Month with environmental awareness and inclusive basic education for all youth.</div>
+                            </div>
+                        </div>
+                    </template>
+
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                    <a href="{{ route('register') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-deped-blue hover:bg-deped-dark text-white font-bold text-xs uppercase tracking-wider shadow-sm transition-all hover:scale-105">
+                        <span>Enroll Now in ALS</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                    <button type="button" 
+                            @click="selectedNews = null" 
+                            class="px-5 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-xs uppercase tracking-wider transition-colors">
+                        Close
+                    </button>
+                </div>
+
+            </div>
+        </div>
 
     </main>
 

@@ -66,6 +66,15 @@ class AlsApiTest extends TestCase
             ->assertJsonPath('data.user.username', $randomUsername);
 
         $this->assertDatabaseHas('users', ['username' => $randomUsername]);
+
+        $createdUser = User::where('username', $randomUsername)->first();
+        if ($createdUser) {
+            $createdUser->tokens()->delete();
+            $createdUser->documents()->delete();
+            $createdUser->enrollments()->delete();
+            $createdUser->profile()->delete();
+            $createdUser->delete();
+        }
     }
 
     public function test_modules_listing_returns_published_modules(): void
@@ -127,6 +136,8 @@ class AlsApiTest extends TestCase
                 'total_learners',
                 'enrollments',
             ]);
+
+        $admin->tokens()->where('name', 'test-admin')->delete();
     }
 
     public function test_learner_can_upload_document(): void
@@ -145,5 +156,7 @@ class AlsApiTest extends TestCase
 
         $response->assertStatus(201)
             ->assertJsonPath('success', true);
+
+        $user->tokens()->where('name', 'test-doc-upload')->delete();
     }
 }

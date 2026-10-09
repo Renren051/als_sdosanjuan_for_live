@@ -37,7 +37,7 @@ echo  [OK] PHP dependencies installed.
 echo.
 
 :: -------------------------------------------------------
-:: Step 3: Install Node dependencies
+:: Step 3: Install Node dependencies & Security Audit
 :: -------------------------------------------------------
 echo [3/5] Installing Node dependencies (npm install)...
 call npm install
@@ -48,6 +48,10 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 echo  [OK] Node dependencies installed.
+
+echo  Running automated security check (npm audit fix)...
+call npm audit fix
+echo  [OK] Node dependencies audited and secured.
 echo.
 
 :: -------------------------------------------------------

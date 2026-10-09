@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 240" width="100%" height="100%">
+  <rect width="500" height="240" fill="#ffffff" rx="12" stroke="#e2e8f0" stroke-width="2"/>
+  
+  <!-- Orange Bottom Swoosh -->
+  <path d="M 0 160 Q 40 230 180 240 L 0 240 Z" fill="#f97316" opacity="0.9"/>
+  <path d="M 0 180 Q 30 235 120 240 L 0 240 Z" fill="#ea580c"/>
+
+  <!-- Kariton Text -->
+  <g font-family="'Comic Sans MS', 'Chalkboard SE', 'Fredoka', cursive, sans-serif" font-weight="900" font-size="64">
+    <text x="60" y="95" fill="#0284c7">K</text>
+    <text x="110" y="95" fill="#0284c7">a</text>
+    <text x="145" y="95" fill="#0284c7">r</text>
+    <text x="175" y="95" fill="#0284c7">i</text>
+    <text x="195" y="95" fill="#0284c7">t</text>
+    
+    <!-- Sun 'o' -->
+    <g transform="translate(260, 72)">
+      <!-- Sun rays -->
+      <line x1="0" y1="-28" x2="0" y2="-20" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
+      <line x1="0" y1="20" x2="0" y2="28" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
+      <line x1="-28" y1="0" x2="-20" y2="0" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
+      <line x1="20" y1="0" x2="28" y2="0" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
+      <line x1="-20" y1="-20" x2="-14" y2="-14" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
+      <line x1="14" y1="14" x2="20" y2="20" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
+      <line x1="-20" y1="20" x2="-14" y2="14" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
+      <line x1="14" y1="-14" x2="20" y2="-20" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
+      <!-- Sun circle -->
+      <circle cx="0" cy="0" r="15" fill="#facc15" stroke="#eab308" stroke-width="2"/>
+      <!-- Sun face -->
+      <circle cx="-5" cy="-3" r="2" fill="#854d0e"/>
+      <circle cx="5" cy="-3" r="2" fill="#854d0e"/>
+      <path d="M -6 4 Q 0 9 6 4" stroke="#854d0e" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </g>
+
+    <text x="290" y="95" fill="#0284c7">n</text>
+  </g>
+
+  <!-- Klasrum Text (Multi-colored) -->
+  <g font-family="'Comic Sans MS', 'Chalkboard SE', 'Fredoka', cursive, sans-serif" font-weight="900" font-size="70">
+    <text x="130" y="180" fill="#0284c7">K</text>
+    <text x="180" y="180" fill="#16a34a">l</text>
+    <text x="205" y="180" fill="#dc2626">a</text>
+    <text x="245" y="180" fill="#f97316">s</text>
+    <text x="280" y="180" fill="#9333ea">r</text>
+    <text x="315" y="180" fill="#2563eb">u</text>
+    <text x="360" y="180" fill="#ea580c">m</text>
+  </g>
+
+  <!-- Subtitle -->
+  <text x="250" y="215" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#64748b" letter-spacing="1">
+    K4 PROGRAM &bull; KARITON, KLASRUM, KANTIN AT KLINIK
+  </text>
+</svg>

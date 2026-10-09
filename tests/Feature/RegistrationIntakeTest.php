@@ -128,6 +128,13 @@ class RegistrationIntakeTest extends TestCase
             ->assertSee('Enrolment Application Under Review')
             ->assertSee('Pending Document Verification')
             ->assertSee($enrollment->tracking_number);
+
+        // Clean up test user
+        $user->tokens()->delete();
+        $user->documents()->delete();
+        $user->enrollments()->delete();
+        $user->profile()->delete();
+        $user->delete();
     }
 
     public function test_incomplete_or_invalid_submission_is_rejected_with_validation_errors(): void
@@ -263,5 +270,16 @@ class RegistrationIntakeTest extends TestCase
 
         $this->assertEquals(Enrollment::STATUS_PENDING, $response->json('data.user.enrollment.enrollment_status'));
         $this->assertNotEmpty($response->json('data.user.enrollment.tracking_number'));
+
+        // Clean up test user
+        $apiUserId = $response->json('data.user.id');
+        $apiUser = User::find($apiUserId);
+        if ($apiUser) {
+            $apiUser->tokens()->delete();
+            $apiUser->documents()->delete();
+            $apiUser->enrollments()->delete();
+            $apiUser->profile()->delete();
+            $apiUser->delete();
+        }
     }
 }

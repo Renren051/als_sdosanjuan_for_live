@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\Admin\BannerController;
 use App\Http\Controllers\Web\Admin\ClcController;
 use App\Http\Controllers\Web\Admin\DashboardController;
 use App\Http\Controllers\Web\Admin\EnrollmentController;
@@ -57,6 +58,13 @@ Route::middleware(['auth', 'role:admin,mobile_teacher'])->prefix('admin')->name(
     Route::put('/modules/{id}', [AdminModuleController::class, 'update'])->name('modules.update');
     Route::patch('/modules/{id}/toggle', [AdminModuleController::class, 'togglePublish'])->name('modules.toggle');
     Route::delete('/modules/{id}', [AdminModuleController::class, 'destroy'])->name('modules.destroy');
+
+    // Homepage Hero Banner Carousel Manager
+    Route::get('/banners', [BannerController::class, 'index'])->name('banners.index');
+    Route::post('/banners', [BannerController::class, 'store'])->name('banners.store');
+    Route::put('/banners/{id}', [BannerController::class, 'update'])->name('banners.update');
+    Route::patch('/banners/{id}/toggle', [BannerController::class, 'toggleActive'])->name('banners.toggle');
+    Route::delete('/banners/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
 
     // DepEd Report Generators
     Route::get('/reports/form-1', [AdminReportController::class, 'form1'])->name('reports.form1');

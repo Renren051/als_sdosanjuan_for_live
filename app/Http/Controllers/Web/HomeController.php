@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\CommunityLearningCenter;
+use App\Models\HeroBanner;
 use App\Models\LearningStrand;
 use App\Models\Module;
 use Illuminate\View\View;
@@ -41,6 +42,7 @@ class HomeController extends Controller
 
         $clcs = collect();
         $strands = collect();
+        $heroBanners = collect();
         $totalClcs = 0;
         $totalModules = 0;
         $barangayCount = 0;
@@ -50,6 +52,9 @@ class HomeController extends Controller
             $totalClcs = $activeClcs->count();
             $barangayCount = $activeClcs->pluck('barangay')->unique()->count();
             $totalModules = Module::where('is_published', true)->count();
+            $heroBanners = HeroBanner::where('is_active', true)
+                ->orderBy('order_seq')
+                ->get();
         }
 
         if ($pageKey === 'programs') {
@@ -70,6 +75,7 @@ class HomeController extends Controller
             'pageTitles',
             'clcs',
             'strands',
+            'heroBanners',
             'totalClcs',
             'totalModules',
             'barangayCount'

@@ -6,7 +6,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7.x-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![DepEd RA 11510](https://img.shields.io/badge/DepEd-RA%2011510%20Compliant-0038A8?style=flat)](https://www.deped.gov.ph/)
-[![Tests Passing](https://img.shields.io/badge/PHPUnit-73%20Passed%20(440%20Assertions)-success?style=flat)]()
+[![Tests Passing](https://img.shields.io/badge/PHPUnit-92%20Passed%20(578%20Assertions)-success?style=flat)]()
 
 ---
 
@@ -15,16 +15,19 @@
 Under the mandate of the **Department of Education (DepEd)** and **Republic Act No. 11510 (The Alternative Learning System Act)**, this system serves the **Schools Division Office (SDO) of San Juan City** to empower Out-of-School Youth and Adults (OSYA) across all 21 barangays.
 
 The platform unifies two essential operational components:
-1. **Web-Based Student Information System (SIS):** Multi-role administrative and student portal handling digital intake (DepEd ALS Form 2), document verification, Community Learning Center (CLC) allocation, module management, and automated DepEd reporting (ALS Form 1 & Form 2).
+1. **Web-Based Student Information System (SIS):** Multi-role administrative and student portal handling digital intake (DepEd ALS Form 2), document verification, Community Learning Center (CLC) allocation, hero banner management, module management, and automated DepEd reporting (ALS Form 1 & Form 2).
 2. **Android-Based Modular LMS (Learner-Only):** An offline-first mobile application designed for OSYA learners with limited internet connectivity, featuring local SQLite/Room caching, background telemetry synchronization, and an in-app PDF module reader.
 
 ---
 
 ## 🎨 UI/UX Design Architecture
 
-The web application is built on a **Bento Grid UI** inspired by Constructivist educational philosophy:
+The web application combines an institutional **Kingster University-Style Photographic Hero** with a modern **Bento Grid UI** inspired by Constructivist educational philosophy:
+- **Kingster University-Style Photographic Hero Carousel:** Full-width photographic showcase with an institutional top emerald accent bar (`bg-emerald-600`), dark navy frosted overlay card (`bg-[#07132c]/90`), Playfair Display serif typography, and gold accent badges.
+- **Ultra-Smooth Slow Crossfade & Ken Burns Transitions:** Powered by Alpine.js with 1,000ms easing (`transition-all duration-1000 ease-in-out`), subtle scale effects (`scale-105`), auto-cycling timer (6.5s), slide indicator dots, previous/next chevron navigation, and pause-on-hover.
+- **Zero-FOUC Single-Cell Grid Stacking:** Slides are stacked in a single CSS Grid cell (`grid grid-cols-1 grid-rows-1`) with server-rendered initial opacities, preventing layout height flashes, jumps, or stacking glitches during initial page load and refresh.
 - **Asymmetric Bento Compartmentalization:** High-density, rounded modular tiles (`rounded-3xl`), micro-badges, and clean borders.
-- **DepEd Division Color Palette:** Deep DepEd Navy (`#0b193d`), Philippine Blue (`#0038A8`), Golden Yellow (`#FCD116`), and Crimson (`#CE1126`).
+- **DepEd Division Color Palette:** Deep DepEd Navy (`#0b193d`), Philippine Blue (`#0038A8`), Golden Yellow (`#FCD116`), Emerald Green (`#059669`), and Crimson (`#CE1126`).
 - **Dual-Logo Institutional Branding:** Dedicated containers showcasing both the **SDO San Juan City Logo** and the official **DepEd ALS Logo**.
 - **Interactive Alpine.js Directory:** Real-time search and filter toolbar for locating the 12 Community Learning Centers (CLCs) across San Juan.
 - **Modern Sticky Frosted-Glass Navbar:** Dynamic `backdrop-blur-md` navigation header with border blur transitions on window scroll.
@@ -35,7 +38,7 @@ The web application is built on a **Bento Grid UI** inspired by Constructivist e
 ## 🚀 Key Features
 
 ### 1. Public Bento Portal
-- **Home:** Interactive hero with division manifesto, live mobile app preview mockup, and real-time division statistics.
+- **Hero Banner Showcase:** Dynamic, slow-fade photo carousel displaying division milestones, Kariton Klasrum outreach, and ALIVE programs with customizable CTAs ("Take A Tour", "Mag-enroll Na").
 - **About ALS:** Constructivist learning methodology (Experience, Self-Pacing, Mentorship) and legal mandate under RA 11510.
 - **A & E Program:** Academic tracks for Basic Literacy Program (BLP), Elementary (Grade 6), and Junior High School (Grade 10), plus the 6 Core Learning Strands (LS 1–6).
 - **Enrolment Requirements & DepEd Qualifications:** Official DepEd A&E requirement checklist (2 pcs 1x1 photo with name tag `SURNAME, FIRST NAME & MIDDLE NAME`, PSA Birth Certificate, Barangay Certificate of Residency, 1 Valid ID), age qualification matrices (Elementary: ages 12+, Secondary/JHS: ages 16+), retakers & overage learner policies, and sectoral eligibility breakdown (OSYAs, workers, IPs, inmates) referencing `DepEd.gov.ph`.
@@ -48,6 +51,7 @@ The web application is built on a **Bento Grid UI** inspired by Constructivist e
   - Birthdate, sex/gender, civil status, active mobile contact, Facebook profile, street address, and 21 San Juan City barangays.
 - **Part II — Educational Background & Social Inclusion:**
   - Highest prior grade completed (No Formal Schooling through Junior/Senior High).
+  - Last school attended, last school year attended, and primary reason for leaving school (economic, family, health, distance, etc.).
   - Mother tongue and 4Ps (Pantawid Pamilyang Pilipino Program) beneficiary tracking.
   - Indigenous Peoples (IP) identification with conditional IP community/ethnicity name requirement.
   - Person with Disability (PWD) identification with conditional disability type/specification.
@@ -64,6 +68,10 @@ The web application is built on a **Bento Grid UI** inspired by Constructivist e
   - Traceable enrollment reference generation (`ALS-YYYY-0000X`) displayed directly on the Learner Dashboard in the pending review banner.
 
 ### 3. Admin & Mobile Teacher Portal
+- **Hero Banner Manager (`/admin/banners`):**
+  - Upload custom high-resolution banner photography directly from the browser.
+  - Configure banner title, subtitle, badge tag, CTA button label, and destination URL.
+  - Toggle slide visibility (Active/Inactive) and manage presentation sort order without touching template code.
 - **Enrollment Queue:** Review pending applications, verify or reject intake documents with remarks, and transition statuses (`submitted`, `under_review`, `enrolled`, `rejected`).
 - **CLC Allocator:** Real-time learner capacity and assignment tracking per barangay center.
 - **Module Repository:** Manage official DepEd Self-Learning Modules (SLMs) categorized by Learning Strands with toggle publishing.
@@ -323,7 +331,7 @@ The API is fully secured via Laravel Sanctum and ready for Android LMS integrati
 
 ## 🧪 Automated Testing
 
-The system includes a PHPUnit test suite covering API authentication, module repository, offline telemetry sync, enrollment validation, and web portal access:
+The system includes a comprehensive PHPUnit / Pest test suite covering API authentication, hero banner rendering and administrative management, learner journey and module progress, registration intake validation (ALS Form 2), AI chatbot guardrails, offline telemetry sync, and web portal access:
 
 ```bash
 php artisan test
@@ -332,14 +340,20 @@ php artisan test
 **Results:**
 ```text
 PASS  Tests\Unit\ExampleTest
+PASS  Tests\Feature\AdminDashboardMetricsTest
 PASS  Tests\Feature\AlsApiTest
 PASS  Tests\Feature\ChatControllerTest
+PASS  Tests\Feature\DepEdReportsValidationTest
+PASS  Tests\Feature\EndToEndPilotJourneyTest
+PASS  Tests\Feature\EnrollmentQueueAndTransitionsTest
 PASS  Tests\Feature\ExampleTest
+PASS  Tests\Feature\HeroBannerTest
 PASS  Tests\Feature\LearnerJourneyTest
 PASS  Tests\Feature\RegistrationIntakeTest
 PASS  Tests\Feature\WebPortalTest
 
-Tests:    45 passed (236 assertions)
+Tests:    92 passed (578 assertions)
+Duration: ~13s
 ```
 
 ---

@@ -29,6 +29,12 @@ class UserProfile extends Model
         'city',
         'province',
         'highest_education_attained',
+        'dropout_reason',
+        'has_attended_als',
+        'previous_als_program',
+        'previous_als_year',
+        'previous_als_completed',
+        'previous_als_incomplete_reason',
         'mother_tongue',
         'is_ip',
         'ip_community_name',
@@ -51,6 +57,8 @@ class UserProfile extends Model
             'is_ip' => 'boolean',
             'is_pwd' => 'boolean',
             'is_4ps_beneficiary' => 'boolean',
+            'has_attended_als' => 'boolean',
+            'previous_als_completed' => 'boolean',
         ];
     }
 

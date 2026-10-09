@@ -212,6 +212,12 @@ class LearnerJourneyTest extends TestCase
         $this->assertEquals(LearnerDocument::STATUS_PENDING, $doc->verification_status);
         $this->assertNull($doc->verification_notes);
         $this->assertNull($doc->reviewed_by);
+
+        // Reset back to seeded rejected state for other tests and clean database
+        $doc->update([
+            'verification_status' => 'rejected',
+            'verification_notes' => 'Photo too dark to verify dry seal',
+        ]);
     }
 
     /**
@@ -285,6 +291,8 @@ class LearnerJourneyTest extends TestCase
         // Attempting to read directly returns 404
         $response = $this->actingAs($mark)->get(route('learner.modules.read', $draftModule->id));
         $response->assertStatus(404);
+
+        $draftModule->delete();
     }
 
     /**
