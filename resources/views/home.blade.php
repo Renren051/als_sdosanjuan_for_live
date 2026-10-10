@@ -63,6 +63,15 @@
     .phone-mockup-frame {
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.08);
     }
+    /* Hero Carousel Pre-hydration: show slide 1 immediately without layout shift or FOUC before Alpine boots */
+    [x-data]:not([data-carousel-ready]) .hero-photo-slide:not(:first-child) {
+        opacity: 0 !important;
+        z-index: 0 !important;
+    }
+    [x-data]:not([data-carousel-ready]) .hero-photo-slide:first-child {
+        opacity: 1 !important;
+        z-index: 20 !important;
+    }
 </style>
 @endpush
 
@@ -215,8 +224,10 @@
 
             <div x-data="{
                 activeSlide: 0,
+                previousSlide: null,
                 totalSlides: {{ $activeBanners->count() }},
                 timer: null,
+                transitionTimer: null,
                 startTimer() {
                     if (this.totalSlides > 1) {
                         this.timer = setInterval(() => {
@@ -231,20 +242,28 @@
                     this.stopTimer();
                     this.startTimer();
                 },
-                next() {
-                    this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
+                setSlide(newIndex) {
+                    if (this.activeSlide === newIndex) return;
+                    this.previousSlide = this.activeSlide;
+                    this.activeSlide = newIndex;
                     this.restartTimer();
+
+                    if (this.transitionTimer) clearTimeout(this.transitionTimer);
+                    this.transitionTimer = setTimeout(() => {
+                        this.previousSlide = null;
+                    }, 1100);
+                },
+                next() {
+                    this.setSlide((this.activeSlide + 1) % this.totalSlides);
                 },
                 prev() {
-                    this.activeSlide = (this.activeSlide - 1 + this.totalSlides) % this.totalSlides;
-                    this.restartTimer();
+                    this.setSlide((this.activeSlide - 1 + this.totalSlides) % this.totalSlides);
                 },
                 goTo(index) {
-                    this.activeSlide = index;
-                    this.restartTimer();
+                    this.setSlide(index);
                 }
             }"
-            x-init="startTimer()"
+            x-init="$el.setAttribute('data-carousel-ready', 'true'); startTimer()"
             @mouseenter="stopTimer()"
             @mouseleave="startTimer()"
             class="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 bg-slate-950 min-h-[480px] sm:min-h-[540px] md:min-h-[600px] flex items-center select-none group">
@@ -257,8 +276,12 @@
                 <!-- SLOW FADE PHOTO CAROUSEL LAYERS -->
                 <div class="absolute inset-0 w-full h-full">
                     @foreach($activeBanners as $bannerIdx => $banner)
-                    <div class="absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out pointer-events-none {{ $bannerIdx === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0' }}"
-                         :class="activeSlide === {{ $bannerIdx }} ? 'opacity-100 z-10' : 'opacity-0 z-0'">
+                    <div class="hero-photo-slide absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out pointer-events-none"
+                         :class="{
+                             'opacity-100 z-20': activeSlide === {{ $bannerIdx }},
+                             'opacity-100 z-10': previousSlide === {{ $bannerIdx }} && activeSlide !== {{ $bannerIdx }},
+                             'opacity-0 z-0': activeSlide !== {{ $bannerIdx }} && previousSlide !== {{ $bannerIdx }}
+                         }">
                         <img src="{{ $banner->image_url }}" 
                              alt="{{ $banner->title }}" 
                              class="w-full h-full object-cover object-center transform transition-transform duration-[7000ms] ease-out"
