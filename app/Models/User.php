@@ -16,6 +16,7 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
+    public const ROLE_SUPER_ADMIN = 'super_admin';
     public const ROLE_ADMIN = 'admin';
     public const ROLE_MOBILE_TEACHER = 'mobile_teacher';
     public const ROLE_LEARNER = 'learner';
@@ -115,7 +116,17 @@ class User extends Authenticatable
      * ROLE & PERMISSION HELPERS
      * ========================================================================= */
 
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === self::ROLE_SUPER_ADMIN;
+    }
+
     public function isAdmin(): bool
+    {
+        return in_array($this->role, [self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN], true);
+    }
+
+    public function isDivisionAdmin(): bool
     {
         return $this->role === self::ROLE_ADMIN;
     }
@@ -123,6 +134,11 @@ class User extends Authenticatable
     public function isMobileTeacher(): bool
     {
         return $this->role === self::ROLE_MOBILE_TEACHER;
+    }
+
+    public function isStaff(): bool
+    {
+        return in_array($this->role, [self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN, self::ROLE_MOBILE_TEACHER], true);
     }
 
     public function isLearner(): bool

@@ -173,6 +173,10 @@ class AuthController extends Controller
      */
     private function redirectBasedOnRole(User $user): RedirectResponse
     {
+        if ($user->isSuperAdmin()) {
+            return redirect()->route('superadmin.teachers.index');
+        }
+
         if ($user->isAdmin() || $user->isMobileTeacher()) {
             return redirect()->route('admin.dashboard');
         }

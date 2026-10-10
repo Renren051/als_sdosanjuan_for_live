@@ -108,6 +108,22 @@
                 </svg>
                 <span>ALS Form 2 (Enrolment)</span>
             </a>
+
+            @if(auth()->user()->isSuperAdmin())
+            <div class="pt-5 px-3 pb-2 text-[10px] font-bold text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                <span>Super Administration</span>
+            </div>
+
+            <!-- Mobile Teacher Account Management -->
+            <a href="{{ route('superadmin.teachers.index') }}" 
+               class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('superadmin.teachers.*') ? 'bg-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-500/30' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
+                <svg class="w-5 h-5 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <span>Mobile Teachers</span>
+            </a>
+            @endif
         </nav>
 
         <!-- User Profile Pill -->
@@ -120,7 +136,7 @@
                     <div class="min-w-0">
                         <div class="text-sm font-semibold text-white truncate">{{ auth()->user()->full_name }}</div>
                         <div class="text-xs text-deped-gold truncate font-medium">
-                            {{ auth()->user()->isAdmin() ? 'Division Coordinator' : 'Mobile Teacher' }}
+                            {{ auth()->user()->isSuperAdmin() ? 'Super Administrator' : (auth()->user()->isDivisionAdmin() ? 'Division Coordinator' : 'Mobile Teacher') }}
                         </div>
                     </div>
                 </div>

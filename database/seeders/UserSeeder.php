@@ -16,6 +16,39 @@ class UserSeeder extends Seeder
     {
         $defaultPassword = Hash::make('Password123!');
 
+        // 0. Super Administrator (Division IT Officer / System Admin)
+        $superAdmin = User::updateOrCreate(
+            ['username' => 'superadmin_als'],
+            [
+                'email' => 'superadmin.als@deped.gov.ph',
+                'password' => $defaultPassword,
+                'role' => User::ROLE_SUPER_ADMIN,
+                'status' => User::STATUS_ACTIVE,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        UserProfile::updateOrCreate(
+            ['user_id' => $superAdmin->id],
+            [
+                'first_name' => 'Ricardo',
+                'middle_name' => 'Alcantara',
+                'last_name' => 'Ramos',
+                'name_extension' => null,
+                'birthdate' => '1980-03-12',
+                'gender' => 'male',
+                'civil_status' => 'married',
+                'contact_number' => '09175558888',
+                'facebook_name' => 'Ricardo Alcantara DepEd',
+                'street_address' => 'SDO San Juan City Hall Compound',
+                'barangay' => 'Pedro Cruz',
+                'city' => 'San Juan City',
+                'province' => 'Metro Manila',
+                'highest_education_attained' => 'Master of Science in Information Technology',
+                'mother_tongue' => 'Tagalog / Filipino',
+            ]
+        );
+
         // 1. Division ALS Administrator / Coordinator
         $admin = User::updateOrCreate(
             ['username' => 'admin_als'],

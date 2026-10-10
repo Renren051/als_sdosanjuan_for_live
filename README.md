@@ -68,6 +68,10 @@ The web application combines an institutional **Kingster University-Style Photog
   - Traceable enrollment reference generation (`ALS-YYYY-0000X`) displayed directly on the Learner Dashboard in the pending review banner.
 
 ### 3. Admin & Mobile Teacher Portal
+- **Super Admin Teacher Management (`/superadmin/teachers`):**
+  - Exclusive Super Administrator role (`super_admin`) authorized to provision, edit, activate/deactivate, and assign Mobile Teachers across 21 San Juan barangay Community Learning Centers (CLCs).
+  - Quick credential reset with temporary password dispatch for field teachers.
+  - Deletion guardrails preventing removal of teachers with active learner enrollments.
 - **Hero Banner Manager (`/admin/banners`):**
   - Upload custom high-resolution banner photography directly from the browser.
   - Configure banner title, subtitle, badge tag, CTA button label, and destination URL.
@@ -387,8 +391,9 @@ The database seeder automatically creates the following accounts for evaluation:
 
 | Role | Username / Identifier | Password | Access / Scope |
 | :--- | :--- | :--- | :--- |
-| **Administrator** | `admin_als` | `Password123!` | Full Division Administrative Access |
-| **Mobile Teacher** | `teacher_juan` | `Password123!` | CLC & Learner Verification Portal |
+| **Super Administrator** | `superadmin_als` | `Password123!` | Division IT / System Admin: Mobile Teacher Provisioning (`/superadmin/teachers`), CLC Assignments & Credential Resets |
+| **Administrator** | `admin_als` | `Password123!` | Full Division Administrative Access (Enrollment Queue, CLC Allocator, Banner Manager) |
+| **Mobile Teacher** | `teacher_juan` | `Password123!` | Assigned CLC & Learner Verification Portal |
 | **Learner** | `learner_mark` *(LRN: `136542240001`)* | `Password123!` | Learner Dashboard & SLM Modules |
 
 ---

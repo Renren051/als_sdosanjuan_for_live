@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\Admin\DashboardController;
 use App\Http\Controllers\Web\Admin\EnrollmentController;
 use App\Http\Controllers\Web\Admin\ModuleController as AdminModuleController;
 use App\Http\Controllers\Web\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Web\SuperAdmin\TeacherManagementController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\HomeController;
@@ -35,8 +36,18 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Super Administrator Protected Portal (Teacher & Staff Account Management)
+Route::middleware(['auth', 'role:super_admin'])->prefix('superadmin')->name('superadmin.')->group(function () {
+    Route::get('/teachers', [TeacherManagementController::class, 'index'])->name('teachers.index');
+    Route::post('/teachers', [TeacherManagementController::class, 'store'])->name('teachers.store');
+    Route::put('/teachers/{id}', [TeacherManagementController::class, 'update'])->name('teachers.update');
+    Route::patch('/teachers/{id}/toggle-status', [TeacherManagementController::class, 'toggleStatus'])->name('teachers.toggleStatus');
+    Route::post('/teachers/{id}/reset-password', [TeacherManagementController::class, 'resetPassword'])->name('teachers.resetPassword');
+    Route::delete('/teachers/{id}', [TeacherManagementController::class, 'destroy'])->name('teachers.destroy');
+});
+
 // Teacher & Administrator Protected Portal
-Route::middleware(['auth', 'role:admin,mobile_teacher'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:super_admin,admin,mobile_teacher'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Enrollment Intake & Verification
@@ -74,7 +85,7 @@ Route::middleware(['auth', 'role:admin,mobile_teacher'])->prefix('admin')->name(
 });
 
 // Learner Protected Portal
-Route::middleware(['auth', 'role:learner,admin,mobile_teacher'])->prefix('learner')->name('learner.')->group(function () {
+Route::middleware(['auth', 'role:learner,super_admin,admin,mobile_teacher'])->prefix('learner')->name('learner.')->group(function () {
     Route::get('/dashboard', [LearnerPortalController::class, 'dashboard'])->name('dashboard');
     Route::get('/enrollment', [LearnerPortalController::class, 'enrollment'])->name('enrollment');
     Route::get('/profile', [LearnerPortalController::class, 'profile'])->name('profile');
