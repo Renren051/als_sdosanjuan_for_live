@@ -67,6 +67,7 @@
                     <option value="">All Sub-Levels</option>
                     <option value="Lower Elementary" {{ request('sub_level') == 'Lower Elementary' ? 'selected' : '' }}>Lower Elementary (Grades 1-3)</option>
                     <option value="Advanced Elementary" {{ request('sub_level') == 'Advanced Elementary' ? 'selected' : '' }}>Advanced Elementary (Grades 4-6)</option>
+                    <option value="Junior High School" {{ request('sub_level') == 'Junior High School' ? 'selected' : '' }}>Junior High School (Grades 7-10)</option>
                 </select>
             </div>
 

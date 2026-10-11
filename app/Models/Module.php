@@ -19,6 +19,7 @@ class Module extends Model
 
     public const SUB_LEVEL_LOWER_ELEMENTARY = 'Lower Elementary';
     public const SUB_LEVEL_ADVANCED_ELEMENTARY = 'Advanced Elementary';
+    public const SUB_LEVEL_JUNIOR_HIGH = 'Junior High School';
 
     public const LANGUAGE_ENGLISH = 'English';
     public const LANGUAGE_FILIPINO = 'Filipino';

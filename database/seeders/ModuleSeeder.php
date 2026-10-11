@@ -31,5 +31,8 @@ class ModuleSeeder extends Seeder
 
         // 3. Import all authentic DepEd ALS Elementary modules (Lower & Advanced, English & Filipino)
         Artisan::call('app:import-elementary-modules');
+
+        // 4. Import all authentic DepEd ALS Secondary / Junior High School modules
+        Artisan::call('app:import-secondary-modules');
     }
 }
