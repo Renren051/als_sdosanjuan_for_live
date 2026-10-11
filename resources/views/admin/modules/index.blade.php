@@ -57,6 +57,7 @@
             <div>
                 <select name="sub_level" onchange="this.form.submit()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
                     <option value="">All Sub-Levels</option>
+                    <option value="Basic Literacy" {{ request('sub_level') == 'Basic Literacy' ? 'selected' : '' }}>Basic Literacy (BLP)</option>
                     <option value="Lower Elementary" {{ request('sub_level') == 'Lower Elementary' ? 'selected' : '' }}>Lower Elementary (Grades 1-3)</option>
                     <option value="Advanced Elementary" {{ request('sub_level') == 'Advanced Elementary' ? 'selected' : '' }}>Advanced Elementary (Grades 4-6)</option>
                     <option value="Junior High School" {{ request('sub_level') == 'Junior High School' ? 'selected' : '' }}>Junior High School (Grades 7-10)</option>
@@ -195,6 +196,7 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase">Sub-Level</label>
                             <select name="sub_level" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                                <option value="Basic Literacy">Basic Literacy (BLP)</option>
                                 <option value="Lower Elementary">Lower Elementary (Grades 1-3)</option>
                                 <option value="Advanced Elementary">Advanced Elementary (Grades 4-6)</option>
                                 <option value="Junior High School">Junior High School (Grades 7-10)</option>

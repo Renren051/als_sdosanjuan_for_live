@@ -34,5 +34,8 @@ class ModuleSeeder extends Seeder
 
         // 4. Import all authentic DepEd ALS Secondary / Junior High School modules
         Artisan::call('app:import-secondary-modules');
+
+        // 5. Import all authentic DepEd ALS Basic Literacy Program modules
+        Artisan::call('app:import-blp-modules');
     }
 }

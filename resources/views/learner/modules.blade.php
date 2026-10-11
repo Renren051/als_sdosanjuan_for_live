@@ -65,6 +65,7 @@
             <div>
                 <select name="sub_level" onchange="this.form.submit()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-deped-blue">
                     <option value="">All Sub-Levels</option>
+                    <option value="Basic Literacy" {{ request('sub_level') == 'Basic Literacy' ? 'selected' : '' }}>Basic Literacy (BLP)</option>
                     <option value="Lower Elementary" {{ request('sub_level') == 'Lower Elementary' ? 'selected' : '' }}>Lower Elementary (Grades 1-3)</option>
                     <option value="Advanced Elementary" {{ request('sub_level') == 'Advanced Elementary' ? 'selected' : '' }}>Advanced Elementary (Grades 4-6)</option>
                     <option value="Junior High School" {{ request('sub_level') == 'Junior High School' ? 'selected' : '' }}>Junior High School (Grades 7-10)</option>
