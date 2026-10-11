@@ -1,440 +1,307 @@
 # SDO San Juan City — Alternative Learning System (ALS)
-### Web-Based Student Information System (SIS) & Android-Based Modular LMS
+### Unified Web Student Information System (SIS), Admin LMS & Mobile Backend API
 
 [![PHP 8.2+](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=flat&logo=php&logoColor=white)](https://www.php.net/)
 [![Laravel 12](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=flat&logo=laravel&logoColor=white)](https://laravel.com/)
 [![Vite](https://img.shields.io/badge/Vite-7.x-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![DepEd RA 11510](https://img.shields.io/badge/DepEd-RA%2011510%20Compliant-0038A8?style=flat)](https://www.deped.gov.ph/)
-[![Tests Passing](https://img.shields.io/badge/PHPUnit-92%20Passed%20(578%20Assertions)-success?style=flat)]()
+[![PHPUnit Tests](https://img.shields.io/badge/PHPUnit-92%20Passed%20(578%20Assertions)-success?style=flat)]()
 
 ---
 
-## 📌 Project Overview
+## 📌 Executive Overview
 
-Under the mandate of the **Department of Education (DepEd)** and **Republic Act No. 11510 (The Alternative Learning System Act)**, this system serves the **Schools Division Office (SDO) of San Juan City** to empower Out-of-School Youth and Adults (OSYA) across all 21 barangays.
+Under the mandate of the **Department of Education (DepEd)** and **Republic Act No. 11510 (The Alternative Learning System Act)**, this ecosystem serves the **Schools Division Office (SDO) of San Juan City** to empower Out-of-School Youth and Adults (OSYA) across all 21 barangays.
 
-The platform unifies two essential operational components:
-1. **Web-Based Student Information System (SIS):** Multi-role administrative and student portal handling digital intake (DepEd ALS Form 2), document verification, Community Learning Center (CLC) allocation, hero banner management, module management, and automated DepEd reporting (ALS Form 1 & Form 2).
-2. **Android-Based Modular LMS (Learner-Only):** An offline-first mobile application designed for OSYA learners with limited internet connectivity, featuring local SQLite/Room caching, background telemetry synchronization, and an in-app PDF module reader.
-
----
-
-## 🎨 UI/UX Design Architecture
-
-The web application combines an institutional **Kingster University-Style Photographic Hero** with a modern **Bento Grid UI** inspired by Constructivist educational philosophy:
-- **Kingster University-Style Photographic Hero Carousel:** Full-width photographic showcase with an institutional top emerald accent bar (`bg-emerald-600`), dark navy frosted overlay card (`bg-[#07132c]/90`), Playfair Display serif typography, and gold accent badges.
-- **Ultra-Smooth Slow Crossfade & Ken Burns Transitions:** Powered by Alpine.js with 1,000ms easing (`transition-all duration-1000 ease-in-out`), subtle scale effects (`scale-105`), auto-cycling timer (6.5s), slide indicator dots, previous/next chevron navigation, and pause-on-hover.
-- **Zero-FOUC Single-Cell Grid Stacking:** Slides are stacked in a single CSS Grid cell (`grid grid-cols-1 grid-rows-1`) with server-rendered initial opacities, preventing layout height flashes, jumps, or stacking glitches during initial page load and refresh.
-- **Asymmetric Bento Compartmentalization:** High-density, rounded modular tiles (`rounded-3xl`), micro-badges, and clean borders.
-- **DepEd Division Color Palette:** Deep DepEd Navy (`#0b193d`), Philippine Blue (`#0038A8`), Golden Yellow (`#FCD116`), Emerald Green (`#059669`), and Crimson (`#CE1126`).
-- **Dual-Logo Institutional Branding:** Dedicated containers showcasing both the **SDO San Juan City Logo** and the official **DepEd ALS Logo**.
-- **Interactive Alpine.js Directory:** Real-time search and filter toolbar for locating the 12 Community Learning Centers (CLCs) across San Juan.
-- **Modern Sticky Frosted-Glass Navbar:** Dynamic `backdrop-blur-md` navigation header with border blur transitions on window scroll.
-- **Floating AI Assistant Widget (ALSJay):** Anchored circular launcher at bottom-right with gentle slow-motion jumping animation, speech bubble callout, and bottom-anchored pop-up chat window.
+The platform operates as a **single, unified dual-platform system** powered by a **shared central MySQL database**:
+1. **Web-Based Student Information System (SIS) & Administrative Portal:** Multi-role governance portal handling digital intake (DepEd ALS Form 2), document verification, Community Learning Center (CLC) allocation, hero banner management, module authoring/publishing, and automated DepEd masterlist exports (ALS Form 1 & Form 2).
+2. **Centralized Backend API:** High-performance Laravel Sanctum REST API serving data, authentication, binary PDF streaming, and telemetry ingestion for both the web portal and the mobile app.
+3. **Android-Based Modular LMS (Native Mobile App):** An offline-first mobile application designed for OSYA learners with limited or intermittent internet connectivity, featuring local SQLite/Room caching, background telemetry synchronization, and an in-app PDF module reader.
 
 ---
 
-## 🚀 Key Features
+## 🗄️ Single Shared Database Architecture
 
-### 1. Public Bento Portal
-- **Hero Banner Showcase:** Dynamic, slow-fade photo carousel displaying division milestones, Kariton Klasrum outreach, and ALIVE programs with customizable CTAs ("Take A Tour", "Mag-enroll Na").
-- **About ALS:** Constructivist learning methodology (Experience, Self-Pacing, Mentorship) and legal mandate under RA 11510.
-- **A & E Program:** Academic tracks for Basic Literacy Program (BLP), Elementary (Grade 6), and Junior High School (Grade 10), plus the 6 Core Learning Strands (LS 1–6).
-- **Enrolment Requirements & DepEd Qualifications:** Official DepEd A&E requirement checklist (2 pcs 1x1 photo with name tag `SURNAME, FIRST NAME & MIDDLE NAME`, PSA Birth Certificate, Barangay Certificate of Residency, 1 Valid ID), age qualification matrices (Elementary: ages 12+, Secondary/JHS: ages 16+), retakers & overage learner policies, and sectoral eligibility breakdown (OSYAs, workers, IPs, inmates) referencing `DepEd.gov.ph`.
-- **Learning Centers (CLCs):** Live searchable directory of all 12 San Juan CLCs with assigned mobile teachers and facility filters.
-- **Contact Us:** Division office directory, emergency hotlines, and instant message inquiry form.
+Both the **Web SIS / LMS** and the **Android Mobile App** operate on the **EXACT SAME MySQL database** (`als_sdosanjuan_db`). There is zero data segregation or secondary synchronization delays:
 
-### 2. Digital Intake Wizard (ALS Form 2 — Complete Learner Record)
-- **Part I — Learner Demographics & Address:**
-  - PSA legal name verification: First name, middle name, last name, name extension.
-  - Birthdate, sex/gender, civil status, active mobile contact, Facebook profile, street address, and 21 San Juan City barangays.
-- **Part II — Educational Background & Social Inclusion:**
-  - Highest prior grade completed (No Formal Schooling through Junior/Senior High).
-  - Last school attended, last school year attended, and primary reason for leaving school (economic, family, health, distance, etc.).
-  - Mother tongue and 4Ps (Pantawid Pamilyang Pilipino Program) beneficiary tracking.
-  - Indigenous Peoples (IP) identification with conditional IP community/ethnicity name requirement.
-  - Person with Disability (PWD) identification with conditional disability type/specification.
-  - Complete parents and legal guardian profile: Father's full name, Mother's maiden name, Legal guardian name, relationship, and emergency contact details.
-- **Part III — Program Track & Center Allocation:**
-  - Academic tracks: Basic Literacy Program (BLP), A&E Elementary, A&E Junior High School.
-  - Preferred Community Learning Center (CLC) in San Juan City with auto-assignment of Barangay Mobile Teacher.
-  - Learning delivery modes (Modular Offline App, Modular Print, Blended, Face-to-Face) and schedule preferences.
-- **Part IV — Account Credentials & Intake Safety:**
-  - Unique username & email validation with clear duplicate guidance and direct sign-in links.
-  - Client-side validation per step via `reportValidity()` preventing skipped sections.
-  - Dynamic initial step restoration (`$initialStep`) jumping straight to erroneous inputs upon server validation with full `old(...)` preservation.
-  - Double-click submission protection (`isSubmitting` flag with loading spinner).
-  - Traceable enrollment reference generation (`ALS-YYYY-0000X`) displayed directly on the Learner Dashboard in the pending review banner.
+```mermaid
+graph TB
+    subgraph Centralized_Database ["Centralized MySQL Database (als_sdosanjuan_db)"]
+        DB_Users[("users & user_profiles\n(Learners, Teachers, Admins)")]
+        DB_Modules[("learning_strands & modules\n(Official DepEd SLMs LS1-LS6)")]
+        DB_Telemetry[("module_progress & enrollments\n(Pages Read, Completion, Timestamps)")]
+        DB_CLCs[("clcs & announcements\n(12 Learning Centers, Banners)")]
+    end
 
-### 3. Admin & Mobile Teacher Portal
-- **Super Admin Teacher Management (`/superadmin/teachers`):**
-  - Exclusive Super Administrator role (`super_admin`) authorized to provision, edit, activate/deactivate, and assign Mobile Teachers across 21 San Juan barangay Community Learning Centers (CLCs).
-  - Quick credential reset with temporary password dispatch for field teachers.
-  - Deletion guardrails preventing removal of teachers with active learner enrollments.
-- **Hero Banner Manager (`/admin/banners`):**
-  - Upload custom high-resolution banner photography directly from the browser.
-  - Configure banner title, subtitle, badge tag, CTA button label, and destination URL.
-  - Toggle slide visibility (Active/Inactive) and manage presentation sort order without touching template code.
-- **Enrollment Queue:** Review pending applications, verify or reject intake documents with remarks, and transition statuses (`submitted`, `under_review`, `enrolled`, `rejected`).
-- **CLC Allocator:** Real-time learner capacity and assignment tracking per barangay center.
-- **Module Repository (`/admin/modules` & `/learner/modules`):**
-  - Manage official DepEd Self-Learning Modules (SLMs) categorized by Learning Strands (LS1 to LS6) with toggle publishing.
-  - Multi-tier program hierarchy supporting **A&E Lower & Advanced Elementary** with sub-levels (**Lower Elementary** Grades 1–3 and **Advanced Elementary** Grades 4–6) and dual-language tracks (**English** & **Filipino**).
-  - 156 authentic DepEd ALS Elementary PDF modules integrated and served with in-browser reading, auto-resume points, and binary streaming for the Android app.
-- **Automated DepEd Exports:**
-  - **ALS Form 1:** Individual Learning Agreement and Masterlist.
-  - **ALS Form 2:** Official Learner Enrolment and Profile Form.
+    subgraph Laravel_Backend ["Laravel 12 Backend & API (Host PC :8000)"]
+        SIS_Web["Web SIS / LMS\n(Blade + Alpine.js + Tailwind CSS)"]
+        Sanctum_API["Laravel Sanctum REST API\n(/api/v1/*)"]
+        AI_Service["Google Gemini 2.5 Flash\n(ALSJay Chat Service)"]
+    end
 
-### 4. Learner Portal
-- Real-time intake status tracker with document compliance checklist.
-- Built-in PDF module viewer modal for self-paced study.
-- Module progress telemetry tracking.
+    subgraph Client_Applications ["Client Access Touchpoints"]
+        Web_Admin["Super Admin & Division Admin\n(Teacher Provisioning, Intake, Modules)"]
+        Web_Teacher["Mobile Teachers\n(CLC Masterlist & Progress Verification)"]
+        Web_Learner["Learners on Web Browser\n(Intake, Status Tracker, Fit-Page PDF Reader)"]
+        Android_App["Learners on Android Mobile App\n(Kotlin, Jetpack Compose, Offline Room DB)"]
+    end
 
-### 5. ALSJay — Official AI Virtual Assistant
-- **AI Persona & Institutional Role:** Official AI assistant for DepEd SDO San Juan City Alternative Learning System named **ALSJay**.
-- **1-to-1 Language Mirroring:**
-  - Queries in Tagalog/Filipino yield **100% pure Tagalog/Filipino** replies with polite honorifics (`po` and `opo`).
-  - Queries in English yield **100% clean, professional English** replies.
-- **Strict School-Only Guardrails:**
-  - Dedicated exclusively to DepEd ALS educational programs (BLP, A&E Elementary and Junior High School), enrollment requirements, Community Learning Centers, and official division announcements.
-  - Strictly refuses requests regarding **coding & software programming**, **student homework & assignment solving**, harassment, or non-school topics with polite redirection to ALS.
-- **Live Weather & Class Suspension Advisories:** Powered by Google Gemini with live Google Search Grounding for real-time DOST-PAGASA forecasts and official San Juan City class suspensions (Mayor Francis Zamora / San Juan City PIO).
-- **Anchored Floating Widget (`<x-chat-widget />`):**
-  - Gentle slow-motion jumping launcher button anchored at the bottom-right (`bottom-5 right-5`).
-  - Speech callout bubble (*"Ano ang maitutulong ko sa’yo ngayon?"*) with `ALSJay` badge.
-  - Clicking the bubble keeps it anchored in place while the chat dialog pops up directly above it; bubble smoothly transforms into an `✕` close button.
-- **Resilient Multi-Tier Architecture:** High-availability `/chat` endpoint with CSRF validation exemption and an offline smart local knowledge-base fallback.
+    %% Database connections
+    Laravel_Backend <--> Centralized_Database
+
+    %% Web connections
+    Web_Admin --> SIS_Web
+    Web_Teacher --> SIS_Web
+    Web_Learner --> SIS_Web
+
+    %% Android connections
+    Android_App <-->|HTTP / REST API via LAN IP| Sanctum_API
+    Android_App -.->|Offline Mode: Cache to Room DB| Android_App
+    Android_App -->|Background Telemetry Sync\nWorkManager SyncWorker| Sanctum_API
+    
+    %% AI connections
+    SIS_Web <--> AI_Service
+    Sanctum_API <--> AI_Service
+```
+
+### How the Shared Database Works in Practice:
+- **Unified User Accounts & Authentication:** Every learner and teacher registered through the Web Intake Wizard (or created by administrators) is immediately stored in the `users` table. They can log into **both the Web Portal and the Android App** using the exact same username/LRN and password.
+- **Centralized Module Control:** When an Administrator uploads, publishes, or updates an official DepEd module on the Web SIS (`/admin/modules`), the Android app immediately receives the updated module, title, file URL, and strand count without requiring an app store update.
+- **Bi-Directional Reading Telemetry:** When a learner reads a module on Android (even without internet connection), their reading position (`last_page_read`) and completion status (`is_completed`) are logged into local SQLite. When the mobile device reconnects to Wi-Fi or mobile data, the Android `SyncWorker` sends this data to `/api/v1/learner/sync-progress`, instantly updating the web database so Teachers and Admins can see the progress on their web dashboards.
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Layer | Technology | Details |
+| Layer | Component | Details |
 | :--- | :--- | :--- |
-| **Backend Framework** | Laravel 12.x | PHP 8.2.12 (CLI Visual C++ 2019 x64) |
-| **AI Virtual Assistant** | Google Gemini 2.5 Flash | Real-time Search Grounding, Language Mirroring, School Guardrails |
-| **API Authentication**| Laravel Sanctum | Bearer token authentication for web & mobile |
-| **Frontend UI** | Blade + Vite v7.3.6 | Tailwind CSS 4, Alpine.js, Plus Jakarta Sans |
-| **Database** | MySQL | Port 3306 (`als_sdosanjuan_db`) via XAMPP |
-| **PDF Generation** | Barryvdh DomPDF | DepEd Form 1 & Form 2 printable formats |
-| **Version Control** | Git 2.54.0 | Tracked on branch `main` |
-| **Mobile App (Phase 4)** | Native Android | Kotlin, Room Database, Retrofit 2, WorkManager |
+| **Backend & API** | Laravel 12.x | PHP 8.2+ (Visual C++ 2019 x64), Eloquent ORM |
+| **Authentication** | Laravel Sanctum | State-based session cookies for Web; Bearer Tokens for Android |
+| **Database** | MySQL 8.0 / MariaDB | Shared database `als_sdosanjuan_db` via XAMPP |
+| **Web Frontend** | Blade + Vite v7.x | Tailwind CSS v4, Alpine.js, Plus Jakarta Sans, Playfair Display |
+| **PDF Generation** | DomPDF | Official DepEd Form 1 (Masterlist) & Form 2 (Enrolment Profile) |
+| **AI Assistant** | Google Gemini 2.5 Flash | Real-time Search Grounding, strict DepEd guardrails, Tagalog/English mirroring |
+| **Mobile App** | Native Android | Kotlin 2.0, Jetpack Compose, Material 3, Room, Retrofit 2, WorkManager |
 
 ---
 
-## 💻 Local Development Setup
+## 💻 Local Development Setup (Web SIS & Backend)
 
-### 📋 Prerequisites Across All Platforms
-- **PHP 8.2 or higher** (Required extensions: `pdo_mysql`, `mbstring`, `openssl`, `fileinfo`, `gd`, `zip`)
-- **Composer 2.x**
-- **Node.js 18+ and npm**
-- **MySQL 8.0+ / MariaDB** (Port 3306)
-- **Git**
-
----
-
-### 📥 Platform-Specific Installation Guides
-
-Select your operating system:
-* [🪟 Windows Setup Guide](#-windows-installation-guide)
-* [🍎 macOS Setup Guide](#-macos-installation-guide)
-* [🐧 Linux (Ubuntu / Debian) Setup Guide](#-linux-ubuntu--debian-installation-guide)
+### 📋 Prerequisites
+1. **PHP 8.2 or higher** (Included in XAMPP; extensions required: `pdo_mysql`, `mbstring`, `openssl`, `fileinfo`, `gd`, `zip`, `curl`).
+2. **Composer 2.x** ([getcomposer.org](https://getcomposer.org/)).
+3. **Node.js 18+ & npm** ([nodejs.org](https://nodejs.org/)).
+4. **MySQL 8.0 / MariaDB** (Default XAMPP port 3306).
+5. **Git** ([git-scm.com](https://git-scm.com/)).
 
 ---
 
-#### 🪟 Windows Installation Guide
+### 📥 Step-by-Step Installation Guide
 
-##### 1. Prerequisites Setup
-- **Git:** Download the 64-bit installer from [git-scm.com/download/win](https://git-scm.com/download/win) or run `winget install --id Git.Git -e --source winget`.
-- **PHP & MySQL (XAMPP):** Download and install [XAMPP for Windows](https://www.apachefriends.org/) (PHP 8.2+).
-  - Open the **XAMPP Control Panel** and start **Apache** and **MySQL**.
-  - Ensure PHP is in your Windows System PATH (`C:\xampp\php`).
-- **Composer:** Download and run the installer from [getcomposer.org/download](https://getcomposer.org/download/).
-- **Node.js & npm:** Download and run the LTS installer from [nodejs.org](https://nodejs.org/).
-
-##### 2. Clone the Repository
+#### 1. Clone the Repository & Checkout Branch
 Open PowerShell or Git Bash:
 ```powershell
 git clone --branch preview-deployment --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan
 cd als_sdosanjuan
 ```
 
-##### 3. Automated 1-Click Setup (Recommended)
-Double-click or run:
+#### 2. Configure Environment (`.env`)
+Copy the environment template:
 ```powershell
-.\setup.bat
-```
-This automated script will:
-1. Verify PHP, Composer, and Node.js in your system PATH.
-2. Install PHP dependencies (`composer install`) and Node packages (`npm install`).
-3. Create `.env` from `.env.example` and generate the `APP_KEY`.
-4. Link public storage (`php artisan storage:link`) for hero banners and uploaded documents.
-5. Prompt to run database migrations and seed default demo data (`php artisan migrate --seed --force`).
-6. Compile production frontend assets (`npm run build`).
-
-##### 4. Daily Development Launch
-Double-click or run:
-```powershell
-.\run.bat
-```
-This instantly launches:
-- **Laravel API Server:** `http://127.0.0.1:8000`
-- **Vite Dev Server:** `http://localhost:5173`
-
-*(Alternatively, run manually in PowerShell: `php artisan serve --host=127.0.0.1 --port=8000` and `npm run dev`.)*
-
----
-
-#### 🍎 macOS Installation Guide
-
-##### 1. Prerequisites via Homebrew
-If you do not have [Homebrew](https://brew.sh/) installed:
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-Install Git, PHP 8.2, Composer, Node.js, and MySQL:
-```bash
-brew install git php@8.2 composer node mysql
-```
-
-Start the local MySQL service:
-```bash
-brew services start mysql
-```
-
-##### 2. Clone the Repository
-```bash
-git clone --branch preview-deployment --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan
-cd als_sdosanjuan
-```
-
-##### 3. Install Dependencies
-```bash
-composer install --no-interaction --prefer-dist
-npm install
-```
-
-##### 4. Configure Environment & Storage
-```bash
 cp .env.example .env
-php artisan key:generate
-php artisan storage:link
 ```
-
-Ensure your `.env` database parameters match your local MySQL configuration:
+Open `.env` in your editor and verify your database configuration matches your local XAMPP MySQL setup:
 ```env
+APP_NAME="ALS SDO San Juan City"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=als_sdosanjuan_db
 DB_USERNAME=root
 DB_PASSWORD=
+
+# Gemini API Key for ALSJay Virtual Assistant
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-##### 5. Create Database, Migrate & Seed
-```bash
-mysql -u root -e "CREATE DATABASE IF NOT EXISTS als_sdosanjuan_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-php artisan migrate:fresh --seed
-npm run build
-```
-
-##### 6. Start Development Servers
-Open two terminal tabs in the project directory:
-
-**Tab 1 (Laravel server):**
-```bash
-php artisan serve --host=127.0.0.1 --port=8000
-```
-
-**Tab 2 (Vite HMR):**
-```bash
-npm run dev
-```
-
-Visit the portal at: **`http://127.0.0.1:8000`**
-
----
-
-#### 🐧 Linux (Ubuntu / Debian) Installation Guide
-
-##### 1. Prerequisites via APT
-Update package lists and install required tools, PHP 8.2 with extensions, Composer, Node.js, and MySQL:
-```bash
-sudo apt update && sudo apt install -y software-properties-common curl git unzip
-sudo add-apt-repository ppa:ondrej/php -y
-sudo apt update
-
-sudo apt install -y php8.2 php8.2-cli php8.2-mysql php8.2-mbstring \
-    php8.2-xml php8.2-curl php8.2-zip php8.2-gd php8.2-intl \
-    mysql-server composer
-```
-
-Install Node.js (LTS v20+ via NodeSource):
-```bash
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y nodejs
-```
-
-Start and enable MySQL service:
-```bash
-sudo systemctl enable --now mysql
-```
-
-##### 2. Clone the Repository
-```bash
-git clone --branch preview-deployment --single-branch https://github.com/Renren051/als_sdosanjuan.git als_sdosanjuan
-cd als_sdosanjuan
-```
-
-##### 3. Configure Directory Permissions
-Grant write permissions to the storage and bootstrap cache directories:
-```bash
-sudo chown -R $USER:www-data storage bootstrap/cache
-chmod -R 775 storage bootstrap/cache
-```
-
-##### 4. Install Dependencies
-```bash
-composer install --no-interaction --prefer-dist
+#### 3. Install Dependencies
+```powershell
+composer install
 npm install
 ```
 
-##### 5. Configure Environment & Storage
-```bash
-cp .env.example .env
+#### 4. Generate Application Key & Link Storage
+```powershell
 php artisan key:generate
 php artisan storage:link
 ```
+> [!IMPORTANT]
+> Running `php artisan storage:link` is **required**. It creates a symbolic link from `public/storage` to `storage/app/public`, allowing uploaded module PDFs, hero banners, and student documents to be downloaded and streamed by both web browsers and the Android application.
 
-Update your `.env` with database settings:
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=als_sdosanjuan_db
-DB_USERNAME=root
-DB_PASSWORD=your_mysql_password
-```
+#### 5. Create Database, Run Migrations & Seed Default Data
+Ensure **MySQL is running in your XAMPP Control Panel**, then run:
+```powershell
+# Create the database in MySQL (if not yet created):
+mysql -u root -e "CREATE DATABASE IF NOT EXISTS als_sdosanjuan_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
-##### 6. Create Database, Migrate & Seed
-```bash
-sudo mysql -e "CREATE DATABASE IF NOT EXISTS als_sdosanjuan_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+# Run migrations and seed default administrative accounts, CLCs, and sample learners:
 php artisan migrate:fresh --seed
+```
+*Note: The seeder also imports official DepEd Elementary modules into the shared repository automatically.*
+
+#### 6. Compile Frontend Assets
+```powershell
+# For production asset compilation:
 npm run build
-```
 
-##### 7. Start Development Servers
-Open two terminal sessions:
-
-**Session 1 (Laravel server):**
-```bash
-php artisan serve --host=0.0.0.0 --port=8000
-```
-
-**Session 2 (Vite HMR):**
-```bash
+# Or for active local development with hot module replacement (HMR):
 npm run dev
 ```
 
-Visit the portal at: **`http://localhost:8000`** (or your server's IP address).
+---
+
+## 🌐 Connecting Android to the Backend (CRITICAL NETWORK SETUP)
+
+Because the Android application runs on either an Android Emulator or a physical Android smartphone connected via Wi-Fi, the Laravel server **must accept incoming connections from other devices on your local network**.
+
+### 1. Launch Laravel with `--host=0.0.0.0`
+```powershell
+php artisan serve --host=0.0.0.0 --port=8000
+```
+> [!WARNING]
+> If you run `php artisan serve` without `--host=0.0.0.0`, Laravel defaults to `127.0.0.1` (localhost only). Physical Android phones will **NOT** be able to connect and will report connection timeouts or network errors!
+
+### 2. Determine Your Host Computer's Local IP Address
+In PowerShell, run:
+```powershell
+ipconfig
+```
+Look for your active network adapter (e.g., **Wireless LAN adapter Wi-Fi** or **Ethernet**) and find your **IPv4 Address**:
+```text
+IPv4 Address. . . . . . . . . . . : 192.168.1.15
+```
+
+### 3. Windows Firewall Configuration
+If your physical phone cannot reach `http://<YOUR_PC_IP>:8000`, open **Windows Defender Firewall with Advanced Security** and add an **Inbound Rule**:
+- **Rule Type:** Port
+- **Protocol & Ports:** TCP, Specific local ports: `8000`
+- **Action:** Allow the connection
+- **Profile:** Check Domain and Private (ensure your Wi-Fi network profile is set to Private).
 
 ---
 
-### Run `main` and `preview-deployment`
+## 👥 Seeded Demo Accounts (Shared Database)
 
-The same checkout can run only one branch at a time. To switch branches in the existing project folder, stop the server with `Ctrl+C`, then run:
+All accounts below are pre-configured in `database/seeders/UserSeeder.php` and can be used on **both the Web Portal and the Android App**:
 
-```powershell
-git switch main
-php artisan serve --host=127.0.0.1 --port=8000
-```
-
-Open **`http://127.0.0.1:8000`**. To run the preview instead, stop the server and switch branches:
-
-```powershell
-git switch preview-deployment
-php artisan serve --host=127.0.0.1 --port=8000
-```
-
-On a fresh clone, fetch and create the local preview branch once with:
-
-```powershell
-git fetch origin
-git switch --track origin/preview-deployment
-```
-
-#### Run both branches at the same time
-
-Use a separate Git worktree for `main`, then run each branch on a different port. In the original project folder, keep the preview branch on port `8000`:
-
-```powershell
-git switch preview-deployment
-php artisan serve --host=127.0.0.1 --port=8000
-```
-
-In a second PowerShell window, create and prepare the `main` worktree. Run these commands from the original project folder:
-
-```powershell
-git worktree add ..\als_sdosanjuan-main main
-Copy-Item .env ..\als_sdosanjuan-main\.env
-cd ..\als_sdosanjuan-main
-composer install
-php artisan serve --host=127.0.0.1 --port=8001
-```
-
-Open **`http://127.0.0.1:8000`** for `preview-deployment` and **`http://127.0.0.1:8001`** for `main`. The worktree setup is needed only once. Both worktrees use the database configured in the copied `.env`; keep that in mind when changing or migrating local data. If both branches point to the same commit, their pages will look the same until one branch has different changes.
+| Role | Username / Identifier | Password | Program Track / Assignment | Access Capabilities |
+| :--- | :--- | :--- | :--- | :--- |
+| **Super Administrator** | `superadmin_als` | `Password123!` | Division IT / All CLCs | Full System Control, Mobile Teacher Provisioning (`/superadmin/teachers`), CLC Assignments, Account Resets |
+| **Division Administrator** | `admin_als` | `Password123!` | SDO San Juan Division Office | Enrollment Intake Queue, Document Verification, Banner Manager, Module Uploading & Publishing, DepEd Form 1 & 2 Exports |
+| **Mobile Teacher** | `teacher_juan` | `Password123!` | West Crame CLC | Assigned CLC Roster, Learner Attendance, Document Verification |
+| **Mobile Teacher** | `teacher_alyssa` | `Password123!` | Batis CLC | Assigned CLC Roster, Learner Attendance, Document Verification |
+| **Learner (BLP)** | `learner_blp`<br>*(LRN: `136542240010`)* | `Password123!` | Basic Literacy Program (BLP) | Enrolled Learner, BLP Modules, Telemetry Sync |
+| **Learner (Elementary)** | `learner_elem`<br>*(LRN: `136542240020`)* | `Password123!` | A&E Elementary (Grades 1–6) | Enrolled Learner, Elementary SLM Modules (English & Filipino), Telemetry Sync |
+| **Learner (Junior High)** | `learner_jhs`<br>*(LRN: `136542240030`)* | `Password123!` | A&E Junior High School | Enrolled Learner, JHS Modules, Telemetry Sync |
+| **Learner (General)** | `learner_mark`<br>*(LRN: `136542240001`)* | `Password123!` | A&E Junior High School | Enrolled Learner, Dashboard & SLM Reader |
 
 ---
 
-## 👥 Default Demo Accounts
+## 📖 How to Use the Web System
 
-The database seeder automatically creates the following accounts for evaluation:
+### 1. Super Administrator (`superadmin_als`)
+- **Login:** Navigate to `/login` and sign in with `superadmin_als`.
+- **Mobile Teacher Provisioning (`/superadmin/teachers`):**
+  - Click **"Add Mobile Teacher"** to provision a new field educator.
+  - Assign the teacher to one or more Community Learning Centers (CLCs) across the 21 barangays.
+  - Reset teacher credentials with temporary passwords when requested.
+  - View audit logs and active teacher statuses.
 
-| Role | Username / Identifier | Password | Access / Scope |
+### 2. Division Administrator (`admin_als`)
+- **Enrollment Queue (`/admin/enrollments`):**
+  - View submitted online applications (DepEd ALS Form 2).
+  - Inspect uploaded documents (PSA Birth Certificate, Barangay Certificate of Residency, 1x1 Photo with Name Tag, Valid ID).
+  - Approve applications to transition learners from `submitted` $\rightarrow$ `under_review` $\rightarrow$ `enrolled`.
+  - Reject incomplete applications with actionable remarks for the applicant.
+- **Hero Banner Manager (`/admin/banners`):**
+  - Upload high-resolution photographs of division events and programs directly from the browser.
+  - Customize banner titles, subtitles, category badges, CTA buttons, and URLs.
+  - Toggle slide visibility (Active / Inactive) and arrange slide ordering.
+- **Module Repository Management (`/admin/modules`):**
+  - View and upload official DepEd Self-Learning Modules (SLMs).
+  - Assign Learning Strands:
+    - **LS1:** Communication Skills (English & Filipino)
+    - **LS2:** Scientific and Critical Thinking Skills
+    - **LS3:** Mathematical and Problem Solving Skills
+    - **LS4:** Life and Career Skills
+    - **LS5:** Understanding the Self and Society
+    - **LS6:** Digital Citizenship
+  - Configure target program levels: **Basic Literacy (BLP)**, **Lower Elementary (Grades 1–3)**, **Advanced Elementary (Grades 4–6)**, or **Junior High School (Grades 7–10)**.
+  - Toggle **Published / Unpublished**: Unpublished modules are hidden from learners; publishing a module makes it instantly visible on both Web and Android.
+- **DepEd Automated Reporting:**
+  - Export **ALS Form 1** (Individual Learning Agreement and Masterlist) in PDF / Excel format.
+  - Export **ALS Form 2** (Official Learner Enrolment and Profile Form) with complete PSA and demographic details.
+
+### 3. Mobile Teacher (`teacher_juan`)
+- View learners assigned to your specific Community Learning Center (CLC).
+- Check individual learner reading progress, completion timestamps, and quiz achievements.
+- Verify learner physical document submissions during face-to-face sessions.
+
+### 4. Learner on Web Portal (`learner_elem` / `learner_jhs` / `learner_blp`)
+- **Digital Intake (Unregistered Users):**
+  - Click **"Mag-enroll Na"** on the home page to launch the multi-step DepEd Form 2 Intake Wizard.
+  - Enter PSA legal demographics, educational attainment, 4Ps/IP/PWD status, and select preferred CLC and learning delivery mode.
+  - Submit application and receive a unique reference code (`ALS-2026-0000X`).
+- **Learner Dashboard (`/learner/dashboard`):**
+  - Check real-time intake status and required document submission checklist.
+  - Access curriculum modules filtered by Learning Strand.
+- **Upgraded In-Browser PDF Module Reader:**
+  - Click **"Basahin ang Modyul"** to launch the interactive viewer.
+  - **View Modes:**
+    - **Fit to Page (<kbd>F</kbd>):** Centers the complete page on screen without vertical overflow.
+    - **Fit to Width (<kbd>W</kbd>):** Expands the page to the full container width for optimal reading.
+    - **Two-Page Spread (<kbd>2</kbd>):** Displays side-by-side pages mimicking an open printed book.
+  - **Navigation & Shortcuts:** Zoom in (<kbd>+</kbd>), Zoom out (<kbd>-</kbd>), Reset zoom (<kbd>0</kbd>), Fullscreen (<kbd>Shift+F</kbd>), and Exit reader (<kbd>Esc</kbd>).
+  - Automatic progress telemetry captures the last page viewed and updates the shared database.
+
+### 5. ALSJay — Official AI Virtual Assistant
+- Click the anchored speech bubble at the bottom-right corner of any web page.
+- Ask questions in **Tagalog/Filipino** or **English** regarding:
+  - ALS qualifications, enrollment requirements, and age brackets.
+  - Locations and mobile teachers of the 12 Community Learning Centers.
+  - Real-time weather advisories and official San Juan City class suspensions (via Google Search Grounding).
+
+---
+
+## 📡 Core REST API Reference (Shared Backend)
+
+All endpoints below are consumed directly by the native Android application:
+
+| Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :--- |
-| **Super Administrator** | `superadmin_als` | `Password123!` | Division IT / System Admin: Mobile Teacher Provisioning (`/superadmin/teachers`), CLC Assignments & Credential Resets |
-| **Administrator** | `admin_als` | `Password123!` | Full Division Administrative Access (Enrollment Queue, CLC Allocator, Banner Manager) |
-| **Mobile Teacher** | `teacher_juan` | `Password123!` | Assigned CLC & Learner Verification Portal |
-| **Learner** | `learner_mark` *(LRN: `136542240001`)* | `Password123!` | Learner Dashboard & SLM Modules |
+| `POST` | `/api/v1/auth/login` | Authenticate user & issue Sanctum Bearer token | No |
+| `POST` | `/api/v1/auth/register` | Digital learner registration (ALS Form 2) | No |
+| `GET` | `/api/v1/auth/me` | Fetch authenticated learner profile & track | Yes (Bearer Token) |
+| `POST` | `/api/v1/auth/logout` | Revoke active bearer token | Yes (Bearer Token) |
+| `GET` | `/api/v1/strands` | Retrieve 6 Learning Strands with dynamic module counts | Yes (Bearer Token) |
+| `GET` | `/api/v1/modules` | Fetch published modules (filterable by strand and track level) | Yes (Bearer Token) |
+| `GET` | `/api/v1/modules/{id}/download` | Binary PDF download stream for offline caching | Yes (Bearer Token) |
+| `POST` | `/api/v1/learner/sync-progress` | Ingest offline reading telemetry (page numbers, completion) | Yes (Bearer Token) |
+| `POST` | `/chat` | Inquire with ALSJay AI assistant | No (CSRF-exempt) |
 
 ---
 
-## 📡 Core REST API Endpoints
+## 🧪 Automated Testing Suite
 
-The API is fully secured via Laravel Sanctum and ready for Android LMS integration:
+The backend includes a comprehensive PHPUnit test suite ensuring data integrity, authentication security, role authorization, and API contracts:
 
-### Authentication
-- `POST /api/v1/auth/login` — Authenticate and receive Sanctum bearer token.
-- `POST /api/v1/auth/register` — Digital learner registration (ALS Form 2).
-- `GET /api/v1/auth/me` — Retrieve active authenticated user profile.
-- `POST /api/v1/auth/logout` — Revoke active token.
-
-### AI Virtual Assistant (ALSJay)
-- `POST /chat` — Send query to ALSJay (Gemini API with Google Search grounding and smart local fallback).
-
-### Curriculum & Modules
-- `GET /api/v1/strands` — List the 6 ALS Learning Strands with module counts.
-- `GET /api/v1/modules` — List published self-learning modules (filterable by strand).
-- `GET /api/v1/modules/{id}/download` — Stream or download official module PDF.
-
-### Learner Telemetry & Sync
-- `POST /api/v1/learner/documents/upload` — Upload PSA / Clearance / Photo credentials.
-- `GET /api/v1/learner/enrollment-status` — Check real-time enrollment progress.
-- `POST /api/v1/learner/sync-progress` — Sync offline modular completion data from Android LMS.
-
-### Administrative Reporting
-- `GET /api/v1/admin/reports/form-1` — Export ALS Form 1 masterlist JSON / PDF data.
-- `GET /api/v1/admin/reports/form-2/{id}` — Export ALS Form 2 individual intake data.
-
----
-
-## 🧪 Automated Testing
-
-The system includes a comprehensive PHPUnit / Pest test suite covering API authentication, hero banner rendering and administrative management, learner journey and module progress, registration intake validation (ALS Form 2), AI chatbot guardrails, offline telemetry sync, and web portal access:
-
-```bash
+```powershell
 php artisan test
 ```
 
@@ -466,10 +333,9 @@ Duration: ~13s
 
 ---
 
-## 🏛️ Acknowledgments & Division Information
+## 🏛️ Division Contact & Administration
 
-- **Department of Education (DepEd)** — Republic of the Philippines
-- **National Capital Region (NCR)**
+- **Department of Education (DepEd)** — National Capital Region (NCR)
 - **Schools Division Office of San Juan City** — Alternative Learning System Unit
 - Pinaglabanan Street, Barangay Pedro Cruz, San Juan City, Metro Manila
 - Email: `als.sanjuan@deped.gov.ph`
