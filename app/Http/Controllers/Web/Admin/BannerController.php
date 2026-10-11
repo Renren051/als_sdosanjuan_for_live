@@ -33,22 +33,30 @@ class BannerController extends Controller
             'button_text' => ['nullable', 'string', 'max:100'],
             'button_url' => ['nullable', 'string', 'max:255'],
             'order_seq' => ['nullable', 'integer', 'min:1'],
-            'image' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:8192'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:12288'],
+            'cropped_image' => ['nullable', 'string'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        $imageFile = $request->file('image');
-        $destinationDir = public_path('images/banners');
-
-        if (!File::isDirectory($destinationDir)) {
-            File::makeDirectory($destinationDir, 0755, true);
+        if (!$request->hasFile('image') && empty($validated['cropped_image'])) {
+            return back()->withErrors(['image' => 'Please select and crop an image for the hero banner.'])->withInput();
         }
 
-        $extension = $imageFile->getClientOriginalExtension();
-        $fileName = 'hero-slide-' . time() . '-' . Str::random(6) . '.' . $extension;
-        $imageFile->move($destinationDir, $fileName);
+        if (!empty($validated['cropped_image']) && str_starts_with($validated['cropped_image'], 'data:image')) {
+            $relativePath = $this->saveCroppedImage($validated['cropped_image']);
+        } else {
+            $imageFile = $request->file('image');
+            $destinationDir = public_path('images/banners');
 
-        $relativePath = 'images/banners/' . $fileName;
+            if (!File::isDirectory($destinationDir)) {
+                File::makeDirectory($destinationDir, 0755, true);
+            }
+
+            $extension = $imageFile->getClientOriginalExtension();
+            $fileName = 'hero-slide-' . time() . '-' . Str::random(6) . '.' . $extension;
+            $imageFile->move($destinationDir, $fileName);
+            $relativePath = 'images/banners/' . $fileName;
+        }
 
         $maxOrder = HeroBanner::max('order_seq') ?? 0;
 
@@ -78,11 +86,16 @@ class BannerController extends Controller
             'button_text' => ['nullable', 'string', 'max:100'],
             'button_url' => ['nullable', 'string', 'max:255'],
             'order_seq' => ['nullable', 'integer', 'min:1'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:8192'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:12288'],
+            'cropped_image' => ['nullable', 'string'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        if ($request->hasFile('image')) {
+        if (!empty($validated['cropped_image']) && str_starts_with($validated['cropped_image'], 'data:image')) {
+            $relativePath = $this->saveCroppedImage($validated['cropped_image']);
+            $this->deleteOldBannerImage($banner->image_path);
+            $banner->image_path = $relativePath;
+        } elseif ($request->hasFile('image')) {
             $imageFile = $request->file('image');
             $destinationDir = public_path('images/banners');
 
@@ -94,14 +107,7 @@ class BannerController extends Controller
             $fileName = 'hero-slide-' . time() . '-' . Str::random(6) . '.' . $extension;
             $imageFile->move($destinationDir, $fileName);
 
-            // If the old image was custom uploaded, clean it up if safe
-            if (!empty($banner->image_path) && !str_contains($banner->image_path, 'hero-slide-1.jpg') && !str_contains($banner->image_path, 'hero-slide-2.jpg') && !str_contains($banner->image_path, 'hero-slide-3.jpg')) {
-                $oldPath = public_path($banner->image_path);
-                if (File::exists($oldPath)) {
-                    File::delete($oldPath);
-                }
-            }
-
+            $this->deleteOldBannerImage($banner->image_path);
             $banner->image_path = 'images/banners/' . $fileName;
         }
 
@@ -116,6 +122,30 @@ class BannerController extends Controller
         $banner->save();
 
         return redirect()->route('admin.banners.index')->with('status', 'Hero banner updated successfully!');
+    }
+
+    /**
+     * Dedicated action to quickly update the crop / reposition framing of an existing hero banner.
+     */
+    public function reposition(Request $request, int $id): RedirectResponse
+    {
+        $banner = HeroBanner::findOrFail($id);
+
+        $validated = $request->validate([
+            'cropped_image' => ['required', 'string'],
+        ]);
+
+        if (!str_starts_with($validated['cropped_image'], 'data:image')) {
+            return back()->withErrors(['cropped_image' => 'Invalid cropped image payload format.']);
+        }
+
+        $relativePath = $this->saveCroppedImage($validated['cropped_image']);
+        $this->deleteOldBannerImage($banner->image_path);
+
+        $banner->image_path = $relativePath;
+        $banner->save();
+
+        return redirect()->route('admin.banners.index')->with('status', "Framing and crop updated successfully for '{$banner->title}'!");
     }
 
     /**
@@ -138,16 +168,63 @@ class BannerController extends Controller
     {
         $banner = HeroBanner::findOrFail($id);
 
-        // Delete uploaded file if not a seeded template asset
-        if (!empty($banner->image_path) && !str_contains($banner->image_path, 'hero-slide-1.jpg') && !str_contains($banner->image_path, 'hero-slide-2.jpg') && !str_contains($banner->image_path, 'hero-slide-3.jpg')) {
-            $filePath = public_path($banner->image_path);
-            if (File::exists($filePath)) {
-                File::delete($filePath);
-            }
-        }
-
+        $this->deleteOldBannerImage($banner->image_path);
         $banner->delete();
 
         return redirect()->route('admin.banners.index')->with('status', 'Hero banner deleted successfully.');
+    }
+
+    /**
+     * Save a base64 encoded cropped image to the banners directory.
+     */
+    protected function saveCroppedImage(string $base64Data): string
+    {
+        $destinationDir = public_path('images/banners');
+
+        if (!File::isDirectory($destinationDir)) {
+            File::makeDirectory($destinationDir, 0755, true);
+        }
+
+        $extension = 'jpg';
+        if (preg_match('/^data:image\/(\w+);base64,/', $base64Data, $matches)) {
+            $type = strtolower($matches[1]);
+            if (in_array($type, ['png', 'webp', 'jpeg', 'jpg'])) {
+                $extension = ($type === 'jpeg') ? 'jpg' : $type;
+            }
+            $base64Data = substr($base64Data, strpos($base64Data, ',') + 1);
+        }
+
+        $decoded = base64_decode($base64Data);
+        if ($decoded === false) {
+            throw new \InvalidArgumentException('Invalid base64 image data.');
+        }
+
+        $imageInfo = @getimagesizefromstring($decoded);
+        if ($imageInfo === false) {
+            throw new \InvalidArgumentException('Uploaded cropped binary is not a valid image.');
+        }
+
+        $fileName = 'hero-slide-' . time() . '-' . Str::random(6) . '.' . $extension;
+        $filePath = $destinationDir . DIRECTORY_SEPARATOR . $fileName;
+
+        File::put($filePath, $decoded);
+
+        return 'images/banners/' . $fileName;
+    }
+
+    /**
+     * Clean up an older uploaded banner file while preserving default template slides.
+     */
+    protected function deleteOldBannerImage(?string $path): void
+    {
+        if (!empty($path) && 
+            !str_contains($path, 'hero-slide-1.jpg') && 
+            !str_contains($path, 'hero-slide-2.jpg') && 
+            !str_contains($path, 'hero-slide-3.jpg')) {
+            $fullPath = public_path($path);
+            if (File::exists($fullPath)) {
+                File::delete($fullPath);
+            }
+        }
     }
 }

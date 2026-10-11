@@ -4,10 +4,10 @@
 @section('page_title', 'Homepage Hero Banners')
 
 @section('content')
-<div class="space-y-6" x-data="{ uploadModal: false, editModal: false, activeBanner: {} }">
+<div class="space-y-6" x-data="bannerManager()">
 
     @if(session('status'))
-        <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-semibold flex items-center justify-between">
+        <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm font-semibold flex items-center justify-between shadow-sm">
             <div class="flex items-center gap-2">
                 <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <span>{{ session('status') }}</span>
@@ -17,9 +17,12 @@
     @endif
 
     @if($errors->any())
-        <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm space-y-1">
-            <div class="font-bold">Please correct the following errors:</div>
-            <ul class="list-disc list-inside text-xs">
+        <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm space-y-1 shadow-sm">
+            <div class="font-bold flex items-center gap-2">
+                <svg class="w-4 h-4 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                <span>Please correct the following errors:</span>
+            </div>
+            <ul class="list-disc list-inside text-xs pl-6">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -33,10 +36,10 @@
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-[10px] font-bold text-deped-blue uppercase tracking-wider mb-1">
                 <span>Kingster-Style Hero Banner Carousel</span>
             </div>
-            <h2 class="text-lg font-bold text-slate-900">Homepage Hero Photos &amp; Transitions</h2>
-            <p class="text-xs text-slate-500">Upload and configure photos shown on the top of the homepage with smooth slow-fade transitions.</p>
+            <h2 class="text-lg font-bold text-slate-900">Homepage Hero Photos &amp; Framing</h2>
+            <p class="text-xs text-slate-500">Upload photos with Facebook-style drag &amp; zoom repositioning to choose the exact view shown on the homepage.</p>
         </div>
-        <button type="button" @click="uploadModal = true" 
+        <button type="button" @click="openUploadModal()" 
                 class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-deped-blue hover:bg-deped-dark text-white font-bold text-xs shadow-md shadow-deped-blue/20 transition-all shrink-0">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             <span>Upload New Banner Photo</span>
@@ -63,6 +66,16 @@
                         <div class="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md text-white font-mono text-xs font-bold">
                             Slide #{{ $banner->order_seq }}
                         </div>
+
+                        <!-- Quick Hover Reposition Overlay Button -->
+                        <button type="button" 
+                                @click="openCropperForDirectBanner({{ json_encode($banner) }})"
+                                class="absolute inset-0 bg-slate-950/60 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-2 font-bold text-xs cursor-pointer">
+                            <span class="p-2.5 rounded-full bg-white/20 border border-white/30 text-white shadow-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                            </span>
+                            <span>Click to Reposition / Crop Photo</span>
+                        </button>
                     </div>
 
                     <!-- Banner Content Details -->
@@ -94,12 +107,21 @@
                         </button>
                     </form>
 
-                    <div class="flex items-center gap-1">
-                        <!-- Edit Button -->
+                    <div class="flex items-center gap-1.5">
+                        <!-- Dedicated Reposition Action Button -->
                         <button type="button" 
-                                @click="activeBanner = {{ json_encode($banner) }}; editModal = true"
+                                @click="openCropperForDirectBanner({{ json_encode($banner) }})"
+                                class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 text-deped-blue hover:bg-blue-100 border border-blue-200/80 text-xs font-bold transition-colors"
+                                title="Reposition photo view (Facebook Style)">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                            <span>Reposition</span>
+                        </button>
+
+                        <!-- Edit Details Button -->
+                        <button type="button" 
+                                @click="openEditModal({{ json_encode($banner) }})"
                                 class="p-2 rounded-lg text-slate-600 hover:bg-white hover:text-deped-blue hover:shadow-sm transition-all"
-                                title="Edit Banner Details">
+                                title="Edit Banner Details & Replace Photo">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                         </button>
 
@@ -111,6 +133,13 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             </button>
                         </form>
+
+                        <!-- Hidden Direct Reposition Form for quick submission -->
+                        <form id="directRepositionForm_{{ $banner->id }}" action="{{ route('admin.banners.reposition', $banner->id) }}" method="POST" style="display: none;">
+                            @csrf
+                            @method('PATCH')
+                            <input type="hidden" name="cropped_image" id="directRepositionInput_{{ $banner->id }}">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -119,41 +148,70 @@
                 <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 <div class="text-base font-bold text-slate-800">No Hero Banners Found</div>
                 <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Upload a high-resolution photo to showcase on the top banner of the public homepage.</p>
-                <button @click="uploadModal = true" class="mt-4 px-4 py-2 rounded-xl bg-deped-blue text-white text-xs font-bold">Upload First Banner</button>
+                <button @click="openUploadModal()" class="mt-4 px-4 py-2 rounded-xl bg-deped-blue text-white text-xs font-bold">Upload First Banner</button>
             </div>
         @endforelse
     </div>
 
-    <!-- Upload Modal -->
-    <div x-show="uploadModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" style="display: none;">
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-5" @click.away="uploadModal = false">
+    <!-- ========================================================
+         MODAL 1: UPLOAD NEW HERO BANNER MODAL
+         ======================================================== -->
+    <div x-show="uploadModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" style="display: none;" x-cloak>
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 sm:p-8 space-y-5" @click.away="uploadModal = false">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
                     <h3 class="text-lg font-bold text-slate-900">Upload New Hero Banner</h3>
-                    <p class="text-xs text-slate-500">Will be added to the homepage carousel with slow fade transition</p>
+                    <p class="text-xs text-slate-500">Pick an image and frame it with Facebook-style repositioning</p>
                 </div>
-                <button type="button" @click="uploadModal = false" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+                <button type="button" @click="uploadModal = false" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none">&times;</button>
             </div>
 
             <form action="{{ route('admin.banners.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 
-                <!-- Image File Input -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Banner Image (JPG, PNG, WebP) *</label>
-                    <input type="file" name="image" required accept="image/jpeg,image/png,image/webp,image/jpg"
+                <!-- Cropped Base64 Payload Input -->
+                <input type="hidden" name="cropped_image" :value="uploadCroppedImage">
+
+                <!-- Image File Input with Auto-Cropper Trigger -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-700 uppercase">Banner Image (JPG, PNG, WebP) *</label>
+                    
+                    <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/jpg"
+                           @change="onUploadFileSelected($event)"
                            class="w-full text-xs text-slate-600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-deped-blue file:text-white hover:file:bg-deped-dark file:cursor-pointer border border-slate-200 rounded-xl bg-slate-50">
-                    <p class="text-[11px] text-slate-400 mt-1">Recommended size: 1920x800 or 1920x1080 (High definition landscape). Max 8MB.</p>
+                    
+                    <!-- Cropped Preview Badge -->
+                    <template x-if="uploadCroppedImage">
+                        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-16 h-8 rounded-lg overflow-hidden border border-emerald-300 bg-black shrink-0">
+                                    <img :src="uploadCroppedImage" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <div class="text-xs font-bold text-emerald-800 flex items-center gap-1.5">
+                                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                        <span>Custom Framing Applied (1920×800)</span>
+                                    </div>
+                                    <div class="text-[11px] text-emerald-600">Framed like Facebook cover photo</div>
+                                </div>
+                            </div>
+                            <button type="button" @click="reopenUploadCrop()" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-[11px] hover:bg-emerald-700 transition-colors">
+                                Adjust Framing
+                            </button>
+                        </div>
+                    </template>
+
+                    <p class="text-[11px] text-slate-400">Selecting a photo will open the Facebook-style reposition tool so you can choose the exact framing.</p>
                 </div>
 
-                <!-- Title (Main Heading in Serif font) -->
+                <!-- Headline / Title -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Headline / University/Program Title *</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Headline / Title *</label>
                     <input type="text" name="title" required placeholder="e.g. Alternative Learning System"
                            class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-deped-blue focus:bg-white font-medium">
                 </div>
 
-                <!-- Subtitle (Top text like 'The Best University Of The State') -->
+                <!-- Subtitle -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Top Subtitle</label>
                     <input type="text" name="subtitle" placeholder="e.g. SDO San Juan City • Division ALS Network"
@@ -197,29 +255,57 @@
         </div>
     </div>
 
-    <!-- Edit Modal -->
-    <div x-show="editModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" style="display: none;">
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-5" @click.away="editModal = false">
+    <!-- ========================================================
+         MODAL 2: EDIT HERO BANNER MODAL (From User Screenshot)
+         ======================================================== -->
+    <div x-show="editModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" style="display: none;" x-cloak>
+        <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 sm:p-8 space-y-5" @click.away="editModal = false">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
                     <h3 class="text-lg font-bold text-slate-900">Edit Hero Banner</h3>
-                    <p class="text-xs text-slate-500">Update slide text, button link, or replace photo</p>
+                    <p class="text-xs text-slate-500">Update slide text, button link, or crop / replace photo</p>
                 </div>
-                <button type="button" @click="editModal = false" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+                <button type="button" @click="editModal = false" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none">&times;</button>
             </div>
 
             <form :action="'{{ url('/admin/banners') }}/' + activeBanner.id" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 @method('PUT')
                 
-                <!-- Replace Image File (Optional) -->
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Replace Image (Leave blank to keep existing)</label>
+                <!-- Cropped Base64 Payload Input -->
+                <input type="hidden" name="cropped_image" :value="editCroppedImage">
+
+                <!-- Replace / Reposition Image Section -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-700 uppercase">Replace Image (Leave blank to keep existing)</label>
+                    
+                    <!-- Reposition Current Photo Trigger -->
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-16 h-9 rounded-lg overflow-hidden bg-slate-900 border border-slate-300 shrink-0">
+                                <img :src="editCroppedImage || activeBanner.image_url" class="w-full h-full object-cover">
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-xs font-bold text-slate-800 truncate" x-text="editCroppedImage ? 'Custom Framing Ready' : 'Current Active Photo'"></div>
+                                <div class="text-[11px] text-slate-500" x-text="editCroppedImage ? 'New crop applied' : '1920×800 format'"></div>
+                            </div>
+                        </div>
+                        <button type="button" 
+                                @click="openCropperForEditExisting()"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-deped-blue text-white font-bold text-xs hover:bg-deped-dark shadow-sm transition-all shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                            <span>Crop / Reposition</span>
+                        </button>
+                    </div>
+
+                    <!-- Replace with New File Input -->
                     <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/jpg"
+                           @change="onEditFileSelected($event)"
                            class="w-full text-xs text-slate-600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-deped-blue file:text-white hover:file:bg-deped-dark file:cursor-pointer border border-slate-200 rounded-xl bg-slate-50">
+                    <p class="text-[11px] text-slate-400">Selecting a new file will automatically launch the Facebook-style reposition tool.</p>
                 </div>
 
-                <!-- Title -->
+                <!-- Headline / Title -->
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Headline / Title *</label>
                     <input type="text" name="title" required x-model="activeBanner.title"
@@ -270,5 +356,525 @@
         </div>
     </div>
 
+    <!-- ========================================================
+         MODAL 3: FACEBOOK COVER PHOTO REPOSITION & CROP MODAL
+         Interactive Drag & Zoom with Rule-of-Thirds Grid
+         ======================================================== -->
+    <div x-show="cropper.isOpen" 
+         class="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6" 
+         style="display: none;" 
+         x-cloak>
+        <div class="bg-white rounded-3xl border border-slate-200/90 shadow-2xl max-w-4xl w-full p-5 sm:p-7 space-y-4" @click.away="cropper.cancel()">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-deped-blue/10 text-deped-blue flex items-center justify-center font-bold">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <span>Reposition Hero Banner Photo</span>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] bg-blue-100 text-deped-blue font-bold uppercase tracking-wider">Facebook Style</span>
+                        </h3>
+                        <p class="text-xs text-slate-500">Drag to reposition photo • Scroll or use slider to zoom • Freely choose what you want to view</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <!-- Aspect Ratio Switcher -->
+                    <div class="hidden sm:inline-flex items-center p-0.5 bg-slate-100 rounded-xl border border-slate-200 text-[11px] font-bold">
+                        <button type="button" 
+                                @click="cropper.setAspectRatio(1920/800, '2.4:1')"
+                                :class="cropper.aspectRatio === 1920/800 ? 'bg-white text-deped-blue shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+                                class="px-2.5 py-1 rounded-lg transition-all">
+                            2.4:1 (Ultra-Wide)
+                        </button>
+                        <button type="button" 
+                                @click="cropper.setAspectRatio(16/9, '16:9')"
+                                :class="cropper.aspectRatio === 16/9 ? 'bg-white text-deped-blue shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+                                class="px-2.5 py-1 rounded-lg transition-all">
+                            16:9 (Landscape)
+                        </button>
+                    </div>
+
+                    <button type="button" @click="cropper.cancel()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none p-1">&times;</button>
+                </div>
+            </div>
+
+            <!-- Interactive Viewport Frame -->
+            <div class="space-y-3">
+                <div class="relative w-full rounded-2xl overflow-hidden bg-slate-950 select-none touch-none border border-slate-800 shadow-inner group"
+                     x-ref="viewportBox"
+                     :style="'aspect-ratio: ' + cropper.aspectRatio + ';'"
+                     @pointerdown="cropper.startDrag($event)"
+                     @pointermove="cropper.onDrag($event)"
+                     @pointerup="cropper.stopDrag()"
+                     @pointercancel="cropper.stopDrag()"
+                     @wheel.prevent="cropper.onWheel($event)"
+                     :class="cropper.isDragging ? 'cursor-grabbing' : 'cursor-grab'">
+
+                    <!-- Image Layer -->
+                    <template x-if="cropper.imgElement">
+                        <img :src="cropper.imgElement.src"
+                             class="absolute left-1/2 top-1/2 pointer-events-none select-none max-w-none max-h-none will-change-transform"
+                             :style="`transform: translate(-50%, -50%) translate3d(${cropper.posX}px, ${cropper.posY}px, 0) rotate(${cropper.rotation}deg) scale(${cropper.currentScale});`" />
+                    </template>
+
+                    <!-- Instruction Overlay Pill (Like Facebook) -->
+                    <div class="absolute top-3 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-md text-white font-semibold text-xs flex items-center gap-2 pointer-events-none shadow-lg border border-white/15 transition-opacity duration-200"
+                         :class="cropper.isDragging ? 'opacity-40' : 'opacity-95'">
+                        <svg class="w-4 h-4 text-deped-gold shrink-0 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"/></svg>
+                        <span>Drag photo to reposition view</span>
+                        <span class="text-white/40">•</span>
+                        <span class="text-white/70">Scroll or use slider to zoom</span>
+                    </div>
+
+                    <!-- Rule of Thirds Grid Overlay (Appears on drag) -->
+                    <div class="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3 transition-opacity duration-300"
+                         :class="cropper.isDragging ? 'opacity-60' : 'opacity-15'">
+                        <div class="border-r border-b border-white/40"></div>
+                        <div class="border-r border-b border-white/40"></div>
+                        <div class="border-b border-white/40"></div>
+                        <div class="border-r border-b border-white/40"></div>
+                        <div class="border-r border-b border-white/40"></div>
+                        <div class="border-b border-white/40"></div>
+                        <div class="border-r border-white/40"></div>
+                        <div class="border-r border-white/40"></div>
+                        <div></div>
+                    </div>
+
+                    <!-- Target Resolution Tag -->
+                    <div class="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-emerald-400 font-mono text-[11px] font-bold border border-emerald-500/20 shadow-md">
+                        <span x-text="cropper.aspectRatio === 1920/800 ? '1920 × 800 HD' : '1920 × 1080 HD'"></span>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div x-show="!cropper.isLoaded" class="absolute inset-0 bg-slate-900 flex items-center justify-center text-white text-xs font-bold gap-2">
+                        <svg class="animate-spin w-5 h-5 text-deped-blue" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                        <span>Loading photo for repositioning...</span>
+                    </div>
+                </div>
+
+                <!-- Controls Toolbar -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3">
+                    
+                    <!-- Zoom Slider Row -->
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs font-bold text-slate-700 uppercase shrink-0 w-14">Zoom:</span>
+                        
+                        <!-- Zoom Out Button -->
+                        <button type="button" 
+                                @click="cropper.zoomStep(-0.1)"
+                                class="w-8 h-8 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-base transition-colors shrink-0">
+                            &minus;
+                        </button>
+                        
+                        <!-- Range Input -->
+                        <input type="range" 
+                               min="1.0" 
+                               max="3.0" 
+                               step="0.01" 
+                               x-model.number="cropper.zoom"
+                               @input="cropper.onZoomChange()"
+                               class="w-full accent-deped-blue cursor-pointer h-2 bg-slate-200 rounded-lg">
+                        
+                        <!-- Zoom In Button -->
+                        <button type="button" 
+                                @click="cropper.zoomStep(0.1)"
+                                class="w-8 h-8 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-base transition-colors shrink-0">
+                            &plus;
+                        </button>
+
+                        <!-- Percentage Badge -->
+                        <div class="w-16 px-2 py-1 rounded-lg bg-white border border-slate-300 text-slate-800 font-mono text-xs font-bold text-center shrink-0">
+                            <span x-text="Math.round(cropper.zoom * 100) + '%'"></span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Tools Row -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <!-- Center Framing -->
+                            <button type="button" 
+                                    @click="cropper.centerAndClamp()"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold text-xs transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                <span>Center Framing</span>
+                            </button>
+
+                            <!-- Rotate Left -->
+                            <button type="button" 
+                                    @click="cropper.rotate(-90)"
+                                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold text-xs transition-colors"
+                                    title="Rotate 90 degrees counter-clockwise">
+                                <span>↺ -90°</span>
+                            </button>
+
+                            <!-- Rotate Right -->
+                            <button type="button" 
+                                    @click="cropper.rotate(90)"
+                                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold text-xs transition-colors"
+                                    title="Rotate 90 degrees clockwise">
+                                <span>↻ +90°</span>
+                            </button>
+                        </div>
+
+                        <!-- Live Mini Preview Mockup Toggle -->
+                        <div class="flex items-center gap-2 text-xs text-slate-500">
+                            <span class="font-semibold text-slate-600">Framing:</span>
+                            <span class="font-mono text-[11px] text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200" x-text="`X: ${Math.round(cropper.posX)}px, Y: ${Math.round(cropper.posY)}px`"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Homepage Mockup Preview -->
+                <div class="p-3.5 bg-slate-900 rounded-2xl border border-slate-800 text-white">
+                    <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                        <span>Live Homepage Simulation (How it appears to learners):</span>
+                        <span class="text-emerald-400">Exact Aspect Ratio</span>
+                    </div>
+                    <div class="relative w-full rounded-xl overflow-hidden bg-black" style="aspect-ratio: 2.4 / 1;">
+                        <template x-if="cropper.previewDataUrl">
+                            <img :src="cropper.previewDataUrl" class="w-full h-full object-cover">
+                        </template>
+                        <!-- Simulated Dark Navy Vignette and Headline -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/40 to-transparent flex items-center p-4 sm:p-6">
+                            <div class="max-w-xs space-y-1">
+                                <div class="text-[9px] font-bold text-deped-gold uppercase tracking-wider">SDO San Juan City • Division ALS</div>
+                                <div class="text-xs sm:text-sm font-bold text-white font-serif leading-tight">Alternative Learning System</div>
+                                <div class="pt-1">
+                                    <span class="inline-block px-2 py-0.5 rounded bg-deped-blue text-[9px] font-bold text-white">Take A Tour &rarr;</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="pt-3 flex items-center justify-between border-t border-slate-100">
+                <button type="button" 
+                        @click="cropper.cancel()" 
+                        class="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors">
+                    Cancel
+                </button>
+                
+                <button type="button" 
+                        @click="cropper.applyCrop()" 
+                        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-deped-blue hover:bg-deped-dark text-white font-bold text-xs shadow-md shadow-deped-blue/25 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span x-text="cropper.targetMode === 'direct' ? 'Save Framing & Reposition' : 'Apply Framing & Crop'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('bannerManager', () => ({
+        uploadModal: false,
+        editModal: false,
+        activeBanner: {},
+        
+        // Staged cropped images
+        uploadCroppedImage: null,
+        editCroppedImage: null,
+        
+        // Active file references
+        uploadOriginalFileUrl: null,
+        editOriginalFileUrl: null,
+
+        // Cropper state machine
+        cropper: {
+            isOpen: false,
+            isLoaded: false,
+            imgElement: null,
+            aspectRatio: 1920 / 800,
+            aspectRatioName: '2.4:1',
+            zoom: 1.0,
+            minZoom: 1.0,
+            maxZoom: 3.0,
+            rotation: 0,
+            posX: 0,
+            posY: 0,
+            isDragging: false,
+            dragStartX: 0,
+            dragStartY: 0,
+            initialPosX: 0,
+            initialPosY: 0,
+            containerWidth: 0,
+            containerHeight: 0,
+            naturalWidth: 0,
+            naturalHeight: 0,
+            previewDataUrl: null,
+            targetMode: null, // 'upload', 'edit', 'direct'
+            targetBannerId: null,
+            _resizeObserver: null,
+            _previewTimer: null,
+
+            open(imageUrl, mode = 'direct', bannerId = null) {
+                this.isOpen = true;
+                this.isLoaded = false;
+                this.targetMode = mode;
+                this.targetBannerId = bannerId;
+                this.zoom = 1.0;
+                this.rotation = 0;
+                this.posX = 0;
+                this.posY = 0;
+                this.aspectRatio = 1920 / 800;
+                this.previewDataUrl = null;
+
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => {
+                    this.imgElement = img;
+                    this.naturalWidth = img.naturalWidth;
+                    this.naturalHeight = img.naturalHeight;
+                    this.isLoaded = true;
+
+                    setTimeout(() => {
+                        this.updateDimensions();
+                        this.centerAndClamp();
+                        this.updatePreview();
+                    }, 50);
+                };
+                img.src = imageUrl;
+            },
+
+            cancel() {
+                this.isOpen = false;
+            },
+
+            updateDimensions() {
+                const vp = document.querySelector('[x-ref="viewportBox"]');
+                if (vp) {
+                    this.containerWidth = vp.clientWidth;
+                    this.containerHeight = vp.clientHeight;
+                }
+            },
+
+            get effectiveDimensions() {
+                if (this.rotation % 180 !== 0) {
+                    return { w: this.naturalHeight, h: this.naturalWidth };
+                }
+                return { w: this.naturalWidth, h: this.naturalHeight };
+            },
+
+            get baseScale() {
+                if (!this.containerWidth || !this.containerHeight || !this.naturalWidth || !this.naturalHeight) {
+                    return 1.0;
+                }
+                const eff = this.effectiveDimensions;
+                return Math.max(this.containerWidth / eff.w, this.containerHeight / eff.h);
+            },
+
+            get currentScale() {
+                return this.baseScale * this.zoom;
+            },
+
+            get slack() {
+                const eff = this.effectiveDimensions;
+                const dispW = eff.w * this.currentScale;
+                const dispH = eff.h * this.currentScale;
+                return {
+                    x: Math.max(0, (dispW - this.containerWidth) / 2),
+                    y: Math.max(0, (dispH - this.containerHeight) / 2)
+                };
+            },
+
+            clampPosition() {
+                const s = this.slack;
+                this.posX = Math.max(-s.x, Math.min(s.x, this.posX));
+                this.posY = Math.max(-s.y, Math.min(s.y, this.posY));
+            },
+
+            centerAndClamp() {
+                this.posX = 0;
+                this.posY = 0;
+                this.clampPosition();
+            },
+
+            startDrag(e) {
+                if (!this.isLoaded) return;
+                this.isDragging = true;
+                this.dragStartX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+                this.dragStartY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+                this.initialPosX = this.posX;
+                this.initialPosY = this.posY;
+            },
+
+            onDrag(e) {
+                if (!this.isDragging) return;
+                const currentX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+                const currentY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+                const deltaX = currentX - this.dragStartX;
+                const deltaY = currentY - this.dragStartY;
+
+                this.posX = this.initialPosX + deltaX;
+                this.posY = this.initialPosY + deltaY;
+                this.clampPosition();
+            },
+
+            stopDrag() {
+                if (this.isDragging) {
+                    this.isDragging = false;
+                    this.updatePreview();
+                }
+            },
+
+            onWheel(e) {
+                const delta = e.deltaY < 0 ? 0.08 : -0.08;
+                this.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, parseFloat((this.zoom + delta).toFixed(2))));
+                this.clampPosition();
+                this.updatePreviewDebounced();
+            },
+
+            zoomStep(step) {
+                this.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, parseFloat((this.zoom + step).toFixed(2))));
+                this.clampPosition();
+                this.updatePreviewDebounced();
+            },
+
+            onZoomChange() {
+                this.clampPosition();
+                this.updatePreviewDebounced();
+            },
+
+            rotate(deg) {
+                this.rotation = (this.rotation + deg + 360) % 360;
+                this.clampPosition();
+                this.updatePreview();
+            },
+
+            setAspectRatio(ratio, name) {
+                this.aspectRatio = ratio;
+                this.aspectRatioName = name;
+                setTimeout(() => {
+                    this.updateDimensions();
+                    this.clampPosition();
+                    this.updatePreview();
+                }, 30);
+            },
+
+            generateCanvas(targetWidth = 1920) {
+                if (!this.imgElement || !this.containerWidth || !this.containerHeight) return null;
+                const targetHeight = Math.round(targetWidth / this.aspectRatio);
+                const canvas = document.createElement('canvas');
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+
+                const k = targetWidth / this.containerWidth;
+                const canvasX = (targetWidth / 2) + (this.posX * k);
+                const canvasY = (targetHeight / 2) + (this.posY * k);
+                const canvasScale = this.currentScale * k;
+
+                ctx.save();
+                ctx.translate(canvasX, canvasY);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.scale(canvasScale, canvasScale);
+                ctx.drawImage(this.imgElement, -this.naturalWidth / 2, -this.naturalHeight / 2);
+                ctx.restore();
+
+                return canvas;
+            },
+
+            updatePreview() {
+                const canvas = this.generateCanvas(640);
+                if (canvas) {
+                    this.previewDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                }
+            },
+
+            updatePreviewDebounced() {
+                clearTimeout(this._previewTimer);
+                this._previewTimer = setTimeout(() => this.updatePreview(), 60);
+            },
+
+            applyCrop() {
+                const canvas = this.generateCanvas(1920);
+                if (!canvas) return;
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+                const manager = Alpine.$data(document.querySelector('[x-data="bannerManager()"]'));
+
+                if (this.targetMode === 'upload') {
+                    manager.uploadCroppedImage = dataUrl;
+                    this.isOpen = false;
+                } else if (this.targetMode === 'edit') {
+                    manager.editCroppedImage = dataUrl;
+                    this.isOpen = false;
+                } else if (this.targetMode === 'direct' && this.targetBannerId) {
+                    const form = document.getElementById('directRepositionForm_' + this.targetBannerId);
+                    const input = document.getElementById('directRepositionInput_' + this.targetBannerId);
+                    if (form && input) {
+                        input.value = dataUrl;
+                        form.submit();
+                    }
+                }
+            }
+        },
+
+        // Helper open methods
+        openUploadModal() {
+            this.uploadCroppedImage = null;
+            this.uploadOriginalFileUrl = null;
+            this.uploadModal = true;
+        },
+
+        openEditModal(banner) {
+            this.activeBanner = banner;
+            this.editCroppedImage = null;
+            this.editOriginalFileUrl = null;
+            this.editModal = true;
+        },
+
+        openCropperForDirectBanner(banner) {
+            this.cropper.open(banner.image_url, 'direct', banner.id);
+        },
+
+        openCropperForEditExisting() {
+            const url = this.editOriginalFileUrl || this.activeBanner.image_url;
+            this.cropper.open(url, 'edit', this.activeBanner.id);
+        },
+
+        reopenUploadCrop() {
+            if (this.uploadOriginalFileUrl) {
+                this.cropper.open(this.uploadOriginalFileUrl, 'upload', null);
+            }
+        },
+
+        onUploadFileSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.uploadOriginalFileUrl = e.target.result;
+                this.cropper.open(e.target.result, 'upload', null);
+            };
+            reader.readAsDataURL(file);
+        },
+
+        onEditFileSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.editOriginalFileUrl = e.target.result;
+                this.cropper.open(e.target.result, 'edit', this.activeBanner.id);
+            };
+            reader.readAsDataURL(file);
+        }
+    }));
+});
+</script>
+@endpush

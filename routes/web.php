@@ -74,6 +74,7 @@ Route::middleware(['auth', 'role:super_admin,admin,mobile_teacher'])->prefix('ad
     Route::get('/banners', [BannerController::class, 'index'])->name('banners.index');
     Route::post('/banners', [BannerController::class, 'store'])->name('banners.store');
     Route::put('/banners/{id}', [BannerController::class, 'update'])->name('banners.update');
+    Route::patch('/banners/{id}/reposition', [BannerController::class, 'reposition'])->name('banners.reposition');
     Route::patch('/banners/{id}/toggle', [BannerController::class, 'toggleActive'])->name('banners.toggle');
     Route::delete('/banners/{id}', [BannerController::class, 'destroy'])->name('banners.destroy');
 
