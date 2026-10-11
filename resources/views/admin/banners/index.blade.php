@@ -318,207 +318,145 @@
     </div>
 
     <!-- ========================================================
-         MODAL 3: REPOSITION HERO BANNER PHOTO MODAL
-         Non-destructive framing: Adjusts focal point with CSS object-position
+         MODAL 3: REPOSITION HERO BANNER PHOTO (FACEBOOK COVER PHOTO STYLE)
          ======================================================== -->
     <div x-show="cropper.isOpen" 
-         class="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5" 
+         class="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6" 
          style="display: none;" 
          x-cloak>
         
-        <div class="relative w-full max-w-5xl bg-white rounded-3xl border border-slate-200/90 shadow-2xl flex flex-col max-h-[94vh] overflow-hidden my-auto" 
+        <div class="relative w-full max-w-5xl lg:max-w-6xl bg-slate-900 rounded-3xl border border-slate-700/80 shadow-2xl overflow-hidden my-auto flex flex-col" 
              @click.away="cropper.cancel()">
             
-            <!-- Sticky Header -->
-            <div class="shrink-0 px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white z-10">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-deped-blue/10 text-deped-blue flex items-center justify-center font-bold shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+            <!-- Sleek Dark Header -->
+            <div class="shrink-0 px-6 py-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 z-20">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-deped-blue/20 text-blue-400 flex items-center justify-center font-bold shrink-0 border border-blue-500/20">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
                     </div>
                     <div>
-                        <h3 class="text-base sm:text-lg font-bold text-slate-900">
-                            Reposition Hero Banner Photo
+                        <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+                            <span>Reposition Hero Banner Photo</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-normal border border-blue-400/20 hidden sm:inline-block">1920 &times; 800 HD</span>
                         </h3>
-                        <p class="text-xs text-slate-500">Drag photo to adjust framing &bull; 1:1 identical to homepage viewing size</p>
+                        <p class="text-xs text-slate-400">Drag photo to adjust framing &bull; Exactly matches homepage viewing</p>
                     </div>
                 </div>
                 
                 <div class="flex items-center gap-2">
-                    <!-- Aspect Ratio Badge -->
-                    <div class="inline-flex items-center px-3 py-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700">
-                        <span>1920 &times; 800 HD (2.4:1)</span>
-                    </div>
+                    <!-- Toggle Title Overlay -->
+                    <button type="button" 
+                            @click="cropper.showOverlayText = !cropper.showOverlayText"
+                            :class="cropper.showOverlayText ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' : 'bg-slate-800 text-slate-400 border-slate-700'"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border font-bold text-xs transition-colors">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        <span x-text="cropper.showOverlayText ? 'Hide Title' : 'Show Title'"></span>
+                    </button>
 
-                    <button type="button" @click="cropper.cancel()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none p-1.5 rounded-lg hover:bg-slate-100 transition-colors">&times;</button>
+                    <!-- Close Button -->
+                    <button type="button" @click="cropper.cancel()" class="text-slate-400 hover:text-white text-2xl font-bold leading-none p-1.5 rounded-xl hover:bg-slate-800 transition-colors">&times;</button>
                 </div>
             </div>
 
-            <!-- Scrollable Body -->
-            <div class="flex-1 overflow-y-auto px-5 sm:px-6 py-4 space-y-3.5">
-                
-                <!-- Viewport Container (Matching 1920x800 aspect ratio exactly) -->
-                <div id="bannerCropperViewport"
-                     class="relative w-full rounded-2xl overflow-hidden bg-slate-950 select-none touch-none border border-slate-800 shadow-inner group cursor-grab active:cursor-grabbing"
-                     style="aspect-ratio: 1920 / 800;"
-                     @mousedown.prevent="cropper.startDrag($event)"
-                     @touchstart.prevent="cropper.startDrag($event)"
-                     @pointerdown.prevent="cropper.startDrag($event)"
-                     @pointermove.window="cropper.onDrag($event)"
-                     @mousemove.window="cropper.onDrag($event)"
-                     @touchmove.window="cropper.onDrag($event)"
-                     @pointerup.window="cropper.stopDrag($event)"
-                     @mouseup.window="cropper.stopDrag($event)"
-                     @touchend.window="cropper.stopDrag($event)"
-                     @pointercancel.window="cropper.stopDrag($event)"
-                     @touchcancel.window="cropper.stopDrag($event)"
-                     @wheel.prevent="cropper.onWheel($event)"
-                     :class="cropper.isDragging ? 'cursor-grabbing' : 'cursor-grab'">
+            <!-- Viewport Container (Facebook Cover Photo Canvas) -->
+            <div class="relative w-full bg-slate-950 overflow-hidden select-none touch-none group"
+                 id="bannerCropperViewport"
+                 style="aspect-ratio: 1920 / 800;"
+                 @mousedown.prevent="cropper.startDrag($event)"
+                 @touchstart.prevent="cropper.startDrag($event)"
+                 @pointerdown.prevent="cropper.startDrag($event)"
+                 @pointermove.window="cropper.onDrag($event)"
+                 @mousemove.window="cropper.onDrag($event)"
+                 @touchmove.window="cropper.onDrag($event)"
+                 @pointerup.window="cropper.stopDrag($event)"
+                 @mouseup.window="cropper.stopDrag($event)"
+                 @touchend.window="cropper.stopDrag($event)"
+                 @pointercancel.window="cropper.stopDrag($event)"
+                 @touchcancel.window="cropper.stopDrag($event)"
+                 @wheel.prevent="cropper.onWheel($event)"
+                 :class="cropper.isDragging ? 'cursor-grabbing' : 'cursor-grab'">
 
-                    <!-- Image Layer: Direct DOM element with immediate style binding and sync -->
-                    <img id="bannerRepositionImg"
-                         :src="cropper.imageUrl"
-                         :style="'object-position: ' + cropper.posX + '% ' + cropper.posY + '%;'"
-                         draggable="false"
-                         ondragstart="return false;"
-                         class="w-full h-full object-cover pointer-events-none select-none transition-none will-change-[object-position]" />
+                <!-- Image Layer -->
+                <img id="bannerRepositionImg"
+                     :src="cropper.imageUrl"
+                     :style="'object-position: ' + cropper.posX + '% ' + cropper.posY + '%;'"
+                     draggable="false"
+                     ondragstart="return false;"
+                     class="w-full h-full object-cover pointer-events-none select-none transition-none will-change-[object-position]" />
 
-                    <!-- Instruction Overlay Pill (as in Image 2) -->
-                    <div class="absolute top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/75 backdrop-blur-md text-white font-semibold text-xs flex items-center gap-2 pointer-events-none shadow-lg border border-white/15 transition-opacity duration-200"
-                         :class="cropper.isDragging ? 'opacity-30' : 'opacity-95'">
-                        <span class="text-amber-400">✋</span>
-                        <span>Drag photo to reposition &bull; Scroll wheel to adjust</span>
-                    </div>
+                <!-- Center Facebook-Style Instruction Pill -->
+                <div class="absolute top-4 sm:top-5 left-1/2 -translate-x-1/2 px-4 sm:px-6 py-2 rounded-full bg-black/80 backdrop-blur-md text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-2xl border border-white/20 select-none pointer-events-none transition-opacity duration-200"
+                     :class="cropper.isDragging ? 'opacity-35' : 'opacity-95'">
+                    <span class="text-amber-400 text-sm sm:text-base">✋</span>
+                    <span>Drag to Reposition Cover Photo</span>
+                </div>
 
-                    <!-- Live Headline Simulation Overlay on Viewport: Matching Homepage exactly -->
-                    <div x-show="cropper.showOverlayText" 
-                         class="absolute inset-0 bg-gradient-to-r from-[#040e24]/95 via-[#07193f]/80 via-40% to-transparent flex items-center p-6 sm:p-10 md:p-12 pointer-events-none transition-opacity duration-300"
-                         :class="cropper.isDragging ? 'opacity-35' : 'opacity-100'">
-                        <div class="max-w-md space-y-2 pointer-events-none">
-                            <!-- Yellow Eyebrow Subtitle -->
-                            <div class="text-[11px] sm:text-xs font-extrabold text-amber-400 uppercase tracking-widest drop-shadow-sm" 
-                                 x-text="(cropper.targetBanner && cropper.targetBanner.subtitle) ? cropper.targetBanner.subtitle : 'THE BEST PARALLEL LEARNING SYSTEM'"></div>
-                            
-                            <!-- Bold White Headline -->
-                            <div class="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-white leading-tight drop-shadow-lg" 
-                                 x-text="(cropper.targetBanner && cropper.targetBanner.title) ? cropper.targetBanner.title : 'Alternative Learning System San Juan'"></div>
-                            
-                            <!-- Royal Blue Button -->
-                            <div class="pt-2">
-                                <span class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-deped-blue text-xs font-bold text-white shadow-md shadow-deped-blue/30" 
-                                      x-text="(cropper.targetBanner && cropper.targetBanner.button_text) ? cropper.targetBanner.button_text + ' →' : 'Take A Tour →'"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 1920x800 Resolution & Coordinates Badge (like Image 2) -->
-                    <div class="absolute bottom-3 right-3 flex items-center gap-2 pointer-events-none select-none">
-                        <div class="px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-slate-300 font-mono text-[11px] font-bold border border-white/10 shadow-md">
-                            <span x-text="`Vertical: ${cropper.posY}% | Horizontal: ${cropper.posX}%`"></span>
-                        </div>
-                        <div class="px-2.5 py-1 rounded-lg bg-black/85 backdrop-blur-md text-emerald-400 font-mono text-[11px] font-bold border border-emerald-500/20 shadow-md">
-                            1920 &times; 800 HD
+                <!-- Live Homepage Headline & Blue Gradient Simulation Overlay -->
+                <div x-show="cropper.showOverlayText" 
+                     class="absolute inset-0 bg-gradient-to-r from-[#040e24]/95 via-[#07193f]/80 via-40% to-transparent flex items-center p-6 sm:p-10 md:p-12 pointer-events-none transition-opacity duration-300"
+                     :class="cropper.isDragging ? 'opacity-35' : 'opacity-100'">
+                    <div class="max-w-md space-y-2 pointer-events-none">
+                        <!-- Yellow Eyebrow Subtitle -->
+                        <div class="text-[11px] sm:text-xs font-extrabold text-amber-400 uppercase tracking-widest drop-shadow-sm" 
+                             x-text="(cropper.targetBanner && cropper.targetBanner.subtitle) ? cropper.targetBanner.subtitle : 'THE BEST PARALLEL LEARNING SYSTEM'"></div>
+                        
+                        <!-- Bold White Headline -->
+                        <div class="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-white leading-tight drop-shadow-lg" 
+                             x-text="(cropper.targetBanner && cropper.targetBanner.title) ? cropper.targetBanner.title : 'Alternative Learning System San Juan'"></div>
+                        
+                        <!-- Royal Blue Button -->
+                        <div class="pt-2">
+                            <span class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-deped-blue text-xs font-bold text-white shadow-md shadow-deped-blue/30" 
+                                  x-text="(cropper.targetBanner && cropper.targetBanner.button_text) ? cropper.targetBanner.button_text + ' →' : 'Take A Tour →'"></span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Reposition Controls Bar -->
-                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3">
+                <!-- Facebook-Style Floating Action Buttons on Bottom-Right of Banner -->
+                <div class="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex items-center gap-2.5 z-30 select-none">
+                    <button type="button" 
+                            @click="cropper.cancel()" 
+                            :disabled="cropper.isSaving"
+                            class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-black/60 hover:bg-black/80 text-white font-bold text-xs sm:text-sm backdrop-blur-md border border-white/20 shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer">
+                        Cancel
+                    </button>
                     
-                    <!-- Vertical Position Slider -->
-                    <div class="space-y-1.5">
-                        <div class="flex items-center justify-between text-xs font-bold text-slate-700">
-                            <span class="uppercase">Vertical Framing</span>
-                            <span class="font-mono text-deped-blue font-bold" x-text="cropper.posY === 0 ? 'Top (0%)' : (cropper.posY === 50 ? 'Center (50%)' : (cropper.posY === 100 ? 'Bottom (100%)' : cropper.posY + '%'))"></span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="text-[11px] font-semibold text-slate-400 shrink-0">Top (0%)</span>
-                            <input type="range" 
-                                   min="0" 
-                                   max="100" 
-                                   step="1" 
-                                   x-model.number="cropper.posY"
-                                   @input="cropper.syncDomImage()"
-                                   class="w-full accent-deped-blue cursor-pointer h-2 bg-slate-200 rounded-lg">
-                            <span class="text-[11px] font-semibold text-slate-400 shrink-0">Bottom (100%)</span>
-                        </div>
-                    </div>
+                    <button type="button" 
+                            @click="cropper.saveReposition()" 
+                            :disabled="cropper.isSaving"
+                            class="inline-flex items-center gap-2 px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl bg-deped-blue hover:bg-blue-600 text-white font-bold text-xs sm:text-sm shadow-xl shadow-deped-blue/40 border border-blue-400/30 transition-all hover:scale-105 active:scale-95 cursor-pointer">
+                        <template x-if="cropper.isSaving">
+                            <svg class="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                        </template>
+                        <template x-if="!cropper.isSaving">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        </template>
+                        <span x-text="cropper.isSaving ? 'Saving Changes...' : 'Save Changes'"></span>
+                    </button>
+                </div>
 
-                    <!-- Preset Positions & Tools -->
-                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/60">
-                        <div class="flex items-center gap-1.5 flex-wrap">
-                            <span class="text-xs font-semibold text-slate-500 mr-1">Quick Alignment:</span>
-                            
-                            <button type="button" 
-                                    @click="cropper.setPos(50, 0)"
-                                    :class="cropper.posY === 0 ? 'bg-deped-blue text-white' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'"
-                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition-colors">
-                                Top
-                            </button>
-
-                            <button type="button" 
-                                    @click="cropper.setPos(50, 25)"
-                                    :class="cropper.posY === 25 ? 'bg-deped-blue text-white' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'"
-                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition-colors"
-                                    title="Upper framing (ideal for faces / stage)">
-                                Upper (Faces)
-                            </button>
-
-                            <button type="button" 
-                                    @click="cropper.setPos(50, 50)"
-                                    :class="cropper.posY === 50 ? 'bg-deped-blue text-white' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'"
-                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition-colors">
-                                Center
-                            </button>
-
-                            <button type="button" 
-                                    @click="cropper.setPos(50, 75)"
-                                    :class="cropper.posY === 75 ? 'bg-deped-blue text-white' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'"
-                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition-colors">
-                                Lower
-                            </button>
-
-                            <button type="button" 
-                                    @click="cropper.setPos(50, 100)"
-                                    :class="cropper.posY === 100 ? 'bg-deped-blue text-white' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'"
-                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition-colors">
-                                Bottom
-                            </button>
-                        </div>
-
-                        <!-- Toggle Headline Overlay Preview -->
-                        <button type="button" 
-                                @click="cropper.showOverlayText = !cropper.showOverlayText"
-                                :class="cropper.showOverlayText ? 'bg-blue-50 text-deped-blue border-blue-200' : 'bg-white text-slate-600 border-slate-300'"
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-bold text-xs transition-colors">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                            <span x-text="cropper.showOverlayText ? 'Hide Title Preview' : 'Show Title Preview'"></span>
-                        </button>
-                    </div>
+                <!-- Coordinates Indicator on Bottom-Left of Banner -->
+                <div class="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 px-3 py-1.5 rounded-lg bg-black/70 backdrop-blur-md text-slate-300 font-mono text-xs font-bold border border-white/10 select-none pointer-events-none">
+                    <span x-text="`Vertical: ${cropper.posY}% | Horizontal: ${cropper.posX}%`"></span>
                 </div>
             </div>
 
-            <!-- Sticky Footer -->
-            <div class="shrink-0 px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between z-10">
-                <button type="button" 
-                        @click="cropper.cancel()" 
-                        :disabled="cropper.isSaving"
-                        class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors">
-                    Cancel
-                </button>
-                
-                <button type="button" 
-                        @click="cropper.saveReposition()" 
-                        :disabled="cropper.isSaving"
-                        :class="cropper.isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-deped-dark'"
-                        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-deped-blue text-white font-bold text-xs shadow-md shadow-deped-blue/25 transition-all">
-                    <template x-if="cropper.isSaving">
-                        <svg class="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
-                    </template>
-                    <template x-if="!cropper.isSaving">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    </template>
-                    <span x-text="cropper.isSaving ? 'Saving Position...' : 'Save Reposition'"></span>
-                </button>
+            <!-- Compact Helper Bar (Fine-tuning & Presets) -->
+            <div class="shrink-0 px-6 py-3 bg-slate-900 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
+                <div class="flex items-center gap-2 text-slate-400">
+                    <span class="font-bold text-slate-300">Quick Align:</span>
+                    <button type="button" @click="cropper.setPos(50, 0)" :class="cropper.posY === 0 ? 'bg-deped-blue text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'" class="px-2.5 py-1 rounded-lg font-bold transition-colors">Top</button>
+                    <button type="button" @click="cropper.setPos(50, 25)" :class="cropper.posY === 25 ? 'bg-deped-blue text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'" class="px-2.5 py-1 rounded-lg font-bold transition-colors">Upper</button>
+                    <button type="button" @click="cropper.setPos(50, 50)" :class="cropper.posY === 50 ? 'bg-deped-blue text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'" class="px-2.5 py-1 rounded-lg font-bold transition-colors">Center</button>
+                    <button type="button" @click="cropper.setPos(50, 75)" :class="cropper.posY === 75 ? 'bg-deped-blue text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'" class="px-2.5 py-1 rounded-lg font-bold transition-colors">Lower</button>
+                    <button type="button" @click="cropper.setPos(50, 100)" :class="cropper.posY === 100 ? 'bg-deped-blue text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'" class="px-2.5 py-1 rounded-lg font-bold transition-colors">Bottom</button>
+                </div>
+
+                <div class="flex items-center gap-3 text-slate-400 min-w-[200px] sm:min-w-[260px]">
+                    <span class="text-[11px] font-semibold shrink-0">Fine Tune:</span>
+                    <input type="range" min="0" max="100" step="1" x-model.number="cropper.posY" @input="cropper.syncDomImage()" class="w-full accent-deped-blue cursor-pointer h-1.5 bg-slate-700 rounded-lg">
+                    <span class="font-mono text-deped-blue font-bold text-xs shrink-0" x-text="cropper.posY + '%'"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -556,9 +494,40 @@ document.addEventListener('alpine:init', () => {
             dragStartY: 0,
             initialPosX: 50,
             initialPosY: 50,
+            overflowX: 400,
+            overflowY: 320,
             showOverlayText: true,
             targetBanner: null,
             targetBannerId: null,
+
+            computeOverflow() {
+                const vp = document.getElementById('bannerCropperViewport');
+                const img = document.getElementById('bannerRepositionImg');
+                if (!vp || !img) {
+                    this.overflowY = 320;
+                    this.overflowX = 400;
+                    return;
+                }
+                const vpW = vp.clientWidth || 960;
+                const vpH = vp.clientHeight || 400;
+                const natW = img.naturalWidth || vpW;
+                const natH = img.naturalHeight || vpH;
+
+                const imgAspect = natW / natH;
+                const vpAspect = vpW / vpH;
+
+                let renderedW, renderedH;
+                if (imgAspect > vpAspect) {
+                    renderedH = vpH;
+                    renderedW = vpH * imgAspect;
+                } else {
+                    renderedW = vpW;
+                    renderedH = vpW / imgAspect;
+                }
+
+                this.overflowY = Math.max(10, Math.round(renderedH - vpH));
+                this.overflowX = Math.max(10, Math.round(renderedW - vpW));
+            },
 
             syncDomImage() {
                 const img = document.getElementById('bannerRepositionImg');
@@ -577,12 +546,21 @@ document.addEventListener('alpine:init', () => {
                 this.posY = typeof posY === 'number' ? posY : 50;
                 this.aspectRatio = 1920 / 800;
                 this.showOverlayText = true;
-                setTimeout(() => this.syncDomImage(), 20);
-                setTimeout(() => this.syncDomImage(), 100);
+                this.isDragging = false;
+                this.syncDomImage();
+                setTimeout(() => {
+                    this.computeOverflow();
+                    this.syncDomImage();
+                }, 50);
+                setTimeout(() => {
+                    this.computeOverflow();
+                    this.syncDomImage();
+                }, 150);
             },
 
             cancel() {
                 this.isOpen = false;
+                this.isDragging = false;
             },
 
             setAspectRatio(ratio, name) {
@@ -599,7 +577,7 @@ document.addEventListener('alpine:init', () => {
             startDrag(e) {
                 if (e.button !== undefined && e.button !== 0) return; // Only primary mouse button
                 if (e.preventDefault && e.cancelable) e.preventDefault();
-                if (this.isDragging) return; // Guard against duplicate pointerdown + mousedown
+                if (this.isDragging) return;
                 this.isDragging = true;
                 
                 let clientX = e.clientX;
@@ -618,6 +596,7 @@ document.addEventListener('alpine:init', () => {
                     }
                 }
 
+                this.computeOverflow();
                 this.dragStartX = clientX;
                 this.dragStartY = clientY;
                 this.initialPosX = this.posX;
@@ -652,17 +631,17 @@ document.addEventListener('alpine:init', () => {
                 const deltaX = clientX - this.dragStartX;
                 const deltaY = clientY - this.dragStartY;
 
-                const vp = document.getElementById('bannerCropperViewport');
-                const vpHeight = (vp && vp.clientHeight) ? vp.clientHeight : 350;
-                const vpWidth = (vp && vp.clientWidth) ? vp.clientWidth : 840;
+                const overflowY = this.overflowY || 320;
+                const overflowX = this.overflowX || 400;
 
-                // Speed multiplier for responsive drag response
-                const speed = 1.8;
-                const factorY = (deltaY / vpHeight) * 100 * speed;
-                const factorX = (deltaX / vpWidth) * 100 * speed;
+                // 1:1 Pixel accuracy matching Facebook cover photo repositioning:
+                // Dragging down (deltaY > 0) pulls the photo down -> reveals top of photo (posY decreases towards 0%)
+                // Dragging up (deltaY < 0) pulls the photo up -> reveals bottom of photo (posY increases towards 100%)
+                const percentY = (deltaY / overflowY) * 100;
+                const percentX = (deltaX / overflowX) * 100;
 
-                this.posY = Math.max(0, Math.min(100, Math.round(this.initialPosY - factorY)));
-                this.posX = Math.max(0, Math.min(100, Math.round(this.initialPosX - factorX)));
+                this.posY = Math.max(0, Math.min(100, Math.round(this.initialPosY - percentY)));
+                this.posX = Math.max(0, Math.min(100, Math.round(this.initialPosX - percentX)));
                 this.syncDomImage();
             },
 
@@ -680,7 +659,7 @@ document.addEventListener('alpine:init', () => {
             onWheel(e) {
                 if (e.preventDefault && e.cancelable) e.preventDefault();
                 // Scrolling down shifts lower, scrolling up shifts higher
-                const delta = Math.sign(e.deltaY) * 5;
+                const delta = Math.sign(e.deltaY) * 4;
                 this.posY = Math.max(0, Math.min(100, this.posY + delta));
                 this.syncDomImage();
             },
