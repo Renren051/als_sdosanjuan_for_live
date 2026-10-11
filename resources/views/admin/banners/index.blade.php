@@ -358,20 +358,29 @@
                 
                 <!-- Viewport Container (Matching 1920x800 aspect ratio exactly) -->
                 <div id="bannerCropperViewport"
-                     class="relative w-full rounded-2xl overflow-hidden bg-slate-950 select-none touch-none border border-slate-800 shadow-inner group"
+                     class="relative w-full rounded-2xl overflow-hidden bg-slate-950 select-none touch-none border border-slate-800 shadow-inner group cursor-grab active:cursor-grabbing"
                      style="aspect-ratio: 1920 / 800;"
+                     @mousedown.prevent="cropper.startDrag($event)"
+                     @touchstart.prevent="cropper.startDrag($event)"
                      @pointerdown.prevent="cropper.startDrag($event)"
                      @pointermove.window="cropper.onDrag($event)"
+                     @mousemove.window="cropper.onDrag($event)"
+                     @touchmove.window="cropper.onDrag($event)"
                      @pointerup.window="cropper.stopDrag($event)"
+                     @mouseup.window="cropper.stopDrag($event)"
+                     @touchend.window="cropper.stopDrag($event)"
+                     @pointercancel.window="cropper.stopDrag($event)"
+                     @touchcancel.window="cropper.stopDrag($event)"
                      @wheel.prevent="cropper.onWheel($event)"
                      :class="cropper.isDragging ? 'cursor-grabbing' : 'cursor-grab'">
 
-                    <!-- Image Layer: Displayed via CSS object-position (No destructive crop, original preserved) -->
-                    <template x-if="cropper.imageUrl">
-                        <img :src="cropper.imageUrl"
-                             class="w-full h-full object-cover pointer-events-none select-none transition-none will-change-[object-position]"
-                             :style="'object-position: ' + cropper.posX + '% ' + cropper.posY + '%;'" />
-                    </template>
+                    <!-- Image Layer: Direct DOM element with immediate style binding and sync -->
+                    <img id="bannerRepositionImg"
+                         :src="cropper.imageUrl"
+                         :style="'object-position: ' + cropper.posX + '% ' + cropper.posY + '%;'"
+                         draggable="false"
+                         ondragstart="return false;"
+                         class="w-full h-full object-cover pointer-events-none select-none transition-none will-change-[object-position]" />
 
                     <!-- Instruction Overlay Pill (as in Image 2) -->
                     <div class="absolute top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/75 backdrop-blur-md text-white font-semibold text-xs flex items-center gap-2 pointer-events-none shadow-lg border border-white/15 transition-opacity duration-200"
@@ -428,6 +437,7 @@
                                    max="100" 
                                    step="1" 
                                    x-model.number="cropper.posY"
+                                   @input="cropper.syncDomImage()"
                                    class="w-full accent-deped-blue cursor-pointer h-2 bg-slate-200 rounded-lg">
                             <span class="text-[11px] font-semibold text-slate-400 shrink-0">Bottom (100%)</span>
                         </div>
@@ -550,6 +560,13 @@ document.addEventListener('alpine:init', () => {
             targetBanner: null,
             targetBannerId: null,
 
+            syncDomImage() {
+                const img = document.getElementById('bannerRepositionImg');
+                if (img) {
+                    img.style.objectPosition = `${this.posX}% ${this.posY}%`;
+                }
+            },
+
             open(imageUrl, posX = 50, posY = 50, banner = null) {
                 this.isOpen = true;
                 this.isSaving = false;
@@ -560,6 +577,8 @@ document.addEventListener('alpine:init', () => {
                 this.posY = typeof posY === 'number' ? posY : 50;
                 this.aspectRatio = 1920 / 800;
                 this.showOverlayText = true;
+                setTimeout(() => this.syncDomImage(), 20);
+                setTimeout(() => this.syncDomImage(), 100);
             },
 
             cancel() {
@@ -574,22 +593,37 @@ document.addEventListener('alpine:init', () => {
             setPos(x, y) {
                 this.posX = Math.max(0, Math.min(100, x));
                 this.posY = Math.max(0, Math.min(100, y));
+                this.syncDomImage();
             },
 
             startDrag(e) {
                 if (e.button !== undefined && e.button !== 0) return; // Only primary mouse button
-                if (e.preventDefault) e.preventDefault();
+                if (e.preventDefault && e.cancelable) e.preventDefault();
+                if (this.isDragging) return; // Guard against duplicate pointerdown + mousedown
                 this.isDragging = true;
                 
-                const clientX = (e.clientX !== undefined) ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-                const clientY = (e.clientY !== undefined) ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+                let clientX = e.clientX;
+                let clientY = e.clientY;
+
+                if (clientX === undefined || clientY === undefined) {
+                    if (e.touches && e.touches.length > 0) {
+                        clientX = e.touches[0].clientX;
+                        clientY = e.touches[0].clientY;
+                    } else if (e.changedTouches && e.changedTouches.length > 0) {
+                        clientX = e.changedTouches[0].clientX;
+                        clientY = e.changedTouches[0].clientY;
+                    } else {
+                        clientX = 0;
+                        clientY = 0;
+                    }
+                }
 
                 this.dragStartX = clientX;
                 this.dragStartY = clientY;
                 this.initialPosX = this.posX;
                 this.initialPosY = this.posY;
 
-                if (e.pointerId && e.currentTarget && e.currentTarget.setPointerCapture) {
+                if (e.pointerId !== undefined && e.currentTarget && e.currentTarget.setPointerCapture) {
                     try {
                         e.currentTarget.setPointerCapture(e.pointerId);
                     } catch (_) {}
@@ -598,10 +632,22 @@ document.addEventListener('alpine:init', () => {
 
             onDrag(e) {
                 if (!this.isDragging) return;
-                if (e.preventDefault) e.preventDefault();
+                if (e.preventDefault && e.cancelable) e.preventDefault();
 
-                const clientX = (e.clientX !== undefined) ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
-                const clientY = (e.clientY !== undefined) ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+                let clientX = e.clientX;
+                let clientY = e.clientY;
+
+                if (clientX === undefined || clientY === undefined) {
+                    if (e.touches && e.touches.length > 0) {
+                        clientX = e.touches[0].clientX;
+                        clientY = e.touches[0].clientY;
+                    } else if (e.changedTouches && e.changedTouches.length > 0) {
+                        clientX = e.changedTouches[0].clientX;
+                        clientY = e.changedTouches[0].clientY;
+                    } else {
+                        return;
+                    }
+                }
 
                 const deltaX = clientX - this.dragStartX;
                 const deltaY = clientY - this.dragStartY;
@@ -610,19 +656,21 @@ document.addEventListener('alpine:init', () => {
                 const vpHeight = (vp && vp.clientHeight) ? vp.clientHeight : 350;
                 const vpWidth = (vp && vp.clientWidth) ? vp.clientWidth : 840;
 
-                // Dragging UP pulls bottom into view (increases posY)
-                // Dragging DOWN pulls top into view (decreases posY)
-                const factorY = (deltaY / vpHeight) * 100;
-                const factorX = (deltaX / vpWidth) * 100;
+                // Speed multiplier for responsive drag response
+                const speed = 1.8;
+                const factorY = (deltaY / vpHeight) * 100 * speed;
+                const factorX = (deltaX / vpWidth) * 100 * speed;
 
                 this.posY = Math.max(0, Math.min(100, Math.round(this.initialPosY - factorY)));
                 this.posX = Math.max(0, Math.min(100, Math.round(this.initialPosX - factorX)));
+                this.syncDomImage();
             },
 
             stopDrag(e) {
                 if (!this.isDragging) return;
                 this.isDragging = false;
-                if (e && e.pointerId && e.currentTarget && e.currentTarget.releasePointerCapture) {
+                this.syncDomImage();
+                if (e && e.pointerId !== undefined && e.currentTarget && e.currentTarget.releasePointerCapture) {
                     try {
                         e.currentTarget.releasePointerCapture(e.pointerId);
                     } catch (_) {}
@@ -630,10 +678,11 @@ document.addEventListener('alpine:init', () => {
             },
 
             onWheel(e) {
-                if (e.preventDefault) e.preventDefault();
+                if (e.preventDefault && e.cancelable) e.preventDefault();
                 // Scrolling down shifts lower, scrolling up shifts higher
-                const delta = Math.sign(e.deltaY) * 3;
+                const delta = Math.sign(e.deltaY) * 5;
                 this.posY = Math.max(0, Math.min(100, this.posY + delta));
+                this.syncDomImage();
             },
 
             saveReposition() {
