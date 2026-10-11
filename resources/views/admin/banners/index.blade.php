@@ -360,10 +360,10 @@
                 <div id="bannerCropperViewport"
                      class="relative w-full rounded-2xl overflow-hidden bg-slate-950 select-none touch-none border border-slate-800 shadow-inner group"
                      style="aspect-ratio: 1920 / 800;"
-                     @pointerdown="cropper.startDrag($event)"
-                     @pointermove="cropper.onDrag($event)"
-                     @pointerup="cropper.stopDrag()"
-                     @pointercancel="cropper.stopDrag()"
+                     @pointerdown.prevent="cropper.startDrag($event)"
+                     @pointermove.window="cropper.onDrag($event)"
+                     @pointerup.window="cropper.stopDrag($event)"
+                     @wheel.prevent="cropper.onWheel($event)"
                      :class="cropper.isDragging ? 'cursor-grabbing' : 'cursor-grab'">
 
                     <!-- Image Layer: Displayed via CSS object-position (No destructive crop, original preserved) -->
@@ -377,14 +377,14 @@
                     <div class="absolute top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/75 backdrop-blur-md text-white font-semibold text-xs flex items-center gap-2 pointer-events-none shadow-lg border border-white/15 transition-opacity duration-200"
                          :class="cropper.isDragging ? 'opacity-30' : 'opacity-95'">
                         <span class="text-amber-400">✋</span>
-                        <span>Drag photo to reposition</span>
+                        <span>Drag photo to reposition &bull; Scroll wheel to adjust</span>
                     </div>
 
                     <!-- Live Headline Simulation Overlay on Viewport: Matching Homepage exactly -->
                     <div x-show="cropper.showOverlayText" 
                          class="absolute inset-0 bg-gradient-to-r from-[#040e24]/95 via-[#07193f]/80 via-40% to-transparent flex items-center p-6 sm:p-10 md:p-12 pointer-events-none transition-opacity duration-300"
                          :class="cropper.isDragging ? 'opacity-35' : 'opacity-100'">
-                        <div class="max-w-md space-y-2">
+                        <div class="max-w-md space-y-2 pointer-events-none">
                             <!-- Yellow Eyebrow Subtitle -->
                             <div class="text-[11px] sm:text-xs font-extrabold text-amber-400 uppercase tracking-widest drop-shadow-sm" 
                                  x-text="(cropper.targetBanner && cropper.targetBanner.subtitle) ? cropper.targetBanner.subtitle : 'THE BEST PARALLEL LEARNING SYSTEM'"></div>
@@ -402,7 +402,7 @@
                     </div>
 
                     <!-- 1920x800 Resolution & Coordinates Badge (like Image 2) -->
-                    <div class="absolute bottom-3 right-3 flex items-center gap-2">
+                    <div class="absolute bottom-3 right-3 flex items-center gap-2 pointer-events-none select-none">
                         <div class="px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-slate-300 font-mono text-[11px] font-bold border border-white/10 shadow-md">
                             <span x-text="`Vertical: ${cropper.posY}% | Horizontal: ${cropper.posX}%`"></span>
                         </div>
@@ -577,33 +577,63 @@ document.addEventListener('alpine:init', () => {
             },
 
             startDrag(e) {
+                if (e.button !== undefined && e.button !== 0) return; // Only primary mouse button
+                if (e.preventDefault) e.preventDefault();
                 this.isDragging = true;
-                this.dragStartX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-                this.dragStartY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
+                
+                const clientX = (e.clientX !== undefined) ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+                const clientY = (e.clientY !== undefined) ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+
+                this.dragStartX = clientX;
+                this.dragStartY = clientY;
                 this.initialPosX = this.posX;
                 this.initialPosY = this.posY;
+
+                if (e.pointerId && e.currentTarget && e.currentTarget.setPointerCapture) {
+                    try {
+                        e.currentTarget.setPointerCapture(e.pointerId);
+                    } catch (_) {}
+                }
             },
 
             onDrag(e) {
                 if (!this.isDragging) return;
-                const currentX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-                const currentY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
-                const deltaX = currentX - this.dragStartX;
-                const deltaY = currentY - this.dragStartY;
+                if (e.preventDefault) e.preventDefault();
+
+                const clientX = (e.clientX !== undefined) ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+                const clientY = (e.clientY !== undefined) ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+
+                const deltaX = clientX - this.dragStartX;
+                const deltaY = clientY - this.dragStartY;
 
                 const vp = document.getElementById('bannerCropperViewport');
-                const vpHeight = vp ? vp.clientHeight : 300;
-                const vpWidth = vp ? vp.clientWidth : 720;
+                const vpHeight = (vp && vp.clientHeight) ? vp.clientHeight : 350;
+                const vpWidth = (vp && vp.clientWidth) ? vp.clientWidth : 840;
 
-                const stepY = (deltaY / vpHeight) * 100;
-                const stepX = (deltaX / vpWidth) * 100;
+                // Dragging UP pulls bottom into view (increases posY)
+                // Dragging DOWN pulls top into view (decreases posY)
+                const factorY = (deltaY / vpHeight) * 100;
+                const factorX = (deltaX / vpWidth) * 100;
 
-                this.posY = Math.max(0, Math.min(100, Math.round(this.initialPosY - stepY)));
-                this.posX = Math.max(0, Math.min(100, Math.round(this.initialPosX - stepX)));
+                this.posY = Math.max(0, Math.min(100, Math.round(this.initialPosY - factorY)));
+                this.posX = Math.max(0, Math.min(100, Math.round(this.initialPosX - factorX)));
             },
 
-            stopDrag() {
+            stopDrag(e) {
+                if (!this.isDragging) return;
                 this.isDragging = false;
+                if (e && e.pointerId && e.currentTarget && e.currentTarget.releasePointerCapture) {
+                    try {
+                        e.currentTarget.releasePointerCapture(e.pointerId);
+                    } catch (_) {}
+                }
+            },
+
+            onWheel(e) {
+                if (e.preventDefault) e.preventDefault();
+                // Scrolling down shifts lower, scrolling up shifts higher
+                const delta = Math.sign(e.deltaY) * 3;
+                this.posY = Math.max(0, Math.min(100, this.posY + delta));
             },
 
             saveReposition() {
