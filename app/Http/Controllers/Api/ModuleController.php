@@ -204,9 +204,9 @@ class ModuleController extends Controller
      */
     public function getStrands(Request $request): JsonResponse
     {
-        $user = $request->user('sanctum') ?? $request->user('web');
-        $enrolledLevel = null;
-        if ($user && $user->isLearner()) {
+        $user = auth('sanctum')->user() ?? $request->user('sanctum') ?? $request->user('web');
+        $enrolledLevel = $request->input('level');
+        if (!$enrolledLevel && $user && $user->isLearner()) {
             $enrollment = $user->latestEnrollment;
             $enrolledLevel = match ($enrollment?->program_track) {
                 \App\Models\Enrollment::TRACK_BLP => Module::LEVEL_BLP,
@@ -217,6 +217,11 @@ class ModuleController extends Controller
         }
 
         $strands = LearningStrand::withCount([
+            'publishedModules as modules_count' => function ($q) use ($enrolledLevel) {
+                if ($enrolledLevel) {
+                    $q->where('level', $enrolledLevel);
+                }
+            },
             'publishedModules' => function ($q) use ($enrolledLevel) {
                 if ($enrolledLevel) {
                     $q->where('level', $enrolledLevel);
