@@ -33,7 +33,7 @@ class ModuleController extends Controller
 
         // Program track scoping for authenticated learners
         $user = $request->user('sanctum') ?? $request->user('web');
-        if ($user && $user->isLearner() && !$request->filled('level')) {
+        if ($user && $user->isLearner()) {
             $enrollment = $user->latestEnrollment;
             $enrolledLevel = match ($enrollment?->program_track) {
                 \App\Models\Enrollment::TRACK_BLP => Module::LEVEL_BLP,
@@ -104,10 +104,28 @@ class ModuleController extends Controller
      * Get module details.
      * GET /api/v1/modules/{id}
      */
-    public function show($id): JsonResponse
+    public function show($id, Request $request): JsonResponse
     {
         $module = Module::with(['strand', 'uploader.profile'])
+            ->published()
             ->findOrFail($id);
+
+        $user = $request->user('sanctum') ?? $request->user('web');
+        if ($user && $user->isLearner()) {
+            $enrollment = $user->latestEnrollment;
+            $enrolledLevel = match ($enrollment?->program_track) {
+                \App\Models\Enrollment::TRACK_BLP => Module::LEVEL_BLP,
+                \App\Models\Enrollment::TRACK_AE_ELEMENTARY => Module::LEVEL_ELEMENTARY,
+                \App\Models\Enrollment::TRACK_AE_JUNIOR_HIGH => Module::LEVEL_JUNIOR_HIGH,
+                default => null,
+            };
+            if ($enrolledLevel && $module->level !== $enrolledLevel) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized access. This module belongs to the ' . $module->level . ' curriculum, but your enrolled program track is ' . ($enrollment->track_label ?? $enrollment->program_track) . '.',
+                ], 403);
+            }
+        }
 
         return response()->json([
             'success' => true,
@@ -121,7 +139,25 @@ class ModuleController extends Controller
      */
     public function download($id, Request $request)
     {
-        $module = Module::findOrFail($id);
+        $module = Module::published()->findOrFail($id);
+
+        $user = $request->user('sanctum') ?? $request->user('web');
+        if ($user && $user->isLearner()) {
+            $enrollment = $user->latestEnrollment;
+            $enrolledLevel = match ($enrollment?->program_track) {
+                \App\Models\Enrollment::TRACK_BLP => Module::LEVEL_BLP,
+                \App\Models\Enrollment::TRACK_AE_ELEMENTARY => Module::LEVEL_ELEMENTARY,
+                \App\Models\Enrollment::TRACK_AE_JUNIOR_HIGH => Module::LEVEL_JUNIOR_HIGH,
+                default => null,
+            };
+            if ($enrolledLevel && $module->level !== $enrolledLevel) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized access. This module belongs to the ' . $module->level . ' curriculum, but your enrolled program track is ' . ($enrollment->track_label ?? $enrollment->program_track) . '.',
+                ], 403);
+            }
+        }
+
         $fullPath = storage_path('app/public/' . $module->pdf_file_path);
 
         if (!File::exists($fullPath)) {
@@ -132,7 +168,6 @@ class ModuleController extends Controller
         }
 
         // Track download for authenticated learner
-        $user = $request->user('sanctum') ?? $request->user('web');
         if ($user && $user->isLearner()) {
             $existing = ModuleProgress::where('user_id', $user->id)->where('module_id', $module->id)->first();
             if (!$existing) {
@@ -164,9 +199,27 @@ class ModuleController extends Controller
      * List all Learning Strands.
      * GET /api/v1/strands
      */
-    public function getStrands(): JsonResponse
+    public function getStrands(Request $request): JsonResponse
     {
-        $strands = LearningStrand::withCount(['publishedModules'])
+        $user = $request->user('sanctum') ?? $request->user('web');
+        $enrolledLevel = null;
+        if ($user && $user->isLearner()) {
+            $enrollment = $user->latestEnrollment;
+            $enrolledLevel = match ($enrollment?->program_track) {
+                \App\Models\Enrollment::TRACK_BLP => Module::LEVEL_BLP,
+                \App\Models\Enrollment::TRACK_AE_ELEMENTARY => Module::LEVEL_ELEMENTARY,
+                \App\Models\Enrollment::TRACK_AE_JUNIOR_HIGH => Module::LEVEL_JUNIOR_HIGH,
+                default => null,
+            };
+        }
+
+        $strands = LearningStrand::withCount([
+            'publishedModules' => function ($q) use ($enrolledLevel) {
+                if ($enrolledLevel) {
+                    $q->where('level', $enrolledLevel);
+                }
+            }
+        ])
             ->orderBy('order_seq')
             ->get();
 
