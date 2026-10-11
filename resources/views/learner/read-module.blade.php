@@ -139,20 +139,20 @@
 
         <!-- Right: Zoom, Display Themes, Completion & Tools -->
         <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-            <!-- Zoom Controls (Desktop / Tablet) -->
+            <!-- Zoom & Fit Controls (Desktop / Tablet) -->
             <div class="hidden md:flex items-center gap-1 p-1 rounded-xl border transition-colors"
                  :class="theme === 'dark' ? 'bg-white/5 border-white/10' : (theme === 'sepia' ? 'bg-[#e5dac0] border-[#d6c4a5]' : 'bg-slate-100 border-slate-200')">
-                <button type="button" @click="zoomOut" :disabled="scale <= 0.6 || loading"
+                <button type="button" @click="zoomOut" :disabled="scale <= 0.4 || loading"
                         class="p-1.5 rounded-lg transition-all disabled:opacity-25"
                         :class="theme === 'dark' ? 'text-slate-300 hover:text-white hover:bg-white/10' : 'text-slate-700 hover:text-slate-900 hover:bg-white'"
                         title="Zoom Out (-)">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
                 </button>
 
-                <button type="button" @click="fitWidth"
+                <button type="button" @click="toggleFit"
                         class="px-2 py-0.5 rounded text-[11px] font-mono font-bold transition-all"
                         :class="theme === 'dark' ? 'text-slate-300 hover:text-white hover:bg-white/10' : 'text-slate-700 hover:text-slate-900 hover:bg-white'"
-                        title="Fit to Width / Reset">
+                        title="Click to toggle Fit Page / Fit Width">
                     <span x-text="Math.round(scale * 100) + '%'"></span>
                 </button>
 
@@ -161,6 +161,26 @@
                         :class="theme === 'dark' ? 'text-slate-300 hover:text-white hover:bg-white/10' : 'text-slate-700 hover:text-slate-900 hover:bg-white'"
                         title="Zoom In (+)">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                </button>
+
+                <div class="h-4 w-px mx-0.5" :class="theme === 'dark' ? 'bg-white/10' : 'bg-slate-300'"></div>
+
+                <!-- Fit Entire Page (Fits 100% of page into screen height without scroll) -->
+                <button type="button" @click="fitPage"
+                        class="px-2 py-1 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1"
+                        :class="viewMode === 'page' ? (theme === 'dark' ? 'bg-deped-blue text-white shadow-sm' : 'bg-deped-blue text-white shadow-sm') : (theme === 'dark' ? 'text-slate-300 hover:text-white hover:bg-white/10' : 'text-slate-700 hover:bg-white')"
+                        title="Fit entire page to screen height (No vertical scrolling needed)">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                    <span>Fit Page</span>
+                </button>
+
+                <!-- Fit Width -->
+                <button type="button" @click="fitWidth"
+                        class="px-2 py-1 rounded-lg text-[10px] font-bold transition-all flex items-center gap-1"
+                        :class="viewMode === 'width' ? (theme === 'dark' ? 'bg-deped-blue text-white shadow-sm' : 'bg-deped-blue text-white shadow-sm') : (theme === 'dark' ? 'text-slate-300 hover:text-white hover:bg-white/10' : 'text-slate-700 hover:bg-white')"
+                        title="Fit page width to screen">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7l-5 5 5 5m8-10l5 5-5 5M3 12h18"/></svg>
+                    <span>Fit Width</span>
                 </button>
             </div>
 
@@ -224,7 +244,7 @@
     </div>
 
     <!-- Main Reading Viewport & Canvas Stage -->
-    <main class="flex-1 w-full overflow-auto reader-viewport relative flex flex-col items-center justify-start p-3 sm:p-6"
+    <main class="flex-1 w-full overflow-auto reader-viewport relative flex flex-col items-center justify-start p-2 sm:p-3"
           id="readerContainer"
           @touchstart="handleTouchStart($event)"
           @touchend="handleTouchEnd($event)">
@@ -260,7 +280,9 @@
         </div>
 
         <!-- PDF Canvas Wrapper & Page Renderer -->
-        <div x-show="!errorMessage" class="pdf-canvas-wrapper relative flex flex-col items-center">
+        <div x-show="!errorMessage" 
+             class="pdf-canvas-wrapper relative flex flex-col items-center transition-all"
+             :class="viewMode === 'page' ? 'my-auto' : 'my-2'">
             
             <!-- Floating Side Navigation Hover Zones (Desktop) -->
             <button type="button" @click="prevPage" 
@@ -284,7 +306,7 @@
                     class="block bg-white shadow-2xl rounded-2xl border border-black/10 cursor-default transition-all"></canvas>
 
             <!-- Page Number Overlay Tag below canvas -->
-            <div class="mt-4 px-3 py-1 rounded-full text-[11px] font-bold font-mono tracking-wider shadow-sm transition-colors"
+            <div class="mt-2 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold font-mono tracking-wider shadow-sm transition-colors"
                  :class="theme === 'dark' ? 'bg-white/10 text-slate-300 border border-white/10' : (theme === 'sepia' ? 'bg-[#e5dac0] text-[#3d2e1e] border border-[#d6c4a5]' : 'bg-slate-200 text-slate-700 border border-slate-300')">
                 Page <span x-text="currentPage" class="text-deped-blue font-black"></span> of <span x-text="totalPages"></span>
             </div>
@@ -320,6 +342,8 @@
             <span><kbd class="px-1.5 py-0.5 rounded bg-black/20 font-mono text-[9px]">←</kbd> / <kbd class="px-1.5 py-0.5 rounded bg-black/20 font-mono text-[9px]">→</kbd> Turn Page</span>
             <span>&bull;</span>
             <span><kbd class="px-1.5 py-0.5 rounded bg-black/20 font-mono text-[9px]">+</kbd> / <kbd class="px-1.5 py-0.5 rounded bg-black/20 font-mono text-[9px]">-</kbd> Zoom</span>
+            <span>&bull;</span>
+            <span><kbd class="px-1.5 py-0.5 rounded bg-black/20 font-mono text-[9px]">0</kbd> Fit Page</span>
             <span>&bull;</span>
             <span><kbd class="px-1.5 py-0.5 rounded bg-black/20 font-mono text-[9px]">F</kbd> Fullscreen</span>
         </div>
@@ -368,9 +392,10 @@ function moduleReader(config) {
         workerUrl: config.workerUrl,
 
         // UI & Viewport State (kept reactive)
+        viewMode: 'page', // 'page' (default fits 100% visible on screen), 'width', or 'custom'
         pageRendering: false,
         pageNumPending: null,
-        scale: 1.15,
+        scale: 1.0,
         rotation: 0,
         loading: true,
         loadingText: 'Loading PDF document...',
@@ -409,8 +434,10 @@ function moduleReader(config) {
                 if (!this.loading && pdfEngine.doc) {
                     clearTimeout(resizeTimeout);
                     resizeTimeout = setTimeout(async () => {
-                        await this.autoScale();
-                        this.queueRenderPage(this.currentPage);
+                        if (this.viewMode !== 'custom') {
+                            await this.autoScale();
+                            this.queueRenderPage(this.currentPage);
+                        }
                     }, 250);
                 }
             });
@@ -468,24 +495,71 @@ function moduleReader(config) {
         },
 
         async autoScale() {
+            if (this.viewMode === 'width') {
+                await this.calcFitWidthScale();
+            } else {
+                await this.calcFitPageScale();
+            }
+        },
+
+        async calcFitPageScale() {
             const container = document.getElementById('readerContainer');
             if (!container) return;
-            const containerWidth = container.clientWidth - 64; // padding
 
             if (pdfEngine.doc) {
                 try {
                     const page = await pdfEngine.doc.getPage(this.currentPage || 1);
                     const unscaled = page.getViewport({ scale: 1.0, rotation: this.rotation });
-                    if (containerWidth < unscaled.width + 48) {
-                        this.scale = Math.max(0.45, +(containerWidth / unscaled.width).toFixed(2));
-                        return;
-                    }
-                } catch (e) {}
+                    // Account for container padding (p-2 sm:p-3) + page number badge & margins + safety buffer
+                    const clientH = container.clientHeight || (window.innerHeight - 120);
+                    const clientW = container.clientWidth || window.innerWidth;
+                    const availableHeight = Math.max(200, clientH - 64);
+                    const availableWidth = Math.max(200, clientW - 40);
+                    const scaleHeight = availableHeight / unscaled.height;
+                    const scaleWidth = availableWidth / unscaled.width;
+                    // Fit Page: Scale so the entire page is 100% visible vertically & horizontally without scrolling
+                    const target = Math.min(scaleHeight, scaleWidth);
+                    this.scale = Math.max(0.35, Math.min(2.5, +(target).toFixed(2)));
+                    return;
+                } catch (e) {
+                    console.warn('Failed to calculate page fit scale:', e);
+                }
             }
 
-            if (containerWidth < 640) {
+            // Fallback estimation based on viewport height
+            const h = container.clientHeight || (window.innerHeight - 120);
+            if (h < 600) {
+                this.scale = 0.65;
+            } else if (h < 850) {
                 this.scale = 0.85;
-            } else if (containerWidth < 1200) {
+            } else {
+                this.scale = 1.0;
+            }
+        },
+
+        async calcFitWidthScale() {
+            const container = document.getElementById('readerContainer');
+            if (!container) return;
+
+            if (pdfEngine.doc) {
+                try {
+                    const page = await pdfEngine.doc.getPage(this.currentPage || 1);
+                    const unscaled = page.getViewport({ scale: 1.0, rotation: this.rotation });
+                    const clientW = container.clientWidth || window.innerWidth;
+                    // Fit Width: Fill container width comfortably (cap at max reading width 960px)
+                    const availableWidth = Math.min(clientW - 48, 960);
+                    const target = availableWidth / unscaled.width;
+                    this.scale = Math.max(0.5, Math.min(2.2, +(target).toFixed(2)));
+                    return;
+                } catch (e) {
+                    console.warn('Failed to calculate width scale:', e);
+                }
+            }
+
+            const w = container.clientWidth || window.innerWidth;
+            if (w < 640) {
+                this.scale = 0.85;
+            } else if (w < 1200) {
                 this.scale = 1.15;
             } else {
                 this.scale = 1.35;
@@ -609,33 +683,43 @@ function moduleReader(config) {
 
         zoomIn() {
             if (this.scale >= 3.0) return;
-            this.scale = Math.min(3.0, +(this.scale + 0.15).toFixed(2));
+            this.viewMode = 'custom';
+            this.scale = Math.min(3.0, +(this.scale + 0.10).toFixed(2));
             this.queueRenderPage(this.currentPage);
         },
 
         zoomOut() {
-            if (this.scale <= 0.6) return;
-            this.scale = Math.max(0.6, +(this.scale - 0.15).toFixed(2));
+            if (this.scale <= 0.4) return;
+            this.viewMode = 'custom';
+            this.scale = Math.max(0.4, +(this.scale - 0.10).toFixed(2));
+            this.queueRenderPage(this.currentPage);
+        },
+
+        async fitPage() {
+            this.viewMode = 'page';
+            await this.calcFitPageScale();
             this.queueRenderPage(this.currentPage);
         },
 
         async fitWidth() {
-            if (!pdfEngine.doc) return;
-            try {
-                const page = await pdfEngine.doc.getPage(this.currentPage);
-                const unscaled = page.getViewport({ scale: 1.0, rotation: this.rotation });
-                const container = document.getElementById('readerContainer');
-                const availableWidth = container ? (container.clientWidth - 80) : 800;
-                this.scale = Math.max(0.5, Math.min(2.5, +(availableWidth / unscaled.width).toFixed(2)));
-                this.queueRenderPage(this.currentPage);
-            } catch (e) {
-                this.scale = 1.25;
-                this.queueRenderPage(this.currentPage);
+            this.viewMode = 'width';
+            await this.calcFitWidthScale();
+            this.queueRenderPage(this.currentPage);
+        },
+
+        toggleFit() {
+            if (this.viewMode === 'page') {
+                this.fitWidth();
+            } else {
+                this.fitPage();
             }
         },
 
-        rotatePage() {
+        async rotatePage() {
             this.rotation = (this.rotation + 90) % 360;
+            if (this.viewMode !== 'custom') {
+                await this.autoScale();
+            }
             this.queueRenderPage(this.currentPage);
         },
 
@@ -721,6 +805,12 @@ function moduleReader(config) {
             } else if (e.key === '-' || e.key === '_') {
                 e.preventDefault();
                 this.zoomOut();
+            } else if (e.key === '0') {
+                e.preventDefault();
+                this.fitPage();
+            } else if (e.key === 'w' || e.key === 'W') {
+                e.preventDefault();
+                this.fitWidth();
             } else if (e.key === 'f' || e.key === 'F') {
                 e.preventDefault();
                 this.toggleFullscreen();
