@@ -328,7 +328,7 @@ class LearnerJourneyTest extends TestCase
     public function test_learner_can_update_progress_and_resume(): void
     {
         $jenny = User::where('username', 'learner_jenny')->first();
-        $module = Module::published()->first();
+        $module = Module::published()->orderBy('strand_id')->orderBy('level')->first();
 
         // Update progress to Page 2 of 4
         $response = $this->actingAs($jenny)->postJson(route('learner.modules.progress', $module->id), [
