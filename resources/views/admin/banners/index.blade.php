@@ -133,13 +133,6 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             </button>
                         </form>
-
-                        <!-- Hidden Direct Reposition Form for quick submission -->
-                        <form :id="'directRepositionForm_' + banner.id" :action="'{{ url('/admin/banners') }}/' + banner.id + '/reposition'" method="POST" style="display: none;">
-                            @csrf
-                            @method('PATCH')
-                            <input type="hidden" name="cropped_image" :id="'directRepositionInput_' + banner.id">
-                        </form>
                     </div>
                 </div>
             </div>
@@ -408,7 +401,8 @@
             <div class="flex-1 overflow-y-auto px-5 sm:px-6 py-4 space-y-3.5">
                 
                 <!-- Viewport Container -->
-                <div class="relative w-full rounded-2xl overflow-hidden bg-slate-950 select-none touch-none border border-slate-800 shadow-inner group max-h-[360px]"
+                <div id="bannerCropperViewport"
+                     class="relative w-full rounded-2xl overflow-hidden bg-slate-950 select-none touch-none border border-slate-800 shadow-inner group max-h-[360px]"
                      x-ref="viewportBox"
                      :style="'aspect-ratio: ' + cropper.aspectRatio + ';'"
                      @pointerdown="cropper.startDrag($event)"
@@ -556,19 +550,34 @@
             <div class="shrink-0 px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between z-10">
                 <button type="button" 
                         @click="cropper.cancel()" 
+                        :disabled="cropper.isSaving"
                         class="px-4 py-2 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors">
                     Cancel
                 </button>
                 
                 <button type="button" 
                         @click="cropper.applyCrop()" 
-                        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-deped-blue hover:bg-deped-dark text-white font-bold text-xs shadow-md shadow-deped-blue/25 transition-all">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    <span x-text="cropper.targetMode === 'direct' ? 'Save Framing & Reposition' : 'Apply Framing & Crop'"></span>
+                        :disabled="cropper.isSaving || !cropper.isLoaded"
+                        :class="(cropper.isSaving || !cropper.isLoaded) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-deped-dark'"
+                        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-deped-blue text-white font-bold text-xs shadow-md shadow-deped-blue/25 transition-all">
+                    <template x-if="cropper.isSaving">
+                        <svg class="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                    </template>
+                    <template x-if="!cropper.isSaving">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    </template>
+                    <span x-text="cropper.isSaving ? 'Saving & Updating Banner...' : (cropper.targetMode === 'direct' ? 'Save Framing & Reposition' : 'Apply Framing & Crop')"></span>
                 </button>
             </div>
         </div>
     </div>
+
+    <!-- Dedicated Global Reposition Form (Guaranteed static ID outside loop) -->
+    <form id="globalRepositionForm" method="POST" action="" style="display: none;">
+        @csrf
+        @method('PATCH')
+        <input type="hidden" name="cropped_image" id="globalRepositionCroppedImage">
+    </form>
 
 </div>
 @endsection
@@ -591,6 +600,10 @@ function toCleanImageUrl(url) {
 
 document.addEventListener('alpine:init', () => {
     Alpine.data('bannerManager', () => ({
+        init() {
+            this.cropper.parent = this;
+        },
+
         uploadModal: false,
         editModal: false,
         activeBanner: {},
@@ -605,8 +618,10 @@ document.addEventListener('alpine:init', () => {
 
         // Cropper state machine
         cropper: {
+            parent: null,
             isOpen: false,
             isLoaded: false,
+            isSaving: false,
             hasError: false,
             errorMessage: '',
             imgElement: null,
@@ -636,6 +651,7 @@ document.addEventListener('alpine:init', () => {
             open(imageUrl, mode = 'direct', banner = null) {
                 this.isOpen = true;
                 this.isLoaded = false;
+                this.isSaving = false;
                 this.hasError = false;
                 this.errorMessage = '';
                 this.targetMode = mode;
@@ -717,8 +733,8 @@ document.addEventListener('alpine:init', () => {
             },
 
             updateDimensions() {
-                const vp = document.querySelector('[x-ref="viewportBox"]');
-                if (vp) {
+                const vp = document.getElementById('bannerCropperViewport') || document.querySelector('[x-ref="viewportBox"]');
+                if (vp && vp.clientWidth && vp.clientHeight) {
                     this.containerWidth = vp.clientWidth;
                     this.containerHeight = vp.clientHeight;
                 }
@@ -822,16 +838,28 @@ document.addEventListener('alpine:init', () => {
             },
 
             generateCanvas(targetWidth = 1920) {
-                if (!this.imgElement || !this.containerWidth || !this.containerHeight) return null;
+                if (!this.imgElement) {
+                    console.error('generateCanvas failed: imgElement is missing');
+                    return null;
+                }
+
+                const vp = document.getElementById('bannerCropperViewport') || document.querySelector('[x-ref="viewportBox"]');
+                const cWidth = this.containerWidth || (vp && vp.clientWidth ? vp.clientWidth : 800) || 800;
+                const cHeight = this.containerHeight || (vp && vp.clientHeight ? vp.clientHeight : Math.round(cWidth / this.aspectRatio)) || 333;
+
                 const targetHeight = Math.round(targetWidth / this.aspectRatio);
                 const canvas = document.createElement('canvas');
                 canvas.width = targetWidth;
                 canvas.height = targetHeight;
                 const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    console.error('generateCanvas failed: unable to get 2d context');
+                    return null;
+                }
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
 
-                const k = targetWidth / this.containerWidth;
+                const k = targetWidth / cWidth;
                 const canvasX = (targetWidth / 2) + (this.posX * k);
                 const canvasY = (targetHeight / 2) + (this.posY * k);
                 const canvasScale = this.currentScale * k;
@@ -847,25 +875,49 @@ document.addEventListener('alpine:init', () => {
             },
 
             applyCrop() {
-                const canvas = this.generateCanvas(1920);
-                if (!canvas) return;
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+                if (this.isSaving) return;
 
-                const manager = Alpine.$data(document.querySelector('[x-data="bannerManager()"]'));
+                try {
+                    const canvas = this.generateCanvas(1920);
+                    if (!canvas) {
+                        alert('Unable to process photo crop. Please wait until the image finishes loading.');
+                        return;
+                    }
 
-                if (this.targetMode === 'upload') {
-                    manager.uploadCroppedImage = dataUrl;
-                    this.isOpen = false;
-                } else if (this.targetMode === 'edit') {
-                    manager.editCroppedImage = dataUrl;
-                    this.isOpen = false;
-                } else if (this.targetMode === 'direct' && this.targetBannerId) {
-                    const form = document.getElementById('directRepositionForm_' + this.targetBannerId);
-                    const input = document.getElementById('directRepositionInput_' + this.targetBannerId);
-                    if (form && input) {
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+                    const manager = (this.parent) ? this.parent : Alpine.$data(document.querySelector('[x-data="bannerManager()"]'));
+
+                    if (this.targetMode === 'upload') {
+                        if (manager) manager.uploadCroppedImage = dataUrl;
+                        this.isOpen = false;
+                    } else if (this.targetMode === 'edit') {
+                        if (manager) manager.editCroppedImage = dataUrl;
+                        this.isOpen = false;
+                    } else if (this.targetMode === 'direct') {
+                        if (!this.targetBannerId) {
+                            alert('No banner ID found for direct repositioning.');
+                            return;
+                        }
+
+                        this.isSaving = true;
+
+                        const form = document.getElementById('globalRepositionForm');
+                        const input = document.getElementById('globalRepositionCroppedImage');
+
+                        if (!form || !input) {
+                            this.isSaving = false;
+                            alert('Reposition form could not be found.');
+                            return;
+                        }
+
+                        form.action = '{{ url('/admin/banners') }}/' + this.targetBannerId + '/reposition';
                         input.value = dataUrl;
                         form.submit();
                     }
+                } catch (err) {
+                    this.isSaving = false;
+                    console.error('Error during applyCrop:', err);
+                    alert('Error saving banner: ' + err.message);
                 }
             }
         },

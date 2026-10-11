@@ -127,7 +127,7 @@ class BannerController extends Controller
     /**
      * Dedicated action to quickly update the crop / reposition framing of an existing hero banner.
      */
-    public function reposition(Request $request, int $id): RedirectResponse
+    public function reposition(Request $request, int $id): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $banner = HeroBanner::findOrFail($id);
 
@@ -136,16 +136,34 @@ class BannerController extends Controller
         ]);
 
         if (!str_starts_with($validated['cropped_image'], 'data:image')) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['error' => 'Invalid cropped image payload format.'], 422);
+            }
             return back()->withErrors(['cropped_image' => 'Invalid cropped image payload format.']);
         }
 
-        $relativePath = $this->saveCroppedImage($validated['cropped_image']);
-        $this->deleteOldBannerImage($banner->image_path);
+        try {
+            $relativePath = $this->saveCroppedImage($validated['cropped_image']);
+            $this->deleteOldBannerImage($banner->image_path);
 
-        $banner->image_path = $relativePath;
-        $banner->save();
+            $banner->image_path = $relativePath;
+            $banner->save();
 
-        return redirect()->route('admin.banners.index')->with('status', "Framing and crop updated successfully for '{$banner->title}'!");
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Framing and crop updated successfully for '{$banner->title}'!",
+                    'image_url' => asset($banner->image_path),
+                ]);
+            }
+
+            return redirect()->route('admin.banners.index')->with('status', "Framing and crop updated successfully for '{$banner->title}'!");
+        } catch (\Throwable $e) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['error' => 'Failed to save cropped image: ' . $e->getMessage()], 500);
+            }
+            return back()->withErrors(['cropped_image' => 'Failed to save cropped image: ' . $e->getMessage()]);
+        }
     }
 
     /**
