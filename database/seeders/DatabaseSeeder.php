@@ -18,5 +18,7 @@ class DatabaseSeeder extends Seeder
             ModuleSeeder::class,
             EnrollmentSeeder::class,
         ]);
+
+        \Illuminate\Support\Facades\Artisan::call('app:import-elementary-modules');
     }
 }

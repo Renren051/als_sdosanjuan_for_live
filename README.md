@@ -78,7 +78,10 @@ The web application combines an institutional **Kingster University-Style Photog
   - Toggle slide visibility (Active/Inactive) and manage presentation sort order without touching template code.
 - **Enrollment Queue:** Review pending applications, verify or reject intake documents with remarks, and transition statuses (`submitted`, `under_review`, `enrolled`, `rejected`).
 - **CLC Allocator:** Real-time learner capacity and assignment tracking per barangay center.
-- **Module Repository:** Manage official DepEd Self-Learning Modules (SLMs) categorized by Learning Strands with toggle publishing.
+- **Module Repository (`/admin/modules` & `/learner/modules`):**
+  - Manage official DepEd Self-Learning Modules (SLMs) categorized by Learning Strands (LS1 to LS6) with toggle publishing.
+  - Multi-tier program hierarchy supporting **A&E Lower & Advanced Elementary** with sub-levels (**Lower Elementary** Grades 1–3 and **Advanced Elementary** Grades 4–6) and dual-language tracks (**English** & **Filipino**).
+  - 156 authentic DepEd ALS Elementary PDF modules integrated and served with in-browser reading, auto-resume points, and binary streaming for the Android app.
 - **Automated DepEd Exports:**
   - **ALS Form 1:** Individual Learning Agreement and Masterlist.
   - **ALS Form 2:** Official Learner Enrolment and Profile Form.

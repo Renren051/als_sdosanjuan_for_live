@@ -317,6 +317,14 @@ class LearnerPortalController extends Controller
             $query->where('level', $request->input('level'));
         }
 
+        if ($request->filled('sub_level')) {
+            $query->where('sub_level', $request->input('sub_level'));
+        }
+
+        if ($request->filled('language')) {
+            $query->where('language', $request->input('language'));
+        }
+
         if ($request->filled('q')) {
             $search = '%' . $request->input('q') . '%';
             $query->where(function ($q) use ($search) {

@@ -47,9 +47,27 @@
             <div>
                 <select name="level" onchange="this.form.submit()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
                     <option value="">All Academic Levels</option>
+                    <option value="Elementary" {{ request('level') == 'Elementary' ? 'selected' : '' }}>A&E Lower &amp; Advanced Elementary</option>
+                    <option value="Junior_High" {{ request('level') == 'Junior_High' ? 'selected' : '' }}>A&E Secondary (Junior High)</option>
                     <option value="BLP" {{ request('level') == 'BLP' ? 'selected' : '' }}>Basic Literacy (BLP)</option>
-                    <option value="Elementary" {{ request('level') == 'Elementary' ? 'selected' : '' }}>Elementary</option>
-                    <option value="Junior_High" {{ request('level') == 'Junior_High' ? 'selected' : '' }}>Junior High</option>
+                </select>
+            </div>
+
+            <!-- Sub-Level Filter -->
+            <div>
+                <select name="sub_level" onchange="this.form.submit()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                    <option value="">All Sub-Levels</option>
+                    <option value="Lower Elementary" {{ request('sub_level') == 'Lower Elementary' ? 'selected' : '' }}>Lower Elementary (Grades 1-3)</option>
+                    <option value="Advanced Elementary" {{ request('sub_level') == 'Advanced Elementary' ? 'selected' : '' }}>Advanced Elementary (Grades 4-6)</option>
+                </select>
+            </div>
+
+            <!-- Language Track Filter -->
+            <div>
+                <select name="language" onchange="this.form.submit()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                    <option value="">All Language Tracks</option>
+                    <option value="English" {{ request('language') == 'English' ? 'selected' : '' }}>English</option>
+                    <option value="Filipino" {{ request('language') == 'Filipino' ? 'selected' : '' }}>Filipino</option>
                 </select>
             </div>
         </form>
@@ -64,14 +82,23 @@
                         <span class="px-2.5 py-0.5 rounded-lg text-white font-bold text-[10px] uppercase tracking-wide" style="background-color: {{ $mod->strand->color_code ?? '#2563eb' }}">
                             {{ $mod->strand->code }}
                         </span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $mod->is_published ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' }}">
-                            {{ $mod->is_published ? 'Published' : 'Draft' }}
-                        </span>
+                        <div class="flex items-center gap-1.5">
+                            @if($mod->language)
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $mod->language === 'Filipino' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-blue-50 text-blue-700 border border-blue-200' }}">
+                                    {{ $mod->language }}
+                                </span>
+                            @endif
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $mod->is_published ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600' }}">
+                                {{ $mod->is_published ? 'Published' : 'Draft' }}
+                            </span>
+                        </div>
                     </div>
 
                     <div class="mt-3">
-                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                            {{ $mod->module_number }} &bull; Level: {{ $mod->level }}
+                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                            <span>{{ $mod->module_number }}</span>
+                            <span>&bull;</span>
+                            <span class="text-slate-600 font-semibold">{{ $mod->sub_level ?: str_replace('_', ' ', $mod->level) }}</span>
                         </div>
                         <h3 class="text-base font-bold text-slate-900 mt-1 leading-snug">
                             {{ $mod->title }}
@@ -159,20 +186,38 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase">Academic Level *</label>
                             <select name="level" required class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
-                                <option value="Junior_High">Junior High</option>
-                                <option value="Elementary">Elementary</option>
+                                <option value="Elementary">A&E Lower &amp; Advanced Elementary</option>
+                                <option value="Junior_High">A&E Secondary (Junior High)</option>
                                 <option value="BLP">Basic Literacy (BLP)</option>
                             </select>
                         </div>
                         <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Sub-Level</label>
+                            <select name="sub_level" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                                <option value="Lower Elementary">Lower Elementary (Grades 1-3)</option>
+                                <option value="Advanced Elementary">Advanced Elementary (Grades 4-6)</option>
+                                <option value="">None / Not Applicable</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Language Track *</label>
+                            <select name="language" required class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                                <option value="English">English</option>
+                                <option value="Filipino">Filipino</option>
+                            </select>
+                        </div>
+                        <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase">Module Number *</label>
-                            <input type="text" name="module_number" required placeholder="e.g. Module 1" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                            <input type="text" name="module_number" required placeholder="e.g. M-LE-EN-01" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase">Module Title *</label>
-                        <input type="text" name="title" required placeholder="e.g. Urban Waste Management in San Juan" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                        <input type="text" name="title" required placeholder="e.g. Addition and Subtraction" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
                     </div>
 
                     <div>

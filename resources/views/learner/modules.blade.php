@@ -39,13 +39,13 @@
             @endforeach
         </div>
 
-        <!-- Level and Search Filter -->
-        <form method="GET" action="{{ route('learner.modules') }}" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <!-- Level, Sub-Level, Language and Search Filter -->
+        <form method="GET" action="{{ route('learner.modules') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             @if(request('strand_id'))
                 <input type="hidden" name="strand_id" value="{{ request('strand_id') }}">
             @endif
 
-            <div class="sm:col-span-2 relative">
+            <div class="lg:col-span-2 relative">
                 <input type="text" name="q" value="{{ request('q') }}" placeholder="Search module title, topic, or number..."
                        class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-deped-blue focus:bg-white focus:outline-none">
                 <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,9 +56,25 @@
             <div>
                 <select name="level" onchange="this.form.submit()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-deped-blue">
                     <option value="">All Academic Levels</option>
+                    <option value="Elementary" {{ request('level') == 'Elementary' ? 'selected' : '' }}>A&E Lower &amp; Advanced Elementary</option>
+                    <option value="Junior_High" {{ request('level') == 'Junior_High' ? 'selected' : '' }}>A&E Secondary (Junior High)</option>
                     <option value="BLP" {{ request('level') == 'BLP' ? 'selected' : '' }}>Basic Literacy Program (BLP)</option>
-                    <option value="Elementary" {{ request('level') == 'Elementary' ? 'selected' : '' }}>A&E Elementary</option>
-                    <option value="Junior_High" {{ request('level') == 'Junior_High' ? 'selected' : '' }}>A&E Junior High School</option>
+                </select>
+            </div>
+
+            <div>
+                <select name="sub_level" onchange="this.form.submit()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-deped-blue">
+                    <option value="">All Sub-Levels</option>
+                    <option value="Lower Elementary" {{ request('sub_level') == 'Lower Elementary' ? 'selected' : '' }}>Lower Elementary (Grades 1-3)</option>
+                    <option value="Advanced Elementary" {{ request('sub_level') == 'Advanced Elementary' ? 'selected' : '' }}>Advanced Elementary (Grades 4-6)</option>
+                </select>
+            </div>
+
+            <div>
+                <select name="language" onchange="this.form.submit()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-deped-blue">
+                    <option value="">All Language Tracks</option>
+                    <option value="English" {{ request('language') == 'English' ? 'selected' : '' }}>English</option>
+                    <option value="Filipino" {{ request('language') == 'Filipino' ? 'selected' : '' }}>Filipino</option>
                 </select>
             </div>
         </form>
@@ -72,14 +88,21 @@
             @endphp
             <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm p-6 flex flex-col justify-between hover:shadow-md transition-shadow">
                 <div>
-                    <!-- Strand and Level Badges -->
+                    <!-- Strand, Sub-Level and Language Badges -->
                     <div class="flex items-center justify-between gap-2">
                         <span class="px-2.5 py-0.5 rounded-lg text-white font-bold text-[10px] uppercase tracking-wide" style="background-color: {{ $mod->strand->color_code ?? '#2563eb' }}">
                             {{ $mod->strand->code }}
                         </span>
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
-                            {{ str_replace('_', ' ', $mod->level) }}
-                        </span>
+                        <div class="flex items-center gap-1.5">
+                            @if($mod->language)
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $mod->language === 'Filipino' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-blue-50 text-blue-700 border border-blue-200' }}">
+                                    {{ $mod->language }}
+                                </span>
+                            @endif
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
+                                {{ $mod->sub_level ?: str_replace('_', ' ', $mod->level) }}
+                            </span>
+                        </div>
                     </div>
 
                     <!-- Title & Module Info -->

@@ -17,9 +17,17 @@ class Module extends Model
     public const LEVEL_ELEMENTARY = 'Elementary';
     public const LEVEL_JUNIOR_HIGH = 'Junior_High';
 
+    public const SUB_LEVEL_LOWER_ELEMENTARY = 'Lower Elementary';
+    public const SUB_LEVEL_ADVANCED_ELEMENTARY = 'Advanced Elementary';
+
+    public const LANGUAGE_ENGLISH = 'English';
+    public const LANGUAGE_FILIPINO = 'Filipino';
+
     protected $fillable = [
         'strand_id',
         'level',
+        'sub_level',
+        'language',
         'module_number',
         'title',
         'description',
@@ -83,5 +91,15 @@ class Module extends Model
     public function scopeForStrand($query, int $strandId)
     {
         return $query->where('strand_id', $strandId);
+    }
+
+    public function scopeForSubLevel($query, string $subLevel)
+    {
+        return $query->where('sub_level', $subLevel);
+    }
+
+    public function scopeForLanguage($query, string $language)
+    {
+        return $query->where('language', $language);
     }
 }

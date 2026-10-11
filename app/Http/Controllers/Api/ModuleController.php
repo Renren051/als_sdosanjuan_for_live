@@ -36,6 +36,16 @@ class ModuleController extends Controller
             $query->where('level', $request->input('level'));
         }
 
+        // Filter by sub_level (Lower Elementary, Advanced Elementary)
+        if ($request->filled('sub_level')) {
+            $query->where('sub_level', $request->input('sub_level'));
+        }
+
+        // Filter by language (English, Filipino)
+        if ($request->filled('language')) {
+            $query->where('language', $request->input('language'));
+        }
+
         // Search query
         if ($request->filled('q')) {
             $searchTerm = '%' . $request->input('q') . '%';

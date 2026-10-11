@@ -29,6 +29,14 @@ class ModuleController extends Controller
             $query->where('level', $request->input('level'));
         }
 
+        if ($request->filled('sub_level')) {
+            $query->where('sub_level', $request->input('sub_level'));
+        }
+
+        if ($request->filled('language')) {
+            $query->where('language', $request->input('language'));
+        }
+
         if ($request->filled('q')) {
             $search = '%' . $request->input('q') . '%';
             $query->where(function ($q) use ($search) {
@@ -52,6 +60,8 @@ class ModuleController extends Controller
         $validated = $request->validate([
             'strand_id' => ['required', 'exists:learning_strands,id'],
             'level' => ['required', 'in:BLP,Elementary,Junior_High'],
+            'sub_level' => ['nullable', 'string', 'max:50'],
+            'language' => ['nullable', 'string', 'in:English,Filipino'],
             'module_number' => ['required', 'string', 'max:50'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
@@ -77,6 +87,8 @@ class ModuleController extends Controller
         Module::create([
             'strand_id' => $validated['strand_id'],
             'level' => $validated['level'],
+            'sub_level' => $validated['sub_level'] ?? ($validated['level'] === 'Elementary' ? Module::SUB_LEVEL_LOWER_ELEMENTARY : null),
+            'language' => $validated['language'] ?? Module::LANGUAGE_ENGLISH,
             'module_number' => $validated['module_number'],
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
@@ -100,6 +112,8 @@ class ModuleController extends Controller
         $validated = $request->validate([
             'strand_id' => ['required', 'exists:learning_strands,id'],
             'level' => ['required', 'in:BLP,Elementary,Junior_High'],
+            'sub_level' => ['nullable', 'string', 'max:50'],
+            'language' => ['nullable', 'string', 'in:English,Filipino'],
             'module_number' => ['required', 'string', 'max:50'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
@@ -111,6 +125,8 @@ class ModuleController extends Controller
         $updateData = [
             'strand_id' => $validated['strand_id'],
             'level' => $validated['level'],
+            'sub_level' => $validated['sub_level'] ?? $module->sub_level,
+            'language' => $validated['language'] ?? $module->language,
             'module_number' => $validated['module_number'],
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
