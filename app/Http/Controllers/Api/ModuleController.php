@@ -139,9 +139,12 @@ class ModuleController extends Controller
      */
     public function download($id, Request $request)
     {
-        $module = Module::published()->findOrFail($id);
-
         $user = $request->user('sanctum') ?? $request->user('web');
+        $moduleQuery = Module::query();
+        if ($user && $user->isLearner()) {
+            $moduleQuery->published();
+        }
+        $module = $moduleQuery->findOrFail($id);
         if ($user && $user->isLearner()) {
             $enrollment = $user->latestEnrollment;
             $enrolledLevel = match ($enrollment?->program_track) {

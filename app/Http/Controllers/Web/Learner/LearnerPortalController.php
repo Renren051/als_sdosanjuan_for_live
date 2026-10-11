@@ -364,8 +364,12 @@ class LearnerPortalController extends Controller
         $enrollment = $user->latestEnrollment;
         $enrolledLevel = $this->getEnrolledModuleLevel($enrollment);
 
-        // Ensure only published modules can be opened by learners
-        $module = Module::published()->with('strand')->findOrFail($id);
+        // Ensure only published modules can be opened by learners (staff can preview drafts)
+        $moduleQuery = Module::with('strand');
+        if ($user->isLearner()) {
+            $moduleQuery->published();
+        }
+        $module = $moduleQuery->findOrFail($id);
 
         // Access control: Ensure learner only accesses modules in their enrolled program
         if ($user->isLearner() && $enrolledLevel && $module->level !== $enrolledLevel) {
@@ -383,7 +387,7 @@ class LearnerPortalController extends Controller
                 'last_opened_at' => now(),
                 'completion_status' => ModuleProgress::STATUS_IN_PROGRESS,
                 'last_page_read' => 1,
-                'total_pages' => 2,
+                'total_pages' => null,
                 'device_identifier' => $request->userAgent() ?: 'Web Browser',
                 'synced_at' => now(),
             ]
@@ -439,7 +443,7 @@ class LearnerPortalController extends Controller
             ->first();
 
         if ($totalPages === null) {
-            $totalPages = $existing?->total_pages ?: 2;
+            $totalPages = $existing?->total_pages ?: null;
         }
 
         // Determine status

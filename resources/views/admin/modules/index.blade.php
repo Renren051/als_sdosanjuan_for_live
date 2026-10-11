@@ -117,12 +117,22 @@
                 </div>
 
                 <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
-                    <!-- Download Link -->
-                    <a href="{{ url('/api/v1/modules/' . $mod->id . '/download') }}" target="_blank"
-                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors">
-                        <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                        <span>PDF</span>
-                    </a>
+                    <!-- Preview / Read and Download Links -->
+                    <div class="flex items-center gap-1.5">
+                        <a href="{{ route('learner.modules.read', $mod->id) }}" target="_blank"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-deped-blue/10 hover:bg-deped-blue hover:text-white text-deped-blue font-bold text-xs transition-colors"
+                           title="Read & Preview Module in Browser">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            <span>Read</span>
+                        </a>
+
+                        <a href="{{ url('/api/v1/modules/' . $mod->id . '/download') }}" target="_blank"
+                           class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors"
+                           title="Download PDF Copy">
+                            <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            <span>PDF</span>
+                        </a>
+                    </div>
 
                     <div class="flex items-center gap-1.5">
                         <!-- Toggle Publish Form -->
