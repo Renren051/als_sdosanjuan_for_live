@@ -6,6 +6,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7.x-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![DepEd RA 11510](https://img.shields.io/badge/DepEd-RA%2011510%20Compliant-0038A8?style=flat)](https://www.deped.gov.ph/)
+[![Android APK](https://img.shields.io/badge/Android%20LMS-v2.0%20Ready-success?style=flat&logo=android&logoColor=white)](https://github.com/Renren051/als_sdosanjuan_modules_apk)
 [![PHPUnit Tests](https://img.shields.io/badge/PHPUnit-92%20Passed%20(578%20Assertions)-success?style=flat)]()
 
 ---
@@ -17,50 +18,43 @@ Under the mandate of the **Department of Education (DepEd)** and **Republic Act 
 The platform operates as a **single, unified dual-platform system** powered by a **shared central MySQL database**:
 1. **Web-Based Student Information System (SIS) & Administrative Portal:** Multi-role governance portal handling digital intake (DepEd ALS Form 2), document verification, Community Learning Center (CLC) allocation, hero banner management, module authoring/publishing, and automated DepEd masterlist exports (ALS Form 1 & Form 2).
 2. **Centralized Backend API:** High-performance Laravel Sanctum REST API serving data, authentication, binary PDF streaming, and telemetry ingestion for both the web portal and the mobile app.
-3. **Android-Based Modular LMS (Native Mobile App):** An offline-first mobile application designed for OSYA learners with limited or intermittent internet connectivity, featuring local SQLite/Room caching, background telemetry synchronization, and an in-app PDF module reader.
+3. **Android-Based Modular LMS (Native Mobile App v2.0):** An offline-first mobile application designed for OSYA learners with limited or intermittent internet connectivity, featuring local SQLite/Room caching, background telemetry synchronization, and an in-app PDF module reader. Pre-built standalone package available as `ALSSDOSanJuan_v2.0.apk`.
 
 ---
 
 ## 🗄️ Single Shared Database Architecture
 
-Both the **Web SIS / LMS** and the **Android Mobile App** operate on the **EXACT SAME MySQL database** (`als_sdosanjuan_db`). There is zero data segregation or secondary synchronization delays:
+Both the **Web SIS / LMS** and the **Android Mobile App (v2.0)** operate on the **EXACT SAME MySQL database** (`als_sdosanjuan_db`). There is zero data segregation or secondary synchronization delays:
 
 ```mermaid
 graph TB
-    subgraph Centralized_Database ["Centralized MySQL Database (als_sdosanjuan_db)"]
-        DB_Users[("users & user_profiles\n(Learners, Teachers, Admins)")]
-        DB_Modules[("learning_strands & modules\n(Official DepEd SLMs LS1-LS6)")]
-        DB_Telemetry[("module_progress & enrollments\n(Pages Read, Completion, Timestamps)")]
-        DB_CLCs[("clcs & announcements\n(12 Learning Centers, Banners)")]
+    subgraph Centralized_Database [Centralized MySQL Database: als_sdosanjuan_db]
+        DB_Users[("users & user_profiles\nLearners, Teachers, Admins")]
+        DB_Modules[("learning_strands & modules\nOfficial DepEd SLMs LS1-LS6")]
+        DB_Telemetry[("module_progress & enrollments\nPages Read, Completion, Timestamps")]
+        DB_CLCs[("clcs & announcements\n12 Learning Centers, Banners")]
     end
 
-    subgraph Laravel_Backend ["Laravel 12 Backend & API (Host PC :8000)"]
+    subgraph Laravel_Backend [Laravel 12 Backend & API: Host PC Port 8000]
         SIS_Web["Web SIS / LMS\n(Blade + Alpine.js + Tailwind CSS)"]
         Sanctum_API["Laravel Sanctum REST API\n(/api/v1/*)"]
         AI_Service["Google Gemini 2.5 Flash\n(ALSJay Chat Service)"]
     end
 
-    subgraph Client_Applications ["Client Access Touchpoints"]
+    subgraph Client_Applications [Client Access Touchpoints]
         Web_Admin["Super Admin & Division Admin\n(Teacher Provisioning, Intake, Modules)"]
         Web_Teacher["Mobile Teachers\n(CLC Masterlist & Progress Verification)"]
         Web_Learner["Learners on Web Browser\n(Intake, Status Tracker, Fit-Page PDF Reader)"]
-        Android_App["Learners on Android Mobile App\n(Kotlin, Jetpack Compose, Offline Room DB)"]
+        Android_App["Learners on Android Mobile App v2.0\n(Kotlin, Jetpack Compose, Offline Room DB)"]
     end
 
-    %% Database connections
     Laravel_Backend <--> Centralized_Database
-
-    %% Web connections
     Web_Admin --> SIS_Web
     Web_Teacher --> SIS_Web
     Web_Learner --> SIS_Web
-
-    %% Android connections
     Android_App <-->|HTTP / REST API via LAN IP| Sanctum_API
     Android_App -.->|Offline Mode: Cache to Room DB| Android_App
     Android_App -->|Background Telemetry Sync\nWorkManager SyncWorker| Sanctum_API
-    
-    %% AI connections
     SIS_Web <--> AI_Service
     Sanctum_API <--> AI_Service
 ```
@@ -82,7 +76,7 @@ graph TB
 | **Web Frontend** | Blade + Vite v7.x | Tailwind CSS v4, Alpine.js, Plus Jakarta Sans, Playfair Display |
 | **PDF Generation** | DomPDF | Official DepEd Form 1 (Masterlist) & Form 2 (Enrolment Profile) |
 | **AI Assistant** | Google Gemini 2.5 Flash | Real-time Search Grounding, strict DepEd guardrails, Tagalog/English mirroring |
-| **Mobile App** | Native Android | Kotlin 2.0, Jetpack Compose, Material 3, Room, Retrofit 2, WorkManager |
+| **Mobile App (v2.0)** | Native Android | Kotlin 2.0, Jetpack Compose, Material 3, Room, Retrofit 2, WorkManager (`ALSSDOSanJuan_v2.0.apk`) |
 
 ---
 
@@ -281,7 +275,7 @@ All accounts below are pre-configured in `database/seeders/UserSeeder.php` and c
 
 ## 📡 Core REST API Reference (Shared Backend)
 
-All endpoints below are consumed directly by the native Android application:
+All endpoints below are consumed directly by the native Android application (v2.0):
 
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :--- |
