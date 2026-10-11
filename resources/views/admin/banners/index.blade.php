@@ -37,7 +37,7 @@
                 <span>Kingster-Style Hero Banner Carousel</span>
             </div>
             <h2 class="text-lg font-bold text-slate-900">Homepage Hero Photos &amp; Framing</h2>
-            <p class="text-xs text-slate-500">Upload photos with Facebook-style drag &amp; zoom repositioning to choose the exact view shown on the homepage.</p>
+            <p class="text-xs text-slate-500">Upload and reposition photos to choose the exact framing shown on the homepage.</p>
         </div>
         <button type="button" @click="openUploadModal()" 
                 class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-deped-blue hover:bg-deped-dark text-white font-bold text-xs shadow-md shadow-deped-blue/20 transition-all shrink-0">
@@ -53,7 +53,7 @@
                 <div>
                     <!-- Banner Photo Preview -->
                     <div class="relative h-48 bg-slate-900 overflow-hidden">
-                        <img src="{{ $banner->image_url }}" alt="{{ $banner->title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        <img src="{{ $banner->image_url }}" alt="{{ $banner->title }}" style="object-position: {{ $banner->position_x ?? 50 }}% {{ $banner->position_y ?? 50 }}%;" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                         
                         <!-- Status Badge -->
                         <div class="absolute top-3 right-3 flex items-center gap-2">
@@ -74,7 +74,7 @@
                             <span class="p-2.5 rounded-full bg-white/20 border border-white/30 text-white shadow-lg">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
                             </span>
-                            <span>Click to Reposition / Crop Photo</span>
+                            <span>Click to Reposition Photo</span>
                         </button>
                     </div>
 
@@ -112,7 +112,7 @@
                         <button type="button" 
                                 @click="openCropperForDirectBanner({{ json_encode($banner) }})"
                                 class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 text-deped-blue hover:bg-blue-100 border border-blue-200/80 text-xs font-bold transition-colors"
-                                title="Reposition photo view (Facebook Style)">
+                                title="Reposition photo view">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
                             <span>Reposition</span>
                         </button>
@@ -146,55 +146,27 @@
         @endforelse
     </div>
 
-    <!-- ========================================================
-         MODAL 1: UPLOAD NEW HERO BANNER MODAL
+    <!-- =====================================================         MODAL 1: UPLOAD NEW HERO BANNER MODAL
          ======================================================== -->
     <div x-show="uploadModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" style="display: none;" x-cloak>
         <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 sm:p-8 space-y-5 my-auto max-h-[92vh] overflow-y-auto" @click.away="uploadModal = false">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
                     <h3 class="text-lg font-bold text-slate-900">Upload New Hero Banner</h3>
-                    <p class="text-xs text-slate-500">Pick an image and frame it with Facebook-style repositioning</p>
+                    <p class="text-xs text-slate-500">Upload a high-resolution photo for the top banner carousel</p>
                 </div>
                 <button type="button" @click="uploadModal = false" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none">&times;</button>
             </div>
 
             <form action="{{ route('admin.banners.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
-                
-                <!-- Cropped Base64 Payload Input -->
-                <input type="hidden" name="cropped_image" :value="uploadCroppedImage">
 
-                <!-- Image File Input with Auto-Cropper Trigger -->
+                <!-- Image File Input -->
                 <div class="space-y-2">
                     <label class="block text-xs font-bold text-slate-700 uppercase">Banner Image (JPG, PNG, WebP) *</label>
-                    
-                    <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/jpg"
-                           @change="onUploadFileSelected($event)"
+                    <input type="file" name="image" required accept="image/jpeg,image/png,image/webp,image/jpg"
                            class="w-full text-xs text-slate-600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-deped-blue file:text-white hover:file:bg-deped-dark file:cursor-pointer border border-slate-200 rounded-xl bg-slate-50">
-                    
-                    <!-- Cropped Preview Badge -->
-                    <template x-if="uploadCroppedImage">
-                        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-16 h-8 rounded-lg overflow-hidden border border-emerald-300 bg-black shrink-0">
-                                    <img :src="uploadCroppedImage" class="w-full h-full object-cover">
-                                </div>
-                                <div>
-                                    <div class="text-xs font-bold text-emerald-800 flex items-center gap-1.5">
-                                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                        <span>Custom Framing Applied (1920×800)</span>
-                                    </div>
-                                    <div class="text-[11px] text-emerald-600">Framed like Facebook cover photo</div>
-                                </div>
-                            </div>
-                            <button type="button" @click="reopenUploadCrop()" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white font-bold text-[11px] hover:bg-emerald-700 transition-colors">
-                                Adjust Framing
-                            </button>
-                        </div>
-                    </template>
-
-                    <p class="text-[11px] text-slate-400">Selecting a photo will open the Facebook-style reposition tool so you can choose the exact framing.</p>
+                    <p class="text-[11px] text-slate-400">Upload your original high-resolution photo. You can reposition its framing anytime using the Reposition tool.</p>
                 </div>
 
                 <!-- Headline / Title -->
@@ -216,12 +188,12 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Button Text</label>
                         <input type="text" name="button_text" value="Take A Tour" placeholder="e.g. Take A Tour"
-                               class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                                class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Button Link URL</label>
                         <input type="text" name="button_url" value="/register" placeholder="e.g. /register"
-                               class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                                class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
                     </div>
                 </div>
 
@@ -230,7 +202,7 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Sequence Order</label>
                         <input type="number" name="order_seq" min="1" value="{{ count($banners) + 1 }}"
-                               class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">
+                                class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono">
                     </div>
                     <div class="flex items-center pt-5">
                         <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-700">
@@ -249,14 +221,14 @@
     </div>
 
     <!-- ========================================================
-         MODAL 2: EDIT HERO BANNER MODAL (From User Screenshot)
+         MODAL 2: EDIT HERO BANNER MODAL
          ======================================================== -->
     <div x-show="editModal" class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4" style="display: none;" x-cloak>
         <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 sm:p-8 space-y-5 my-auto max-h-[92vh] overflow-y-auto" @click.away="editModal = false">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div>
                     <h3 class="text-lg font-bold text-slate-900">Edit Hero Banner</h3>
-                    <p class="text-xs text-slate-500">Update slide text, button link, or crop / replace photo</p>
+                    <p class="text-xs text-slate-500">Update slide text, button link, or replace photo</p>
                 </div>
                 <button type="button" @click="editModal = false" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none">&times;</button>
             </div>
@@ -264,38 +236,34 @@
             <form :action="'{{ url('/admin/banners') }}/' + activeBanner.id" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 @method('PUT')
-                
-                <!-- Cropped Base64 Payload Input -->
-                <input type="hidden" name="cropped_image" :value="editCroppedImage">
 
                 <!-- Replace / Reposition Image Section -->
                 <div class="space-y-2">
-                    <label class="block text-xs font-bold text-slate-700 uppercase">Replace Image (Leave blank to keep existing)</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase">Banner Photo</label>
                     
-                    <!-- Reposition Current Photo Trigger -->
+                    <!-- Current Photo & Reposition Trigger -->
                     <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-16 h-9 rounded-lg overflow-hidden bg-slate-900 border border-slate-300 shrink-0">
-                                <img :src="editCroppedImage || activeBanner.image_url" class="w-full h-full object-cover">
+                                <img :src="activeBanner.image_url" :style="'object-position: ' + (activeBanner.position_x || 50) + '% ' + (activeBanner.position_y || 50) + '%;'" class="w-full h-full object-cover">
                             </div>
                             <div class="min-w-0">
-                                <div class="text-xs font-bold text-slate-800 truncate" x-text="editCroppedImage ? 'Custom Framing Ready' : 'Current Active Photo'"></div>
-                                <div class="text-[11px] text-slate-500" x-text="editCroppedImage ? 'New crop applied' : '1920×800 format'"></div>
+                                <div class="text-xs font-bold text-slate-800 truncate" x-text="activeBanner.title || 'Current Photo'"></div>
+                                <div class="text-[11px] text-slate-500" x-text="`Framing: ${activeBanner.position_y || 50}% Vertical`"></div>
                             </div>
                         </div>
                         <button type="button" 
-                                @click="openCropperForEditExisting()"
+                                @click="editModal = false; openCropperForDirectBanner(activeBanner)"
                                 class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-deped-blue text-white font-bold text-xs hover:bg-deped-dark shadow-sm transition-all shrink-0">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
-                            <span>Crop / Reposition</span>
+                            <span>Reposition Photo</span>
                         </button>
                     </div>
 
                     <!-- Replace with New File Input -->
+                    <label class="block text-xs font-semibold text-slate-600">Replace image file (optional):</label>
                     <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/jpg"
-                           @change="onEditFileSelected($event)"
                            class="w-full text-xs text-slate-600 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-deped-blue file:text-white hover:file:bg-deped-dark file:cursor-pointer border border-slate-200 rounded-xl bg-slate-50">
-                    <p class="text-[11px] text-slate-400">Selecting a new file will automatically launch the Facebook-style reposition tool.</p>
                 </div>
 
                 <!-- Headline / Title -->
@@ -350,8 +318,8 @@
     </div>
 
     <!-- ========================================================
-         MODAL 3: FACEBOOK COVER PHOTO REPOSITION & CROP MODAL
-         Fixed layout: Pinned Header & Footer, zero overflow bugs
+         MODAL 3: REPOSITION HERO BANNER PHOTO MODAL
+         Non-destructive framing: Adjusts focal point with CSS object-position
          ======================================================== -->
     <div x-show="cropper.isOpen" 
          class="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-5" 
@@ -361,18 +329,17 @@
         <div class="relative w-full max-w-4xl bg-white rounded-3xl border border-slate-200/90 shadow-2xl flex flex-col max-h-[92vh] overflow-hidden my-auto" 
              @click.away="cropper.cancel()">
             
-            <!-- Sticky Header (Always 100% visible) -->
+            <!-- Sticky Header -->
             <div class="shrink-0 px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white z-10">
                 <div class="flex items-center gap-2.5">
                     <div class="w-9 h-9 rounded-xl bg-deped-blue/10 text-deped-blue flex items-center justify-center font-bold shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
                     </div>
                     <div>
-                        <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
-                            <span>Reposition Hero Banner Photo</span>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] bg-blue-100 text-deped-blue font-bold uppercase tracking-wider">Facebook Style</span>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900">
+                            Reposition Hero Banner Photo
                         </h3>
-                        <p class="text-xs text-slate-500">Drag to reposition photo • Scroll or use slider to zoom</p>
+                        <p class="text-xs text-slate-500">Drag photo to adjust framing &bull; Choose what is displayed on the homepage</p>
                     </div>
                 </div>
                 
@@ -403,43 +370,25 @@
                 <!-- Viewport Container -->
                 <div id="bannerCropperViewport"
                      class="relative w-full rounded-2xl overflow-hidden bg-slate-950 select-none touch-none border border-slate-800 shadow-inner group max-h-[360px]"
-                     x-ref="viewportBox"
                      :style="'aspect-ratio: ' + cropper.aspectRatio + ';'"
                      @pointerdown="cropper.startDrag($event)"
                      @pointermove="cropper.onDrag($event)"
                      @pointerup="cropper.stopDrag()"
                      @pointercancel="cropper.stopDrag()"
-                     @wheel.prevent="cropper.onWheel($event)"
                      :class="cropper.isDragging ? 'cursor-grabbing' : 'cursor-grab'">
 
-                    <!-- Image Layer -->
-                    <template x-if="cropper.imgElement && cropper.isLoaded">
-                        <img :src="cropper.imgElement.src"
-                             class="absolute left-1/2 top-1/2 pointer-events-none select-none max-w-none max-h-none will-change-transform"
-                             :style="`transform: translate(-50%, -50%) translate3d(${cropper.posX}px, ${cropper.posY}px, 0) rotate(${cropper.rotation}deg) scale(${cropper.currentScale});`" />
+                    <!-- Image Layer: Displayed via CSS object-position (No destructive crop, original preserved) -->
+                    <template x-if="cropper.imageUrl">
+                        <img :src="cropper.imageUrl"
+                             class="w-full h-full object-cover pointer-events-none select-none transition-none will-change-[object-position]"
+                             :style="'object-position: ' + cropper.posX + '% ' + cropper.posY + '%;'" />
                     </template>
 
-                    <!-- Instruction Overlay Pill (Like Facebook) -->
+                    <!-- Instruction Overlay Pill -->
                     <div class="absolute top-3 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-md text-white font-semibold text-xs flex items-center gap-2 pointer-events-none shadow-lg border border-white/15 transition-opacity duration-200"
                          :class="cropper.isDragging ? 'opacity-30' : 'opacity-95'">
                         <svg class="w-4 h-4 text-deped-gold shrink-0 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"/></svg>
-                        <span>Drag photo to reposition</span>
-                        <span class="text-white/40">•</span>
-                        <span class="text-white/70">Scroll to zoom</span>
-                    </div>
-
-                    <!-- Rule of Thirds Grid Overlay -->
-                    <div class="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3 transition-opacity duration-300"
-                         :class="cropper.isDragging ? 'opacity-60' : 'opacity-15'">
-                        <div class="border-r border-b border-white/40"></div>
-                        <div class="border-r border-b border-white/40"></div>
-                        <div class="border-b border-white/40"></div>
-                        <div class="border-r border-b border-white/40"></div>
-                        <div class="border-r border-b border-white/40"></div>
-                        <div class="border-b border-white/40"></div>
-                        <div class="border-r border-b border-white/40"></div>
-                        <div class="border-r border-b border-white/40"></div>
-                        <div></div>
+                        <span>Drag photo up or down to reposition</span>
                     </div>
 
                     <!-- Live Headline Simulation Overlay on Viewport -->
@@ -455,98 +404,88 @@
                         </div>
                     </div>
 
-                    <!-- Resolution Tag -->
+                    <!-- Position Tag -->
                     <div class="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-emerald-400 font-mono text-[11px] font-bold border border-emerald-500/20 shadow-md">
-                        <span x-text="cropper.aspectRatio === 1920/800 ? '1920 × 800 HD' : '1920 × 1080 HD'"></span>
-                    </div>
-
-                    <!-- Loading State with Spinner -->
-                    <div x-show="!cropper.isLoaded && !cropper.hasError" class="absolute inset-0 bg-slate-900/90 flex flex-col items-center justify-center text-white text-xs font-bold gap-2">
-                        <svg class="animate-spin w-6 h-6 text-deped-blue" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
-                        <span>Loading photo for repositioning...</span>
-                    </div>
-
-                    <!-- Error State with Retry -->
-                    <div x-show="cropper.hasError" class="absolute inset-0 bg-slate-900/90 flex flex-col items-center justify-center text-rose-300 text-xs font-bold gap-2 p-4 text-center">
-                        <svg class="w-8 h-8 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                        <span x-text="cropper.errorMessage || 'Unable to load photo.'"></span>
+                        <span x-text="`Vertical: ${cropper.posY}% | Horizontal: ${cropper.posX}%`"></span>
                     </div>
                 </div>
 
-                <!-- Compact Controls Bar -->
-                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 space-y-2.5">
+                <!-- Reposition Controls Bar -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3">
                     
-                    <!-- Zoom Slider Row -->
-                    <div class="flex items-center gap-3">
-                        <span class="text-xs font-bold text-slate-700 uppercase shrink-0 w-12">Zoom:</span>
-                        
-                        <button type="button" 
-                                @click="cropper.zoomStep(-0.1)"
-                                class="w-7 h-7 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-base transition-colors shrink-0">
-                            &minus;
-                        </button>
-                        
-                        <input type="range" 
-                               min="1.0" 
-                               max="3.0" 
-                               step="0.01" 
-                               x-model.number="cropper.zoom"
-                               @input="cropper.onZoomChange()"
-                               class="w-full accent-deped-blue cursor-pointer h-2 bg-slate-200 rounded-lg">
-                        
-                        <button type="button" 
-                                @click="cropper.zoomStep(0.1)"
-                                class="w-7 h-7 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 flex items-center justify-center font-bold text-base transition-colors shrink-0">
-                            &plus;
-                        </button>
-
-                        <div class="w-14 px-1.5 py-1 rounded-lg bg-white border border-slate-300 text-slate-800 font-mono text-xs font-bold text-center shrink-0">
-                            <span x-text="Math.round(cropper.zoom * 100) + '%'"></span>
+                    <!-- Vertical Position Slider -->
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                            <span class="uppercase">Vertical Framing</span>
+                            <span class="font-mono text-deped-blue font-bold" x-text="cropper.posY === 0 ? 'Top (0%)' : (cropper.posY === 50 ? 'Center (50%)' : (cropper.posY === 100 ? 'Bottom (100%)' : cropper.posY + '%'))"></span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[11px] font-semibold text-slate-400 shrink-0">Top (0%)</span>
+                            <input type="range" 
+                                   min="0" 
+                                   max="100" 
+                                   step="1" 
+                                   x-model.number="cropper.posY"
+                                   class="w-full accent-deped-blue cursor-pointer h-2 bg-slate-200 rounded-lg">
+                            <span class="text-[11px] font-semibold text-slate-400 shrink-0">Bottom (100%)</span>
                         </div>
                     </div>
 
-                    <!-- Action Tools Row -->
+                    <!-- Preset Positions & Tools -->
                     <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/60">
                         <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="text-xs font-semibold text-slate-500 mr-1">Quick Alignment:</span>
+                            
                             <button type="button" 
-                                    @click="cropper.centerAndClamp()"
-                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold text-xs transition-colors">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                                <span>Center Framing</span>
+                                    @click="cropper.setPos(50, 0)"
+                                    :class="cropper.posY === 0 ? 'bg-deped-blue text-white' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'"
+                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition-colors">
+                                Top
                             </button>
 
                             <button type="button" 
-                                    @click="cropper.rotate(-90)"
-                                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold text-xs transition-colors"
-                                    title="Rotate counter-clockwise">
-                                <span>↺ -90°</span>
+                                    @click="cropper.setPos(50, 25)"
+                                    :class="cropper.posY === 25 ? 'bg-deped-blue text-white' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'"
+                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition-colors"
+                                    title="Upper framing (ideal for faces / stage)">
+                                Upper (Faces)
                             </button>
 
                             <button type="button" 
-                                    @click="cropper.rotate(90)"
-                                    class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold text-xs transition-colors"
-                                    title="Rotate clockwise">
-                                <span>↻ +90°</span>
+                                    @click="cropper.setPos(50, 50)"
+                                    :class="cropper.posY === 50 ? 'bg-deped-blue text-white' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'"
+                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition-colors">
+                                Center
                             </button>
 
-                            <!-- Toggle Headline Overlay Preview -->
                             <button type="button" 
-                                    @click="cropper.showOverlayText = !cropper.showOverlayText"
-                                    :class="cropper.showOverlayText ? 'bg-blue-50 text-deped-blue border-blue-200' : 'bg-white text-slate-600 border-slate-300'"
-                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-bold text-xs transition-colors">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                <span x-text="cropper.showOverlayText ? 'Hide Title Preview' : 'Show Title Preview'"></span>
+                                    @click="cropper.setPos(50, 75)"
+                                    :class="cropper.posY === 75 ? 'bg-deped-blue text-white' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'"
+                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition-colors">
+                                Lower
+                            </button>
+
+                            <button type="button" 
+                                    @click="cropper.setPos(50, 100)"
+                                    :class="cropper.posY === 100 ? 'bg-deped-blue text-white' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-300'"
+                                    class="px-2.5 py-1 rounded-lg text-xs font-bold transition-colors">
+                                Bottom
                             </button>
                         </div>
 
-                        <div class="text-xs text-slate-500 font-medium">
-                            Position: <span class="font-mono text-slate-700 font-bold" x-text="`X: ${Math.round(cropper.posX)}px, Y: ${Math.round(cropper.posY)}px`"></span>
-                        </div>
+                        <!-- Toggle Headline Overlay Preview -->
+                        <button type="button" 
+                                @click="cropper.showOverlayText = !cropper.showOverlayText"
+                                :class="cropper.showOverlayText ? 'bg-blue-50 text-deped-blue border-blue-200' : 'bg-white text-slate-600 border-slate-300'"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-bold text-xs transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            <span x-text="cropper.showOverlayText ? 'Hide Title Preview' : 'Show Title Preview'"></span>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Sticky Footer (Always 100% visible) -->
+            <!-- Sticky Footer -->
             <div class="shrink-0 px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between z-10">
                 <button type="button" 
                         @click="cropper.cancel()" 
@@ -556,9 +495,9 @@
                 </button>
                 
                 <button type="button" 
-                        @click="cropper.applyCrop()" 
-                        :disabled="cropper.isSaving || !cropper.isLoaded"
-                        :class="(cropper.isSaving || !cropper.isLoaded) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-deped-dark'"
+                        @click="cropper.saveReposition()" 
+                        :disabled="cropper.isSaving"
+                        :class="cropper.isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-deped-dark'"
                         class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-deped-blue text-white font-bold text-xs shadow-md shadow-deped-blue/25 transition-all">
                     <template x-if="cropper.isSaving">
                         <svg class="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
@@ -566,17 +505,18 @@
                     <template x-if="!cropper.isSaving">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                     </template>
-                    <span x-text="cropper.isSaving ? 'Saving & Updating Banner...' : (cropper.targetMode === 'direct' ? 'Save Framing & Reposition' : 'Apply Framing & Crop')"></span>
+                    <span x-text="cropper.isSaving ? 'Saving Position...' : 'Save Reposition'"></span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Dedicated Global Reposition Form (Guaranteed static ID outside loop) -->
+    <!-- Dedicated Global Reposition Form -->
     <form id="globalRepositionForm" method="POST" action="" style="display: none;">
         @csrf
         @method('PATCH')
-        <input type="hidden" name="cropped_image" id="globalRepositionCroppedImage">
+        <input type="hidden" name="position_x" id="globalRepositionPosX">
+        <input type="hidden" name="position_y" id="globalRepositionPosY">
     </form>
 
 </div>
@@ -584,205 +524,57 @@
 
 @push('scripts')
 <script>
-function toCleanImageUrl(url) {
-    if (!url) return '';
-    if (url.startsWith('data:') || url.startsWith('blob:')) return url;
-    try {
-        const u = new URL(url, window.location.origin);
-        return u.pathname + u.search;
-    } catch(e) {
-        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            return '/' + url.replace(/^\/+/, '');
-        }
-        return url;
-    }
-}
-
 document.addEventListener('alpine:init', () => {
     Alpine.data('bannerManager', () => ({
-        init() {
-            this.cropper.parent = this;
-        },
-
         uploadModal: false,
         editModal: false,
         activeBanner: {},
-        
-        // Staged cropped images
-        uploadCroppedImage: null,
-        editCroppedImage: null,
-        
-        // Active file references
-        uploadOriginalFileUrl: null,
-        editOriginalFileUrl: null,
 
-        // Cropper state machine
+        // Reposition state machine (Non-destructive, CSS object-position)
         cropper: {
-            parent: null,
             isOpen: false,
-            isLoaded: false,
             isSaving: false,
-            hasError: false,
-            errorMessage: '',
-            imgElement: null,
+            imageUrl: '',
             aspectRatio: 1920 / 800,
             aspectRatioName: '2.4:1',
-            zoom: 1.0,
-            minZoom: 1.0,
-            maxZoom: 3.0,
-            rotation: 0,
-            posX: 0,
-            posY: 0,
+            posX: 50,
+            posY: 50,
             isDragging: false,
             dragStartX: 0,
             dragStartY: 0,
-            initialPosX: 0,
-            initialPosY: 0,
-            containerWidth: 0,
-            containerHeight: 0,
-            naturalWidth: 0,
-            naturalHeight: 0,
+            initialPosX: 50,
+            initialPosY: 50,
             showOverlayText: true,
-            targetMode: null, // 'upload', 'edit', 'direct'
             targetBanner: null,
             targetBannerId: null,
-            _previewTimer: null,
 
-            open(imageUrl, mode = 'direct', banner = null) {
+            open(imageUrl, posX = 50, posY = 50, banner = null) {
                 this.isOpen = true;
-                this.isLoaded = false;
                 this.isSaving = false;
-                this.hasError = false;
-                this.errorMessage = '';
-                this.targetMode = mode;
+                this.imageUrl = imageUrl;
                 this.targetBanner = banner;
                 this.targetBannerId = banner ? banner.id : null;
-                this.zoom = 1.0;
-                this.rotation = 0;
-                this.posX = 0;
-                this.posY = 0;
+                this.posX = typeof posX === 'number' ? posX : 50;
+                this.posY = typeof posY === 'number' ? posY : 50;
                 this.aspectRatio = 1920 / 800;
                 this.showOverlayText = true;
-
-                const cleanUrl = toCleanImageUrl(imageUrl);
-                const img = new Image();
-
-                // Only set crossOrigin if URL is truly a foreign domain
-                if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
-                    try {
-                        const parsed = new URL(cleanUrl);
-                        if (parsed.origin !== window.location.origin) {
-                            img.crossOrigin = 'anonymous';
-                        }
-                    } catch(e) {}
-                }
-
-                const onImageReady = () => {
-                    this.imgElement = img;
-                    this.naturalWidth = img.naturalWidth;
-                    this.naturalHeight = img.naturalHeight;
-                    this.isLoaded = true;
-                    this.hasError = false;
-
-                    setTimeout(() => {
-                        this.updateDimensions();
-                        this.centerAndClamp();
-                    }, 40);
-                };
-
-                img.onload = onImageReady;
-                img.onerror = (e) => {
-                    console.error('Failed to load image for repositioning:', cleanUrl, e);
-                    // Fallback attempt: if it had crossOrigin, retry without it
-                    if (img.crossOrigin) {
-                        const fallbackImg = new Image();
-                        fallbackImg.onload = () => {
-                            this.imgElement = fallbackImg;
-                            this.naturalWidth = fallbackImg.naturalWidth;
-                            this.naturalHeight = fallbackImg.naturalHeight;
-                            this.isLoaded = true;
-                            this.hasError = false;
-                            setTimeout(() => {
-                                this.updateDimensions();
-                                this.centerAndClamp();
-                            }, 40);
-                        };
-                        fallbackImg.onerror = () => {
-                            this.isLoaded = false;
-                            this.hasError = true;
-                            this.errorMessage = 'Unable to load image file. Please verify the photo.';
-                        };
-                        fallbackImg.src = cleanUrl;
-                    } else {
-                        this.isLoaded = false;
-                        this.hasError = true;
-                        this.errorMessage = 'Unable to load image file. Please verify the photo.';
-                    }
-                };
-
-                img.src = cleanUrl;
-
-                // If already cached in browser memory
-                if (img.complete && img.naturalWidth > 0) {
-                    onImageReady();
-                }
             },
 
             cancel() {
                 this.isOpen = false;
             },
 
-            updateDimensions() {
-                const vp = document.getElementById('bannerCropperViewport') || document.querySelector('[x-ref="viewportBox"]');
-                if (vp && vp.clientWidth && vp.clientHeight) {
-                    this.containerWidth = vp.clientWidth;
-                    this.containerHeight = vp.clientHeight;
-                }
+            setAspectRatio(ratio, name) {
+                this.aspectRatio = ratio;
+                this.aspectRatioName = name;
             },
 
-            get effectiveDimensions() {
-                if (this.rotation % 180 !== 0) {
-                    return { w: this.naturalHeight, h: this.naturalWidth };
-                }
-                return { w: this.naturalWidth, h: this.naturalHeight };
-            },
-
-            get baseScale() {
-                if (!this.containerWidth || !this.containerHeight || !this.naturalWidth || !this.naturalHeight) {
-                    return 1.0;
-                }
-                const eff = this.effectiveDimensions;
-                return Math.max(this.containerWidth / eff.w, this.containerHeight / eff.h);
-            },
-
-            get currentScale() {
-                return this.baseScale * this.zoom;
-            },
-
-            get slack() {
-                const eff = this.effectiveDimensions;
-                const dispW = eff.w * this.currentScale;
-                const dispH = eff.h * this.currentScale;
-                return {
-                    x: Math.max(0, (dispW - this.containerWidth) / 2),
-                    y: Math.max(0, (dispH - this.containerHeight) / 2)
-                };
-            },
-
-            clampPosition() {
-                const s = this.slack;
-                this.posX = Math.max(-s.x, Math.min(s.x, this.posX));
-                this.posY = Math.max(-s.y, Math.min(s.y, this.posY));
-            },
-
-            centerAndClamp() {
-                this.posX = 0;
-                this.posY = 0;
-                this.clampPosition();
+            setPos(x, y) {
+                this.posX = Math.max(0, Math.min(100, x));
+                this.posY = Math.max(0, Math.min(100, y));
             },
 
             startDrag(e) {
-                if (!this.isLoaded) return;
                 this.isDragging = true;
                 this.dragStartX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
                 this.dragStartY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
@@ -797,182 +589,62 @@ document.addEventListener('alpine:init', () => {
                 const deltaX = currentX - this.dragStartX;
                 const deltaY = currentY - this.dragStartY;
 
-                this.posX = this.initialPosX + deltaX;
-                this.posY = this.initialPosY + deltaY;
-                this.clampPosition();
+                const vp = document.getElementById('bannerCropperViewport');
+                const vpHeight = vp ? vp.clientHeight : 300;
+                const vpWidth = vp ? vp.clientWidth : 720;
+
+                const stepY = (deltaY / vpHeight) * 100;
+                const stepX = (deltaX / vpWidth) * 100;
+
+                this.posY = Math.max(0, Math.min(100, Math.round(this.initialPosY - stepY)));
+                this.posX = Math.max(0, Math.min(100, Math.round(this.initialPosX - stepX)));
             },
 
             stopDrag() {
-                if (this.isDragging) {
-                    this.isDragging = false;
-                }
+                this.isDragging = false;
             },
 
-            onWheel(e) {
-                const delta = e.deltaY < 0 ? 0.08 : -0.08;
-                this.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, parseFloat((this.zoom + delta).toFixed(2))));
-                this.clampPosition();
-            },
-
-            zoomStep(step) {
-                this.zoom = Math.max(this.minZoom, Math.min(this.maxZoom, parseFloat((this.zoom + step).toFixed(2))));
-                this.clampPosition();
-            },
-
-            onZoomChange() {
-                this.clampPosition();
-            },
-
-            rotate(deg) {
-                this.rotation = (this.rotation + deg + 360) % 360;
-                this.clampPosition();
-            },
-
-            setAspectRatio(ratio, name) {
-                this.aspectRatio = ratio;
-                this.aspectRatioName = name;
-                setTimeout(() => {
-                    this.updateDimensions();
-                    this.clampPosition();
-                }, 30);
-            },
-
-            generateCanvas(targetWidth = 1920) {
-                if (!this.imgElement) {
-                    console.error('generateCanvas failed: imgElement is missing');
-                    return null;
-                }
-
-                const vp = document.getElementById('bannerCropperViewport') || document.querySelector('[x-ref="viewportBox"]');
-                const cWidth = this.containerWidth || (vp && vp.clientWidth ? vp.clientWidth : 800) || 800;
-                const cHeight = this.containerHeight || (vp && vp.clientHeight ? vp.clientHeight : Math.round(cWidth / this.aspectRatio)) || 333;
-
-                const targetHeight = Math.round(targetWidth / this.aspectRatio);
-                const canvas = document.createElement('canvas');
-                canvas.width = targetWidth;
-                canvas.height = targetHeight;
-                const ctx = canvas.getContext('2d');
-                if (!ctx) {
-                    console.error('generateCanvas failed: unable to get 2d context');
-                    return null;
-                }
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
-
-                const k = targetWidth / cWidth;
-                const canvasX = (targetWidth / 2) + (this.posX * k);
-                const canvasY = (targetHeight / 2) + (this.posY * k);
-                const canvasScale = this.currentScale * k;
-
-                ctx.save();
-                ctx.translate(canvasX, canvasY);
-                ctx.rotate((this.rotation * Math.PI) / 180);
-                ctx.scale(canvasScale, canvasScale);
-                ctx.drawImage(this.imgElement, -this.naturalWidth / 2, -this.naturalHeight / 2);
-                ctx.restore();
-
-                return canvas;
-            },
-
-            applyCrop() {
+            saveReposition() {
                 if (this.isSaving) return;
 
-                try {
-                    const canvas = this.generateCanvas(1920);
-                    if (!canvas) {
-                        alert('Unable to process photo crop. Please wait until the image finishes loading.');
-                        return;
-                    }
-
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
-                    const manager = (this.parent) ? this.parent : Alpine.$data(document.querySelector('[x-data="bannerManager()"]'));
-
-                    if (this.targetMode === 'upload') {
-                        if (manager) manager.uploadCroppedImage = dataUrl;
-                        this.isOpen = false;
-                    } else if (this.targetMode === 'edit') {
-                        if (manager) manager.editCroppedImage = dataUrl;
-                        this.isOpen = false;
-                    } else if (this.targetMode === 'direct') {
-                        if (!this.targetBannerId) {
-                            alert('No banner ID found for direct repositioning.');
-                            return;
-                        }
-
-                        this.isSaving = true;
-
-                        const form = document.getElementById('globalRepositionForm');
-                        const input = document.getElementById('globalRepositionCroppedImage');
-
-                        if (!form || !input) {
-                            this.isSaving = false;
-                            alert('Reposition form could not be found.');
-                            return;
-                        }
-
-                        form.action = '{{ url('/admin/banners') }}/' + this.targetBannerId + '/reposition';
-                        input.value = dataUrl;
-                        form.submit();
-                    }
-                } catch (err) {
-                    this.isSaving = false;
-                    console.error('Error during applyCrop:', err);
-                    alert('Error saving banner: ' + err.message);
+                if (!this.targetBannerId) {
+                    alert('No banner selected for repositioning.');
+                    return;
                 }
+
+                this.isSaving = true;
+
+                const form = document.getElementById('globalRepositionForm');
+                const inputX = document.getElementById('globalRepositionPosX');
+                const inputY = document.getElementById('globalRepositionPosY');
+
+                if (!form || !inputX || !inputY) {
+                    this.isSaving = false;
+                    alert('Reposition form not found.');
+                    return;
+                }
+
+                form.action = '{{ url('/admin/banners') }}/' + this.targetBannerId + '/reposition';
+                inputX.value = this.posX;
+                inputY.value = this.posY;
+                form.submit();
             }
         },
 
-        // Helper open methods
         openUploadModal() {
-            this.uploadCroppedImage = null;
-            this.uploadOriginalFileUrl = null;
             this.uploadModal = true;
         },
 
         openEditModal(banner) {
             this.activeBanner = banner;
-            this.editCroppedImage = null;
-            this.editOriginalFileUrl = null;
             this.editModal = true;
         },
 
         openCropperForDirectBanner(banner) {
-            this.cropper.open(banner.image_url || ('/' + banner.image_path), 'direct', banner);
-        },
-
-        openCropperForEditExisting() {
-            const url = this.editOriginalFileUrl || this.activeBanner.image_url || ('/' + this.activeBanner.image_path);
-            this.cropper.open(url, 'edit', this.activeBanner);
-        },
-
-        reopenUploadCrop() {
-            if (this.uploadOriginalFileUrl) {
-                this.cropper.open(this.uploadOriginalFileUrl, 'upload', null);
-            }
-        },
-
-        onUploadFileSelected(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.uploadOriginalFileUrl = e.target.result;
-                this.cropper.open(e.target.result, 'upload', null);
-            };
-            reader.readAsDataURL(file);
-        },
-
-        onEditFileSelected(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.editOriginalFileUrl = e.target.result;
-                this.cropper.open(e.target.result, 'edit', this.activeBanner);
-            };
-            reader.readAsDataURL(file);
+            const url = banner.image_url || ('/' + banner.image_path);
+            const posX = banner.position_x !== null && banner.position_x !== undefined ? banner.position_x : 50;
+            const posY = banner.position_y !== null && banner.position_y !== undefined ? banner.position_y : 50;
+            this.cropper.open(url, posX, posY, banner);
         }
     }));
 });

@@ -14,6 +14,8 @@ class HeroBanner extends Model
         'title',
         'subtitle',
         'image_path',
+        'position_x',
+        'position_y',
         'button_text',
         'button_url',
         'order_seq',
@@ -23,7 +25,19 @@ class HeroBanner extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'order_seq' => 'integer',
+        'position_x' => 'integer',
+        'position_y' => 'integer',
     ];
+
+    /**
+     * Get CSS object-position string (e.g. '50% 25%').
+     */
+    public function getObjectPositionAttribute(): string
+    {
+        $x = $this->position_x ?? 50;
+        $y = $this->position_y ?? 50;
+        return "{$x}% {$y}%";
+    }
 
     /**
      * Get accessible URL for the banner image.

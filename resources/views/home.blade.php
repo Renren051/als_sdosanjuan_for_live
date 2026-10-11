@@ -270,7 +270,8 @@
                          :class="activeSlide === {{ $bannerIdx }} ? 'z-20' : 'z-10'">
                         <img src="{{ $banner->image_url }}" 
                              alt="{{ $banner->title }}" 
-                             class="w-full h-full object-cover object-center transform transition-transform duration-[7000ms] ease-out"
+                             style="object-position: {{ $banner->position_x ?? 50 }}% {{ $banner->position_y ?? 50 }}%;"
+                             class="w-full h-full object-cover transform transition-transform duration-[7000ms] ease-out"
                              :class="activeSlide === {{ $bannerIdx }} ? 'scale-105' : 'scale-100'" />
                         <!-- High visual quality gradient vignette for text legibility -->
                         <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/40 to-transparent sm:from-slate-950/70 sm:via-slate-950/25 sm:to-transparent"></div>

@@ -199,4 +199,41 @@ class HeroBannerTest extends TestCase
         }
         $banner->delete();
     }
+
+    public function test_admin_can_reposition_banner_offset_without_cropping(): void
+    {
+        $admin = User::where('role', User::ROLE_ADMIN)->first() ?? User::create([
+            'username' => 'testadmin_' . uniqid(),
+            'email' => 'admin_' . uniqid() . '@test.com',
+            'password' => bcrypt('password'),
+            'role' => User::ROLE_ADMIN,
+            'status' => 'active',
+        ]);
+
+        $banner = HeroBanner::create([
+            'title' => 'Banner To Reposition Without Crop',
+            'subtitle' => 'Subtitle',
+            'image_path' => 'images/banners/hero-slide-1.jpg',
+            'position_x' => 50,
+            'position_y' => 50,
+            'button_text' => 'Tour',
+            'button_url' => '/register',
+            'order_seq' => 1,
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->patch(route('admin.banners.reposition', $banner->id), [
+            'position_x' => 50,
+            'position_y' => 25,
+        ]);
+
+        $response->assertRedirect(route('admin.banners.index'));
+        $banner->refresh();
+        $this->assertEquals(50, $banner->position_x);
+        $this->assertEquals(25, $banner->position_y);
+        // The original image file is intact and unchanged (no destructive crop)
+        $this->assertEquals('images/banners/hero-slide-1.jpg', $banner->image_path);
+
+        $banner->delete();
+    }
 }

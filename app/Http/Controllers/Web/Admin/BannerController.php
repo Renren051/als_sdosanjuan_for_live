@@ -35,11 +35,13 @@ class BannerController extends Controller
             'order_seq' => ['nullable', 'integer', 'min:1'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:12288'],
             'cropped_image' => ['nullable', 'string'],
+            'position_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'position_y' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
         if (!$request->hasFile('image') && empty($validated['cropped_image'])) {
-            return back()->withErrors(['image' => 'Please select and crop an image for the hero banner.'])->withInput();
+            return back()->withErrors(['image' => 'Please select an image for the hero banner.'])->withInput();
         }
 
         if (!empty($validated['cropped_image']) && str_starts_with($validated['cropped_image'], 'data:image')) {
@@ -64,6 +66,8 @@ class BannerController extends Controller
             'title' => $validated['title'],
             'subtitle' => $validated['subtitle'] ?? 'SDO San Juan City • Division ALS Network',
             'image_path' => $relativePath,
+            'position_x' => (int) round($validated['position_x'] ?? 50),
+            'position_y' => (int) round($validated['position_y'] ?? 50),
             'button_text' => $validated['button_text'] ?: 'Take A Tour',
             'button_url' => $validated['button_url'] ?: '/register',
             'order_seq' => $validated['order_seq'] ?? ($maxOrder + 1),
@@ -88,6 +92,8 @@ class BannerController extends Controller
             'order_seq' => ['nullable', 'integer', 'min:1'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:12288'],
             'cropped_image' => ['nullable', 'string'],
+            'position_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'position_y' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
@@ -118,6 +124,12 @@ class BannerController extends Controller
         if (isset($validated['order_seq'])) {
             $banner->order_seq = $validated['order_seq'];
         }
+        if (isset($validated['position_x'])) {
+            $banner->position_x = (int) round($validated['position_x']);
+        }
+        if (isset($validated['position_y'])) {
+            $banner->position_y = (int) round($validated['position_y']);
+        }
         $banner->is_active = $request->has('is_active');
         $banner->save();
 
@@ -125,12 +137,36 @@ class BannerController extends Controller
     }
 
     /**
-     * Dedicated action to quickly update the crop / reposition framing of an existing hero banner.
+     * Dedicated action to quickly update the reposition framing of an existing hero banner without destructive cropping.
      */
     public function reposition(Request $request, int $id): RedirectResponse|\Illuminate\Http\JsonResponse
     {
         $banner = HeroBanner::findOrFail($id);
 
+        // Repositioning without destructive cropping (saves CSS object-position focal point)
+        if ($request->has('position_y') || $request->has('position_x')) {
+            $validated = $request->validate([
+                'position_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
+                'position_y' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            ]);
+
+            $banner->position_x = (int) round($validated['position_x'] ?? 50);
+            $banner->position_y = (int) round($validated['position_y'] ?? 50);
+            $banner->save();
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Banner reposition updated successfully for '{$banner->title}'!",
+                    'position_x' => $banner->position_x,
+                    'position_y' => $banner->position_y,
+                ]);
+            }
+
+            return redirect()->route('admin.banners.index')->with('status', "Banner reposition updated successfully for '{$banner->title}'!");
+        }
+
+        // Fallback for legacy cropped_image payload (backward compatibility)
         $validated = $request->validate([
             'cropped_image' => ['required', 'string'],
         ]);
@@ -152,12 +188,12 @@ class BannerController extends Controller
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => true,
-                    'message' => "Framing and crop updated successfully for '{$banner->title}'!",
+                    'message' => "Framing updated successfully for '{$banner->title}'!",
                     'image_url' => asset($banner->image_path),
                 ]);
             }
 
-            return redirect()->route('admin.banners.index')->with('status', "Framing and crop updated successfully for '{$banner->title}'!");
+            return redirect()->route('admin.banners.index')->with('status', "Framing updated successfully for '{$banner->title}'!");
         } catch (\Throwable $e) {
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json(['error' => 'Failed to save cropped image: ' . $e->getMessage()], 500);
