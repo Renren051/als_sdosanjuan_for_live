@@ -280,10 +280,8 @@
             </button>
 
             <!-- Render Target Canvas -->
-            <div class="rounded-xl overflow-hidden shadow-2xl border border-black/10 bg-white relative transition-shadow"
-                 :style="'transform: rotate(' + rotation + 'deg)'">
-                <canvas id="pdfCanvas" class="block max-w-full h-auto cursor-default"></canvas>
-            </div>
+            <canvas id="pdfCanvas" 
+                    class="block bg-white shadow-2xl rounded-2xl border border-black/10 cursor-default transition-all"></canvas>
 
             <!-- Page Number Overlay Tag below canvas -->
             <div class="mt-4 px-3 py-1 rounded-full text-[11px] font-bold font-mono tracking-wider shadow-sm transition-colors"
@@ -400,10 +398,15 @@ function moduleReader(config) {
                 this.isFullscreen = !!document.fullscreenElement;
             });
 
-            // Adjust scale on window resize
+            // Adjust scale on window resize (debounced)
+            let resizeTimeout;
             window.addEventListener('resize', () => {
                 if (!this.loading && this.pdfDoc) {
-                    this.autoScale();
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(async () => {
+                        await this.autoScale();
+                        this.queueRenderPage(this.currentPage);
+                    }, 250);
                 }
             });
         },
@@ -449,7 +452,7 @@ function moduleReader(config) {
                     this.debounceSyncProgress(this.currentPage, this.completed ? 'completed' : 'in_progress');
                 }
 
-                this.autoScale();
+                await this.autoScale();
                 this.renderPage(this.currentPage);
             } catch (err) {
                 console.error('Failed to load PDF document:', err);
@@ -458,19 +461,28 @@ function moduleReader(config) {
             }
         },
 
-        autoScale() {
+        async autoScale() {
             const container = document.getElementById('readerContainer');
             if (!container) return;
-            const containerWidth = container.clientWidth - 48; // padding
+            const containerWidth = container.clientWidth - 64; // padding
+
+            if (this.pdfDoc) {
+                try {
+                    const page = await this.pdfDoc.getPage(this.currentPage || 1);
+                    const unscaled = page.getViewport({ scale: 1.0, rotation: this.rotation });
+                    if (containerWidth < unscaled.width + 48) {
+                        this.scale = Math.max(0.45, +(containerWidth / unscaled.width).toFixed(2));
+                        return;
+                    }
+                } catch (e) {}
+            }
+
             if (containerWidth < 640) {
-                // Mobile device: fit comfortably to width
-                this.scale = Math.max(0.7, Math.min(1.0, containerWidth / 620));
-            } else if (containerWidth < 1024) {
-                // Tablet
-                this.scale = 1.0;
+                this.scale = 0.85;
+            } else if (containerWidth < 1200) {
+                this.scale = 1.15;
             } else {
-                // Desktop
-                this.scale = 1.25;
+                this.scale = 1.35;
             }
         },
 
@@ -494,22 +506,24 @@ function moduleReader(config) {
                 if (!canvas) return;
 
                 const context = canvas.getContext('2d');
-                const viewport = page.getViewport({ scale: this.scale });
+                const pixelRatio = window.devicePixelRatio || 1;
 
-                // Render at high-DPI resolution for crisp text
-                const outputScale = window.devicePixelRatio || 1;
-                canvas.width = Math.floor(viewport.width * outputScale);
-                canvas.height = Math.floor(viewport.height * outputScale);
-                canvas.style.width = Math.floor(viewport.width) + "px";
-                canvas.style.height = Math.floor(viewport.height) + "px";
+                // PDF.js native viewport with device pixel ratio & rotation
+                const viewport = page.getViewport({
+                    scale: this.scale * pixelRatio,
+                    rotation: this.rotation
+                });
 
-                const transform = outputScale !== 1
-                    ? [outputScale, 0, 0, outputScale, 0, 0]
-                    : null;
+                // Set raw canvas internal buffer (crisp HiDPI)
+                canvas.width = Math.floor(viewport.width);
+                canvas.height = Math.floor(viewport.height);
+
+                // Set CSS display dimensions
+                canvas.style.width = Math.floor(viewport.width / pixelRatio) + "px";
+                canvas.style.height = Math.floor(viewport.height / pixelRatio) + "px";
 
                 const renderContext = {
                     canvasContext: context,
-                    transform: transform,
                     viewport: viewport
                 };
 
@@ -540,6 +554,7 @@ function moduleReader(config) {
                 console.error('Error rendering page ' + num + ':', err);
                 this.pageRendering = false;
                 this.loading = false;
+                this.errorMessage = 'Page render error: ' + (err.message || 'Unknown error');
             }
         },
 
@@ -600,13 +615,24 @@ function moduleReader(config) {
             this.queueRenderPage(this.currentPage);
         },
 
-        fitWidth() {
-            this.autoScale();
-            this.queueRenderPage(this.currentPage);
+        async fitWidth() {
+            if (!this.pdfDoc) return;
+            try {
+                const page = await this.pdfDoc.getPage(this.currentPage);
+                const unscaled = page.getViewport({ scale: 1.0, rotation: this.rotation });
+                const container = document.getElementById('readerContainer');
+                const availableWidth = container ? (container.clientWidth - 80) : 800;
+                this.scale = Math.max(0.5, Math.min(2.5, +(availableWidth / unscaled.width).toFixed(2)));
+                this.queueRenderPage(this.currentPage);
+            } catch (e) {
+                this.scale = 1.25;
+                this.queueRenderPage(this.currentPage);
+            }
         },
 
         rotatePage() {
             this.rotation = (this.rotation + 90) % 360;
+            this.queueRenderPage(this.currentPage);
         },
 
         setTheme(themeName) {
