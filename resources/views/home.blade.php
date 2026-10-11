@@ -247,7 +247,8 @@
             x-init="startTimer()"
             @mouseenter="stopTimer()"
             @mouseleave="startTimer()"
-            class="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 bg-slate-950 min-h-[480px] sm:min-h-[540px] md:min-h-[600px] flex items-center select-none group">
+            class="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 bg-slate-950 aspect-[16/9] sm:aspect-[2.4/1] min-h-[420px] sm:min-h-[480px] md:min-h-[540px] flex items-center select-none group"
+            style="aspect-ratio: 1920 / 800;">
 
                 <!-- Top Green Accent Line (Kingster University Signature Style) -->
                 <div class="absolute top-0 left-0 right-0 z-30 flex justify-center pointer-events-none">
@@ -273,57 +274,49 @@
                              style="object-position: {{ $banner->position_x ?? 50 }}% {{ $banner->position_y ?? 50 }}%;"
                              class="w-full h-full object-cover transform transition-transform duration-[7000ms] ease-out"
                              :class="activeSlide === {{ $bannerIdx }} ? 'scale-105' : 'scale-100'" />
-                        <!-- High visual quality gradient vignette for text legibility -->
-                        <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/40 to-transparent sm:from-slate-950/70 sm:via-slate-950/25 sm:to-transparent"></div>
+                        <!-- Gradient Blue Vignette & Overlay (DepEd Blue / Deep Navy) -->
+                        <div class="absolute inset-0 bg-gradient-to-r from-[#040e24]/95 via-[#07193f]/80 via-40% to-transparent pointer-events-none"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-slate-950/20 pointer-events-none"></div>
                     </div>
                     @endforeach
                 </div>
 
-                <!-- KINGSTER-STYLE LEFT OVERLAY CARD (Navy Blue Card with Serif Heading & White Button) -->
-                <div class="relative z-20 w-full max-w-xl sm:ml-6 md:ml-10 lg:ml-12 px-4 py-8 sm:py-12">
-                    <div class="bg-[#0b1938]/95 sm:bg-[#0c1a3b]/90 backdrop-blur-md p-6 sm:p-9 md:p-11 rounded-2xl sm:rounded-3xl border border-white/10 shadow-2xl">
-                        
-                        <!-- Grid container to hold all slide texts in the exact same spot -->
-                        <div class="grid grid-cols-1 grid-rows-1">
-                            @foreach($activeBanners as $contentIdx => $banner)
-                            <div x-show="activeSlide === {{ $contentIdx }}"
-                                 x-cloak
-                                 style="{{ $contentIdx === 0 ? '' : 'display: none;' }}"
-                                 x-transition:enter="transition-opacity duration-700 ease-out"
-                                 x-transition:enter-start="opacity-0"
-                                 x-transition:enter-end="opacity-100"
-                                 x-transition:leave="transition-opacity duration-400 ease-in"
-                                 x-transition:leave-start="opacity-100"
-                                 x-transition:leave-end="opacity-0"
-                                 class="col-start-1 row-start-1 space-y-4 sm:space-y-6">
-                                
-                                <!-- Subtitle: Elegant clean light text (e.g. 'The Best University Of The State') -->
-                                <div class="text-xs sm:text-sm md:text-base font-light text-slate-200 tracking-wider">
-                                    {{ $banner->subtitle ?: 'SDO San Juan City • Division ALS Network' }}
-                                </div>
-
-                                <!-- Title: Prominent Serif Font (e.g. 'Kingster University') -->
-                                <div class="bg-[#07132b]/85 px-4 py-3 sm:px-5 sm:py-4 rounded-xl border border-white/10 inline-block w-full">
-                                    <h1 class="text-2xl sm:text-4xl md:text-5xl font-serif font-bold text-white tracking-tight leading-[1.12]">
-                                        {{ $banner->title }}
-                                    </h1>
-                                </div>
-
-                                <!-- White Button with Emerald Accent Stripe (e.g. 'Take A Tour') -->
-                                <div class="pt-1 sm:pt-2">
-                                    <a href="{{ $banner->button_url ?: route('register') }}" 
-                                       class="inline-flex items-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs sm:text-sm tracking-wider uppercase border-l-4 border-emerald-500 shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02] active:scale-[0.98] group/btn">
-                                        <span>{{ $banner->button_text ?: 'Take A Tour' }}</span>
-                                        <svg class="w-4 h-4 text-emerald-600 transition-transform group-hover/btn:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                                        </svg>
-                                    </a>
-                                </div>
-
+                <!-- LEFT OVERLAY CONTENT (Gradient Blue & Prominent Headline) -->
+                <div class="relative z-20 w-full max-w-2xl px-6 sm:px-12 md:px-16 lg:px-20 py-8 sm:py-12 md:py-16">
+                    <!-- Grid container to hold all slide texts in the exact same spot -->
+                    <div class="grid grid-cols-1 grid-rows-1">
+                        @foreach($activeBanners as $contentIdx => $banner)
+                        <div x-show="activeSlide === {{ $contentIdx }}"
+                             x-cloak
+                             style="{{ $contentIdx === 0 ? '' : 'display: none;' }}"
+                             x-transition:enter="transition-opacity duration-700 ease-out"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition-opacity duration-400 ease-in"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="col-start-1 row-start-1 space-y-3 sm:space-y-4">
+                            
+                            <!-- Subtitle / Eyebrow in Bright DepEd Gold / Amber -->
+                            <div class="text-xs sm:text-sm md:text-base font-extrabold text-amber-400 uppercase tracking-widest drop-shadow-sm">
+                                {{ $banner->subtitle ?: 'THE BEST PARALLEL LEARNING SYSTEM' }}
                             </div>
-                            @endforeach
-                        </div>
 
+                            <!-- Headline: Crisp White Font directly on gradient with soft drop shadow -->
+                            <h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-serif font-bold text-white tracking-tight leading-[1.14] drop-shadow-lg">
+                                {{ $banner->title }}
+                            </h1>
+
+                            <!-- Solid Royal Blue CTA Button with Arrow -->
+                            <div class="pt-2 sm:pt-4">
+                                <a href="{{ $banner->button_url ?: route('register') }}" 
+                                   class="inline-flex items-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 bg-deped-blue hover:bg-deped-dark text-white font-bold text-xs sm:text-sm tracking-wide rounded-xl shadow-lg shadow-deped-blue/30 transition-all hover:scale-105 active:scale-95 group/btn">
+                                    <span>{{ $banner->button_text ?: 'Take A Tour' }} &rarr;</span>
+                                </a>
+                            </div>
+
+                        </div>
+                        @endforeach
                     </div>
                 </div>
 

@@ -326,7 +326,7 @@
          style="display: none;" 
          x-cloak>
         
-        <div class="relative w-full max-w-4xl bg-white rounded-3xl border border-slate-200/90 shadow-2xl flex flex-col max-h-[92vh] overflow-hidden my-auto" 
+        <div class="relative w-full max-w-5xl bg-white rounded-3xl border border-slate-200/90 shadow-2xl flex flex-col max-h-[94vh] overflow-hidden my-auto" 
              @click.away="cropper.cancel()">
             
             <!-- Sticky Header -->
@@ -339,25 +339,14 @@
                         <h3 class="text-base sm:text-lg font-bold text-slate-900">
                             Reposition Hero Banner Photo
                         </h3>
-                        <p class="text-xs text-slate-500">Drag photo to adjust framing &bull; Choose what is displayed on the homepage</p>
+                        <p class="text-xs text-slate-500">Drag photo to adjust framing &bull; 1:1 identical to homepage viewing size</p>
                     </div>
                 </div>
                 
                 <div class="flex items-center gap-2">
-                    <!-- Aspect Ratio Switcher -->
-                    <div class="inline-flex items-center p-0.5 bg-slate-100 rounded-xl border border-slate-200 text-[11px] font-bold">
-                        <button type="button" 
-                                @click="cropper.setAspectRatio(1920/800, '2.4:1')"
-                                :class="cropper.aspectRatio === 1920/800 ? 'bg-white text-deped-blue shadow-xs' : 'text-slate-600 hover:text-slate-900'"
-                                class="px-2.5 py-1 rounded-lg transition-all">
-                            2.4:1 (Hero Banner)
-                        </button>
-                        <button type="button" 
-                                @click="cropper.setAspectRatio(16/9, '16:9')"
-                                :class="cropper.aspectRatio === 16/9 ? 'bg-white text-deped-blue shadow-xs' : 'text-slate-600 hover:text-slate-900'"
-                                class="px-2.5 py-1 rounded-lg transition-all">
-                            16:9 (Landscape)
-                        </button>
+                    <!-- Aspect Ratio Badge -->
+                    <div class="inline-flex items-center px-3 py-1 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700">
+                        <span>1920 &times; 800 HD (2.4:1)</span>
                     </div>
 
                     <button type="button" @click="cropper.cancel()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none p-1.5 rounded-lg hover:bg-slate-100 transition-colors">&times;</button>
@@ -367,10 +356,10 @@
             <!-- Scrollable Body -->
             <div class="flex-1 overflow-y-auto px-5 sm:px-6 py-4 space-y-3.5">
                 
-                <!-- Viewport Container -->
+                <!-- Viewport Container (Matching 1920x800 aspect ratio exactly) -->
                 <div id="bannerCropperViewport"
-                     class="relative w-full rounded-2xl overflow-hidden bg-slate-950 select-none touch-none border border-slate-800 shadow-inner group max-h-[360px]"
-                     :style="'aspect-ratio: ' + cropper.aspectRatio + ';'"
+                     class="relative w-full rounded-2xl overflow-hidden bg-slate-950 select-none touch-none border border-slate-800 shadow-inner group"
+                     style="aspect-ratio: 1920 / 800;"
                      @pointerdown="cropper.startDrag($event)"
                      @pointermove="cropper.onDrag($event)"
                      @pointerup="cropper.stopDrag()"
@@ -384,29 +373,42 @@
                              :style="'object-position: ' + cropper.posX + '% ' + cropper.posY + '%;'" />
                     </template>
 
-                    <!-- Instruction Overlay Pill -->
-                    <div class="absolute top-3 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-black/75 backdrop-blur-md text-white font-semibold text-xs flex items-center gap-2 pointer-events-none shadow-lg border border-white/15 transition-opacity duration-200"
+                    <!-- Instruction Overlay Pill (as in Image 2) -->
+                    <div class="absolute top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/75 backdrop-blur-md text-white font-semibold text-xs flex items-center gap-2 pointer-events-none shadow-lg border border-white/15 transition-opacity duration-200"
                          :class="cropper.isDragging ? 'opacity-30' : 'opacity-95'">
-                        <svg class="w-4 h-4 text-deped-gold shrink-0 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"/></svg>
-                        <span>Drag photo up or down to reposition</span>
+                        <span class="text-amber-400">✋</span>
+                        <span>Drag photo to reposition</span>
                     </div>
 
-                    <!-- Live Headline Simulation Overlay on Viewport -->
+                    <!-- Live Headline Simulation Overlay on Viewport: Matching Homepage exactly -->
                     <div x-show="cropper.showOverlayText" 
-                         class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/40 to-transparent flex items-center p-6 sm:p-8 pointer-events-none transition-opacity duration-300"
+                         class="absolute inset-0 bg-gradient-to-r from-[#040e24]/95 via-[#07193f]/80 via-40% to-transparent flex items-center p-6 sm:p-10 md:p-12 pointer-events-none transition-opacity duration-300"
                          :class="cropper.isDragging ? 'opacity-35' : 'opacity-100'">
-                        <div class="max-w-xs space-y-1">
-                            <div class="text-[10px] font-bold text-deped-gold uppercase tracking-wider" x-text="(cropper.targetBanner && cropper.targetBanner.subtitle) ? cropper.targetBanner.subtitle : 'SDO San Juan City • Division ALS'"></div>
-                            <div class="text-sm sm:text-base font-bold text-white font-serif leading-tight" x-text="(cropper.targetBanner && cropper.targetBanner.title) ? cropper.targetBanner.title : 'Alternative Learning System'"></div>
-                            <div class="pt-1.5">
-                                <span class="inline-block px-2.5 py-1 rounded bg-deped-blue text-[10px] font-bold text-white shadow-xs" x-text="(cropper.targetBanner && cropper.targetBanner.button_text) ? cropper.targetBanner.button_text + ' →' : 'Take A Tour →'"></span>
+                        <div class="max-w-md space-y-2">
+                            <!-- Yellow Eyebrow Subtitle -->
+                            <div class="text-[11px] sm:text-xs font-extrabold text-amber-400 uppercase tracking-widest drop-shadow-sm" 
+                                 x-text="(cropper.targetBanner && cropper.targetBanner.subtitle) ? cropper.targetBanner.subtitle : 'THE BEST PARALLEL LEARNING SYSTEM'"></div>
+                            
+                            <!-- Bold White Headline -->
+                            <div class="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-white leading-tight drop-shadow-lg" 
+                                 x-text="(cropper.targetBanner && cropper.targetBanner.title) ? cropper.targetBanner.title : 'Alternative Learning System San Juan'"></div>
+                            
+                            <!-- Royal Blue Button -->
+                            <div class="pt-2">
+                                <span class="inline-flex items-center gap-1 px-4 py-2 rounded-xl bg-deped-blue text-xs font-bold text-white shadow-md shadow-deped-blue/30" 
+                                      x-text="(cropper.targetBanner && cropper.targetBanner.button_text) ? cropper.targetBanner.button_text + ' →' : 'Take A Tour →'"></span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Position Tag -->
-                    <div class="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-emerald-400 font-mono text-[11px] font-bold border border-emerald-500/20 shadow-md">
-                        <span x-text="`Vertical: ${cropper.posY}% | Horizontal: ${cropper.posX}%`"></span>
+                    <!-- 1920x800 Resolution & Coordinates Badge (like Image 2) -->
+                    <div class="absolute bottom-3 right-3 flex items-center gap-2">
+                        <div class="px-2.5 py-1 rounded-lg bg-black/70 backdrop-blur-md text-slate-300 font-mono text-[11px] font-bold border border-white/10 shadow-md">
+                            <span x-text="`Vertical: ${cropper.posY}% | Horizontal: ${cropper.posX}%`"></span>
+                        </div>
+                        <div class="px-2.5 py-1 rounded-lg bg-black/85 backdrop-blur-md text-emerald-400 font-mono text-[11px] font-bold border border-emerald-500/20 shadow-md">
+                            1920 &times; 800 HD
+                        </div>
                     </div>
                 </div>
 

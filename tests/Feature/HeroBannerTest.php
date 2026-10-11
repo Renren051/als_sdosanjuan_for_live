@@ -13,7 +13,7 @@ class HeroBannerTest extends TestCase
 
     public function test_homepage_renders_hero_banner_carousel(): void
     {
-        $banner = HeroBanner::firstOrCreate(
+        $banner = HeroBanner::updateOrCreate(
             ['title' => 'Alternative Learning System San Juan'],
             [
                 'subtitle' => 'The Best Parallel Learning System',
