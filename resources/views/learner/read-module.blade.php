@@ -347,6 +347,14 @@
 </script>
 
 <script>
+// Native PDF.js instances must NOT be stored in Alpine.js reactive state because
+// ES2022 private class fields (#d, #s, #n) throw "Cannot read private member #d"
+// when accessed through an ES6 Proxy. We keep raw instances in this unproxied engine container.
+const pdfEngine = {
+    doc: null,
+    renderTask: null
+};
+
 function moduleReader(config) {
     return {
         moduleId: config.moduleId,
@@ -359,8 +367,7 @@ function moduleReader(config) {
         csrfToken: config.csrfToken,
         workerUrl: config.workerUrl,
 
-        // PDF.js Engine State
-        pdfDoc: null,
+        // UI & Viewport State (kept reactive)
         pageRendering: false,
         pageNumPending: null,
         scale: 1.15,
@@ -368,8 +375,6 @@ function moduleReader(config) {
         loading: true,
         loadingText: 'Loading PDF document...',
         errorMessage: '',
-
-        // UI & Viewport State
         theme: localStorage.getItem('als_reader_theme') || 'dark',
         isFullscreen: false,
         saving: false,
@@ -401,7 +406,7 @@ function moduleReader(config) {
             // Adjust scale on window resize (debounced)
             let resizeTimeout;
             window.addEventListener('resize', () => {
-                if (!this.loading && this.pdfDoc) {
+                if (!this.loading && pdfEngine.doc) {
                     clearTimeout(resizeTimeout);
                     resizeTimeout = setTimeout(async () => {
                         await this.autoScale();
@@ -435,8 +440,9 @@ function moduleReader(config) {
                     }
                 };
 
-                this.pdfDoc = await loadingTask.promise;
-                this.totalPages = this.pdfDoc.numPages;
+                // Store in raw unproxied container
+                pdfEngine.doc = await loadingTask.promise;
+                this.totalPages = pdfEngine.doc.numPages;
 
                 // Clamp current page
                 if (this.currentPage > this.totalPages) {
@@ -466,9 +472,9 @@ function moduleReader(config) {
             if (!container) return;
             const containerWidth = container.clientWidth - 64; // padding
 
-            if (this.pdfDoc) {
+            if (pdfEngine.doc) {
                 try {
-                    const page = await this.pdfDoc.getPage(this.currentPage || 1);
+                    const page = await pdfEngine.doc.getPage(this.currentPage || 1);
                     const unscaled = page.getViewport({ scale: 1.0, rotation: this.rotation });
                     if (containerWidth < unscaled.width + 48) {
                         this.scale = Math.max(0.45, +(containerWidth / unscaled.width).toFixed(2));
@@ -486,13 +492,11 @@ function moduleReader(config) {
             }
         },
 
-        currentRenderTask: null,
-
         async renderPage(num) {
-            if (!this.pdfDoc) return;
-            if (this.currentRenderTask) {
+            if (!pdfEngine.doc) return;
+            if (pdfEngine.renderTask) {
                 try {
-                    this.currentRenderTask.cancel();
+                    pdfEngine.renderTask.cancel();
                 } catch (e) {}
             }
 
@@ -501,7 +505,7 @@ function moduleReader(config) {
             this.loadingText = 'Rendering page ' + num + ' of ' + this.totalPages + '...';
 
             try {
-                const page = await this.pdfDoc.getPage(num);
+                const page = await pdfEngine.doc.getPage(num);
                 const canvas = document.getElementById('pdfCanvas');
                 if (!canvas) return;
 
@@ -527,9 +531,9 @@ function moduleReader(config) {
                     viewport: viewport
                 };
 
-                this.currentRenderTask = page.render(renderContext);
-                await this.currentRenderTask.promise;
-                this.currentRenderTask = null;
+                pdfEngine.renderTask = page.render(renderContext);
+                await pdfEngine.renderTask.promise;
+                pdfEngine.renderTask = null;
 
                 this.pageRendering = false;
                 this.loading = false;
@@ -616,9 +620,9 @@ function moduleReader(config) {
         },
 
         async fitWidth() {
-            if (!this.pdfDoc) return;
+            if (!pdfEngine.doc) return;
             try {
-                const page = await this.pdfDoc.getPage(this.currentPage);
+                const page = await pdfEngine.doc.getPage(this.currentPage);
                 const unscaled = page.getViewport({ scale: 1.0, rotation: this.rotation });
                 const container = document.getElementById('readerContainer');
                 const availableWidth = container ? (container.clientWidth - 80) : 800;
