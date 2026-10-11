@@ -31,8 +31,20 @@ class ModuleController extends Controller
             });
         }
 
-        // Filter by level (BLP, Elementary, Junior_High)
-        if ($request->filled('level')) {
+        // Program track scoping for authenticated learners
+        $user = $request->user('sanctum') ?? $request->user('web');
+        if ($user && $user->isLearner() && !$request->filled('level')) {
+            $enrollment = $user->latestEnrollment;
+            $enrolledLevel = match ($enrollment?->program_track) {
+                \App\Models\Enrollment::TRACK_BLP => Module::LEVEL_BLP,
+                \App\Models\Enrollment::TRACK_AE_ELEMENTARY => Module::LEVEL_ELEMENTARY,
+                \App\Models\Enrollment::TRACK_AE_JUNIOR_HIGH => Module::LEVEL_JUNIOR_HIGH,
+                default => null,
+            };
+            if ($enrolledLevel) {
+                $query->where('level', $enrolledLevel);
+            }
+        } elseif ($request->filled('level')) {
             $query->where('level', $request->input('level'));
         }
 

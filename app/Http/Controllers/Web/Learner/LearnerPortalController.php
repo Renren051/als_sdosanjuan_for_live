@@ -121,7 +121,12 @@ class LearnerPortalController extends Controller
             })
             ->count();
 
-        $totalPublishedModules = Module::published()->count();
+        $enrolledLevel = $this->getEnrolledModuleLevel($enrollment);
+        $modulesCountQuery = Module::published();
+        if ($user->isLearner() && $enrolledLevel) {
+            $modulesCountQuery->where('level', $enrolledLevel);
+        }
+        $totalPublishedModules = $modulesCountQuery->count();
         $overallProgressPercent = $totalPublishedModules > 0
             ? min(100, (int) round(($completedCount / $totalPublishedModules) * 100))
             : 0;
@@ -306,15 +311,21 @@ class LearnerPortalController extends Controller
     public function modules(Request $request): View
     {
         $user = Auth::user();
+        $enrollment = $user->latestEnrollment;
+        $enrolledLevel = $this->getEnrolledModuleLevel($enrollment);
+
         $query = Module::with(['strand', 'uploader.profile'])
             ->published();
 
-        if ($request->filled('strand_id')) {
-            $query->where('strand_id', $request->input('strand_id'));
+        // Strict program scoping: Learners can ONLY view modules in their enrolled program
+        if ($user->isLearner() && $enrolledLevel) {
+            $query->where('level', $enrolledLevel);
+        } elseif ($request->filled('level')) {
+            $query->where('level', $request->input('level'));
         }
 
-        if ($request->filled('level')) {
-            $query->where('level', $request->input('level'));
+        if ($request->filled('strand_id')) {
+            $query->where('strand_id', $request->input('strand_id'));
         }
 
         if ($request->filled('sub_level')) {
@@ -341,7 +352,7 @@ class LearnerPortalController extends Controller
             ->get()
             ->keyBy('module_id');
 
-        return view('learner.modules', compact('modules', 'strands', 'userProgress'));
+        return view('learner.modules', compact('modules', 'strands', 'userProgress', 'enrollment', 'enrolledLevel'));
     }
 
     /**
@@ -350,8 +361,16 @@ class LearnerPortalController extends Controller
     public function readModule($id, Request $request): View
     {
         $user = Auth::user();
+        $enrollment = $user->latestEnrollment;
+        $enrolledLevel = $this->getEnrolledModuleLevel($enrollment);
+
         // Ensure only published modules can be opened by learners
         $module = Module::published()->with('strand')->findOrFail($id);
+
+        // Access control: Ensure learner only accesses modules in their enrolled program
+        if ($user->isLearner() && $enrolledLevel && $module->level !== $enrolledLevel) {
+            abort(403, 'Unauthorized access. This module belongs to the ' . $module->level . ' curriculum, but your enrolled program track is ' . ($enrollment->track_label ?? $enrollment->program_track) . '.');
+        }
 
         // Find or create progress record for this learner and module
         $progress = ModuleProgress::firstOrCreate(
@@ -393,7 +412,18 @@ class LearnerPortalController extends Controller
     public function updateProgress(Request $request, $id): JsonResponse
     {
         $user = Auth::user();
+        $enrollment = $user->latestEnrollment;
+        $enrolledLevel = $this->getEnrolledModuleLevel($enrollment);
+
         $module = Module::published()->findOrFail($id);
+
+        // Access control: Deny saving progress on modules outside learner's program
+        if ($user->isLearner() && $enrolledLevel && $module->level !== $enrolledLevel) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized access. This module is outside your enrolled program track.',
+            ], 403);
+        }
 
         $validated = $request->validate([
             'last_page_read' => ['required', 'integer', 'min:1'],
@@ -448,5 +478,22 @@ class LearnerPortalController extends Controller
                 'is_completed' => $progress->isCompleted(),
             ],
         ]);
+    }
+
+    /**
+     * Resolve the module level associated with the learner's enrolled track.
+     */
+    private function getEnrolledModuleLevel(?Enrollment $enrollment): ?string
+    {
+        if (!$enrollment) {
+            return null;
+        }
+
+        return match ($enrollment->program_track) {
+            Enrollment::TRACK_BLP => Module::LEVEL_BLP,
+            Enrollment::TRACK_AE_ELEMENTARY => Module::LEVEL_ELEMENTARY,
+            Enrollment::TRACK_AE_JUNIOR_HIGH => Module::LEVEL_JUNIOR_HIGH,
+            default => null,
+        };
     }
 }

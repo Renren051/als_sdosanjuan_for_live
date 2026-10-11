@@ -16,9 +16,15 @@
                 Access verified learning materials across the 6 ALS Learning Strands. Read directly in your browser with automatic progress saving or download for offline study.
             </p>
         </div>
-        <div class="flex items-center gap-2 shrink-0">
+        <div class="flex flex-wrap items-center gap-2 shrink-0">
+            @if(isset($enrolledLevel) && $enrolledLevel)
+                <span class="px-3.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 font-bold text-xs border border-emerald-200 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    Enrolled Track: {{ $enrollment?->track_label ?? $enrolledLevel }}
+                </span>
+            @endif
             <span class="px-3.5 py-1.5 rounded-xl bg-blue-50 text-deped-blue font-bold text-xs border border-blue-200">
-                {{ $modules->total() }} Published Modules
+                {{ $modules->total() }} Available Modules
             </span>
         </div>
     </div>
@@ -54,21 +60,39 @@
             </div>
 
             <div>
-                <select name="level" onchange="this.form.submit()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-deped-blue">
-                    <option value="">All Academic Levels</option>
-                    <option value="Elementary" {{ request('level') == 'Elementary' ? 'selected' : '' }}>A&E Lower &amp; Advanced Elementary</option>
-                    <option value="Junior_High" {{ request('level') == 'Junior_High' ? 'selected' : '' }}>A&E Secondary (Junior High)</option>
-                    <option value="BLP" {{ request('level') == 'BLP' ? 'selected' : '' }}>Basic Literacy Program (BLP)</option>
-                </select>
+                @if(isset($enrolledLevel) && $enrolledLevel)
+                    <select disabled class="w-full px-3 py-2.5 bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded-xl text-xs cursor-not-allowed">
+                        @if($enrolledLevel === 'BLP')
+                            <option selected>Basic Literacy Program (BLP)</option>
+                        @elseif($enrolledLevel === 'Elementary')
+                            <option selected>A&E Lower &amp; Advanced Elementary</option>
+                        @elseif($enrolledLevel === 'Junior_High')
+                            <option selected>A&E Secondary (Junior High)</option>
+                        @endif
+                    </select>
+                @else
+                    <select name="level" onchange="this.form.submit()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-deped-blue">
+                        <option value="">All Academic Levels</option>
+                        <option value="BLP" {{ request('level') == 'BLP' ? 'selected' : '' }}>Basic Literacy Program (BLP)</option>
+                        <option value="Elementary" {{ request('level') == 'Elementary' ? 'selected' : '' }}>A&E Lower &amp; Advanced Elementary</option>
+                        <option value="Junior_High" {{ request('level') == 'Junior_High' ? 'selected' : '' }}>A&E Secondary (Junior High)</option>
+                    </select>
+                @endif
             </div>
 
             <div>
                 <select name="sub_level" onchange="this.form.submit()" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-deped-blue">
                     <option value="">All Sub-Levels</option>
-                    <option value="Basic Literacy" {{ request('sub_level') == 'Basic Literacy' ? 'selected' : '' }}>Basic Literacy (BLP)</option>
-                    <option value="Lower Elementary" {{ request('sub_level') == 'Lower Elementary' ? 'selected' : '' }}>Lower Elementary (Grades 1-3)</option>
-                    <option value="Advanced Elementary" {{ request('sub_level') == 'Advanced Elementary' ? 'selected' : '' }}>Advanced Elementary (Grades 4-6)</option>
-                    <option value="Junior High School" {{ request('sub_level') == 'Junior High School' ? 'selected' : '' }}>Junior High School (Grades 7-10)</option>
+                    @if(!isset($enrolledLevel) || !$enrolledLevel || $enrolledLevel === 'BLP')
+                        <option value="Basic Literacy" {{ request('sub_level') == 'Basic Literacy' ? 'selected' : '' }}>Basic Literacy (BLP)</option>
+                    @endif
+                    @if(!isset($enrolledLevel) || !$enrolledLevel || $enrolledLevel === 'Elementary')
+                        <option value="Lower Elementary" {{ request('sub_level') == 'Lower Elementary' ? 'selected' : '' }}>Lower Elementary (Grades 1-3)</option>
+                        <option value="Advanced Elementary" {{ request('sub_level') == 'Advanced Elementary' ? 'selected' : '' }}>Advanced Elementary (Grades 4-6)</option>
+                    @endif
+                    @if(!isset($enrolledLevel) || !$enrolledLevel || $enrolledLevel === 'Junior_High')
+                        <option value="Junior High School" {{ request('sub_level') == 'Junior High School' ? 'selected' : '' }}>Junior High School (Grades 7-10)</option>
+                    @endif
                 </select>
             </div>
 

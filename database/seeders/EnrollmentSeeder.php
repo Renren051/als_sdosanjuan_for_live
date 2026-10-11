@@ -129,6 +129,63 @@ class EnrollmentSeeder extends Seeder
             $this->seedSampleDocument($bea, $enrBea, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'verified', $teacherJuan);
             $this->seedSampleDocument($bea, $enrBea, LearnerDocument::TYPE_FORM_137_SF10, 'pending', null);
         }
+
+        // 5. Dedicated Basic Literacy Program Learner (BLP)
+        $blpLearner = User::where('username', 'learner_blp')->first();
+        if ($blpLearner && $clcBatis) {
+            $enrBlp = Enrollment::updateOrCreate(
+                ['user_id' => $blpLearner->id, 'calendar_year' => '2026'],
+                [
+                    'program_track' => Enrollment::TRACK_BLP,
+                    'clc_id' => $clcBatis->id,
+                    'assigned_teacher_id' => $teacherAlyssa?->id,
+                    'enrollment_status' => Enrollment::STATUS_ENROLLED,
+                    'delivery_mode' => 'modular_offline',
+                    'schedule_preference' => 'weekend',
+                    'remarks' => 'Enrolled in Basic Literacy Program. Verified credentials.',
+                    'enrolled_at' => now()->subDays(7),
+                ]
+            );
+            $this->seedSampleDocument($blpLearner, $enrBlp, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'verified', $teacherAlyssa);
+        }
+
+        // 6. Dedicated A&E Lower & Advanced Elementary Learner
+        $elemLearner = User::where('username', 'learner_elem')->first();
+        if ($elemLearner && $clcAdditionHills) {
+            $enrElem = Enrollment::updateOrCreate(
+                ['user_id' => $elemLearner->id, 'calendar_year' => '2026'],
+                [
+                    'program_track' => Enrollment::TRACK_AE_ELEMENTARY,
+                    'clc_id' => $clcAdditionHills->id,
+                    'assigned_teacher_id' => $teacherJuan?->id,
+                    'enrollment_status' => Enrollment::STATUS_ENROLLED,
+                    'delivery_mode' => 'modular_offline',
+                    'schedule_preference' => 'weekday_pm',
+                    'remarks' => 'Enrolled in A&E Elementary. Verified credentials.',
+                    'enrolled_at' => now()->subDays(7),
+                ]
+            );
+            $this->seedSampleDocument($elemLearner, $enrElem, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'verified', $teacherJuan);
+        }
+
+        // 7. Dedicated A&E Secondary / Junior High School Learner
+        $jhsLearner = User::where('username', 'learner_jhs')->first();
+        if ($jhsLearner && $clcWestCrame) {
+            $enrJhs = Enrollment::updateOrCreate(
+                ['user_id' => $jhsLearner->id, 'calendar_year' => '2026'],
+                [
+                    'program_track' => Enrollment::TRACK_AE_JUNIOR_HIGH,
+                    'clc_id' => $clcWestCrame->id,
+                    'assigned_teacher_id' => $teacherJuan?->id,
+                    'enrollment_status' => Enrollment::STATUS_ENROLLED,
+                    'delivery_mode' => 'modular_offline',
+                    'schedule_preference' => 'weekend',
+                    'remarks' => 'Enrolled in A&E Junior High School. Verified credentials.',
+                    'enrolled_at' => now()->subDays(7),
+                ]
+            );
+            $this->seedSampleDocument($jhsLearner, $enrJhs, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'verified', $teacherJuan);
+        }
     }
 
     private function seedSampleDocument(
