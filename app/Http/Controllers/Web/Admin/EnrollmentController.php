@@ -277,7 +277,7 @@ class EnrollmentController extends Controller
         $baseUsername = "{$cleanFirst}.{$cleanLast}";
         $username = $baseUsername;
         $counter = 1;
-        while (User::where('username', $username)->exists()) {
+        while (User::withTrashed()->where('username', $username)->exists()) {
             $username = "{$baseUsername}{$counter}";
             $counter++;
         }

@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2240" height="3560" viewBox="0 0 2240 3560" role="img" aria-labelledby="title desc">
+<title id="title">DepEd SDO San Juan ALS Platform Use Case Diagram</title>
+<desc id="desc">Transparent canvas UML use-case diagram with five actors and thirteen platform use cases.</desc>
+<defs>
+  <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L12 6 L0 12 z" fill="#475569"/></marker>
+  <style>
+    .frame { fill:none; stroke:#718096; stroke-width:2.5; }
+    .frameTitle { font:700 30px Arial,sans-serif; fill:#243247; }
+    .actor { fill:none; stroke:#334155; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+    .actorLabel { font:600 24px Arial,sans-serif; fill:#243247; text-anchor:middle; }
+    .association { fill:none; stroke:#8593a4; stroke-width:2.2; opacity:.72; }
+    .uc { fill:#f5f8fc; stroke:#29466b; stroke-width:3; }
+    .ucId { font:700 18px Arial,sans-serif; fill:#456589; text-anchor:middle; }
+    .ucLabel { font:600 24px Arial,sans-serif; fill:#172b45; text-anchor:middle; }
+    .relation { fill:none; stroke:#475569; stroke-width:2.5; stroke-dasharray:8 7; marker-end:url(#arrow); }
+    .relLabel { font:700 18px Arial,sans-serif; fill:#3b4c62; text-anchor:middle; }
+  </style>
+</defs>
+<rect class="frame" x="35" y="120" width="470" height="3340" rx="16"/>
+<text class="frameTitle" x="270" y="180" text-anchor="middle">Actors</text>
+<rect class="frame" x="700" y="120" width="1510" height="3340" rx="16"/>
+<text class="frameTitle" x="1455" y="180" text-anchor="middle">DepEd SDO San Juan ALS Platform Use Cases</text>
+<path class="association" d="M 299 610 H 545 V 300 V 3050"/>
+<path class="association" d="M 545 300 H 865"/>
+<path class="association" d="M 545 550 H 865"/>
+<path class="association" d="M 545 1550 H 865"/>
+<path class="association" d="M 545 2050 H 865"/>
+<path class="association" d="M 545 3050 H 865"/>
+<path class="association" d="M 299 1220 H 572 V 800 V 3300"/>
+<path class="association" d="M 572 800 H 865"/>
+<path class="association" d="M 572 1050 H 865"/>
+<path class="association" d="M 572 1550 H 865"/>
+<path class="association" d="M 572 2300 H 865"/>
+<path class="association" d="M 572 3050 H 865"/>
+<path class="association" d="M 572 3300 H 865"/>
+<path class="association" d="M 299 1830 H 599 V 800 V 2800"/>
+<path class="association" d="M 599 800 H 865"/>
+<path class="association" d="M 599 1050 H 865"/>
+<path class="association" d="M 599 1300 H 865"/>
+<path class="association" d="M 599 2300 H 865"/>
+<path class="association" d="M 599 2800 H 865"/>
+<path class="association" d="M 299 2440 H 626 V 1300 V 2550"/>
+<path class="association" d="M 626 1300 H 865"/>
+<path class="association" d="M 626 2300 H 865"/>
+<path class="association" d="M 626 2550 H 865"/>
+<path class="association" d="M 299 3050 H 653 V 1800 V 3050"/>
+<path class="association" d="M 653 1800 H 865"/>
+<path class="association" d="M 653 2050 H 865"/>
+<path class="relation" d="M 1455 374.0 V 478.0"/>
+<rect x="1463" y="410.0" width="112" height="28" rx="7" fill="#ffffff"/>
+<text class="relLabel" x="1519" y="432.0">«include»</text>
+<path class="relation" d="M 1455 874.0 V 978.0"/>
+<rect x="1463" y="910.0" width="112" height="28" rx="7" fill="#ffffff"/>
+<text class="relLabel" x="1519" y="932.0">«extend»</text>
+<path class="relation" d="M 1455 1624.0 V 1728.0"/>
+<rect x="1463" y="1660.0" width="112" height="28" rx="7" fill="#ffffff"/>
+<text class="relLabel" x="1519" y="1682.0">«include»</text>
+<path class="relation" d="M 2045 1550 H 2145 V 2050 H 2045"/>
+<rect x="2070" y="1785.0" width="135" height="28" rx="7" fill="#ffffff"/>
+<text class="relLabel" x="2137" y="1805.0">«extend»</text>
+<ellipse class="uc" cx="1455" cy="300" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="268">UC01</text>
+<text class="ucLabel" x="1455" y="293">Submit Digital Intake</text>
+<text class="ucLabel" x="1455" y="323">(ALS Form 2)</text>
+<ellipse class="uc" cx="1455" cy="550" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="533">UC02</text>
+<text class="ucLabel" x="1455" y="558">Upload Mandatory Documents</text>
+<ellipse class="uc" cx="1455" cy="800" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="768">UC03</text>
+<text class="ucLabel" x="1455" y="793">Review &amp; Verify Enrollment</text>
+<text class="ucLabel" x="1455" y="823">Records</text>
+<ellipse class="uc" cx="1455" cy="1050" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="1033">UC04</text>
+<text class="ucLabel" x="1455" y="1058">Allocate CLC &amp; Program Track</text>
+<ellipse class="uc" cx="1455" cy="1300" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="1283">UC05</text>
+<text class="ucLabel" x="1455" y="1308">Author, Upload &amp; Manage Modules</text>
+<ellipse class="uc" cx="1455" cy="1550" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="1533">UC06</text>
+<text class="ucLabel" x="1455" y="1558">Read Modules &amp; Track Telemetry</text>
+<ellipse class="uc" cx="1455" cy="1800" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="1783">UC07</text>
+<text class="ucLabel" x="1455" y="1808">Synchronize Offline Progress</text>
+<ellipse class="uc" cx="1455" cy="2050" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="2033">UC08</text>
+<text class="ucLabel" x="1455" y="2058">Play Module Games &amp; Sync Game Scores</text>
+<ellipse class="uc" cx="1455" cy="2300" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="2268">UC09</text>
+<text class="ucLabel" x="1455" y="2293">Export DepEd Form 1 &amp; Form 2</text>
+<text class="ucLabel" x="1455" y="2323">Masterlists</text>
+<ellipse class="uc" cx="1455" cy="2550" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="2533">UC10</text>
+<text class="ucLabel" x="1455" y="2558">Provision Teachers &amp; Audit Accounts</text>
+<ellipse class="uc" cx="1455" cy="2800" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="2783">UC11</text>
+<text class="ucLabel" x="1455" y="2808">Reposition Hero Banners &amp; Announcements</text>
+<ellipse class="uc" cx="1455" cy="3050" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="3033">UC12</text>
+<text class="ucLabel" x="1455" y="3058">Toggle Dark Mode / Light Mode</text>
+<ellipse class="uc" cx="1455" cy="3300" rx="590.0" ry="74.0"/>
+<text class="ucId" x="1455" y="3283">UC13</text>
+<text class="ucLabel" x="1455" y="3308">Register as ALS Mobile Teacher</text>
+<circle class="actor" cx="265" cy="562" r="19"/>
+<path class="actor" d="M 265 582 V 644 M 231 607 H 299 M 265 644 L 236 682 M 265 644 L 294 682"/>
+<text class="actorLabel" x="265" y="718">Learner (OSYA)</text>
+<circle class="actor" cx="265" cy="1172" r="19"/>
+<path class="actor" d="M 265 1192 V 1254 M 231 1217 H 299 M 265 1254 L 236 1292 M 265 1254 L 294 1292"/>
+<text class="actorLabel" x="265" y="1328">Mobile Teacher</text>
+<circle class="actor" cx="265" cy="1782" r="19"/>
+<path class="actor" d="M 265 1802 V 1864 M 231 1827 H 299 M 265 1864 L 236 1902 M 265 1864 L 294 1902"/>
+<text class="actorLabel" x="265" y="1938">Division Admin</text>
+<circle class="actor" cx="265" cy="2392" r="19"/>
+<path class="actor" d="M 265 2412 V 2474 M 231 2437 H 299 M 265 2474 L 236 2512 M 265 2474 L 294 2512"/>
+<text class="actorLabel" x="265" y="2548">Super Admin</text>
+<circle class="actor" cx="265" cy="3002" r="19"/>
+<path class="actor" d="M 265 3022 V 3084 M 231 3047 H 299 M 265 3084 L 236 3122 M 265 3084 L 294 3122"/>
+<text class="actorLabel" x="265" y="3158">Android</text>
+<text class="actorLabel" x="265" y="3186">WorkManager</text>
+</svg>

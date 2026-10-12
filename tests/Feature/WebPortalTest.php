@@ -30,7 +30,7 @@ class WebPortalTest extends TestCase
 
         $response = $this->actingAs($admin)->get('/admin/dashboard');
         $response->assertStatus(200)
-            ->assertSee('Executive Dashboard')
+            ->assertSee('Dashboard')
             ->assertSee('Officially Enrolled');
     }
 
@@ -72,12 +72,12 @@ class WebPortalTest extends TestCase
 
     public function test_learner_can_access_learner_portal(): void
     {
-        $learner = User::where('username', 'learner_mark')->first();
+        $learner = User::where('username', 'learner_jhs')->first();
 
         $response = $this->actingAs($learner)->get('/learner/dashboard');
         $response->assertStatus(200)
             ->assertSee('Officially Enrolled')
-            ->assertSee('136542240001');
+            ->assertSee('136542240030');
 
         $docResponse = $this->actingAs($learner)->get('/learner/documents');
         $docResponse->assertStatus(200)
@@ -86,5 +86,59 @@ class WebPortalTest extends TestCase
         $modResponse = $this->actingAs($learner)->get('/learner/modules');
         $modResponse->assertStatus(200)
             ->assertSee('Self-Learning Module Library');
+    }
+
+    public function test_user_can_login_using_email_for_blp_learner(): void
+    {
+        $response = $this->post('/login', [
+            'login' => 'learner.blp@deped.gov.ph',
+            'password' => 'Password123!',
+        ]);
+
+        $response->assertRedirect('/learner/dashboard');
+        $this->assertAuthenticated();
+        $this->assertEquals('learner_blp', auth()->user()->username);
+
+        // Test alias email
+        auth()->logout();
+        $aliasResponse = $this->post('/login', [
+            'login' => 'blp.learner@deped.gov.ph',
+            'password' => 'Password123!',
+        ]);
+        $aliasResponse->assertRedirect('/learner/dashboard');
+        $this->assertAuthenticated();
+    }
+
+    public function test_user_can_login_using_email_for_elementary_learner(): void
+    {
+        $response = $this->post('/login', [
+            'login' => 'learner.elem@deped.gov.ph',
+            'password' => 'Password123!',
+        ]);
+
+        $response->assertRedirect('/learner/dashboard');
+        $this->assertAuthenticated();
+        $this->assertEquals('learner_elem', auth()->user()->username);
+
+        // Test alias email
+        auth()->logout();
+        $aliasResponse = $this->post('/login', [
+            'login' => 'elem.learner@deped.gov.ph',
+            'password' => 'Password123!',
+        ]);
+        $aliasResponse->assertRedirect('/learner/dashboard');
+        $this->assertAuthenticated();
+    }
+
+    public function test_user_can_login_using_email_for_admin(): void
+    {
+        $response = $this->post('/login', [
+            'login' => 'admin.als@deped.gov.ph',
+            'password' => 'Password123!',
+        ]);
+
+        $response->assertRedirect('/admin/dashboard');
+        $this->assertAuthenticated();
+        $this->assertEquals('admin_als', auth()->user()->username);
     }
 }

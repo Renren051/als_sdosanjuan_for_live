@@ -1,0 +1,55 @@
+graph LR
+    subgraph Actors
+        Learner["Learner (OSYA)"]
+        Teacher["Mobile Teacher"]
+        Admin["Division Admin"]
+        SuperAdmin["Super Admin"]
+        SystemDaemon["Android WorkManager"]
+    end
+
+    subgraph ALS_Use_Cases ["DepEd SDO San Juan ALS Platform Use Cases"]
+        UC01(["UC01: Submit Digital Intake (ALS Form 2)"])
+        UC02(["UC02: Upload Mandatory Documents"])
+        UC03(["UC03: Review & Verify Enrollment Records"])
+        UC04(["UC04: Allocate CLC & Program Track"])
+        UC05(["UC05: Author, Upload & Manage Modules"])
+        UC06(["UC06: Read Modules & Track Telemetry"])
+        UC07(["UC07: Synchronize Offline Progress"])
+        UC08(["UC08: Play Module Games & Sync Game Scores"])
+        UC09(["UC09: Export DepEd Form 1 & Form 2 Masterlists"])
+        UC10(["UC10: Provision Teachers & Audit Accounts"])
+        UC11(["UC11: Reposition Hero Banners & Announcements"])
+        UC12(["UC12: Toggle Dark Mode / Light Mode"])
+        UC13(["UC13: Register as ALS Mobile Teacher"])
+    end
+
+    Learner --> UC01
+    Learner --> UC02
+    Learner --> UC06
+    Learner --> UC08
+    Learner --> UC12
+
+    SystemDaemon --> UC07
+    SystemDaemon --> UC08
+
+    Teacher --> UC13
+    Teacher --> UC03
+    Teacher --> UC04
+    Teacher --> UC06
+    Teacher --> UC09
+    Teacher --> UC12
+
+    Admin --> UC03
+    Admin --> UC04
+    Admin --> UC05
+    Admin --> UC09
+    Admin --> UC11
+
+    SuperAdmin --> UC10
+    SuperAdmin --> UC05
+    SuperAdmin --> UC09
+
+    UC01 -.->|<<include>>| UC02
+    UC06 -.->|<<include>>| UC07
+    UC06 -.->|<<extend>>| UC08
+    UC03 -.->|<<extend>>| UC04

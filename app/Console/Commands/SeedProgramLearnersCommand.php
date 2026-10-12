@@ -46,7 +46,7 @@ class SeedProgramLearnersCommand extends Command
             // 1. Basic Literacy Program (BLP)
             [
                 'username' => 'learner_blp',
-                'email' => 'blp.learner@als-sanjuan.local',
+                'email' => 'learner.blp@deped.gov.ph',
                 'lrn' => '136542240010',
                 'track' => Enrollment::TRACK_BLP,
                 'clc_id' => $clcBatis->id,
@@ -79,7 +79,7 @@ class SeedProgramLearnersCommand extends Command
             // 2. A&E Lower and Advanced Elementary
             [
                 'username' => 'learner_elem',
-                'email' => 'elem.learner@als-sanjuan.local',
+                'email' => 'learner.elem@deped.gov.ph',
                 'lrn' => '136542240020',
                 'track' => Enrollment::TRACK_AE_ELEMENTARY,
                 'clc_id' => $clcAdditionHills->id,
@@ -114,7 +114,7 @@ class SeedProgramLearnersCommand extends Command
             // 3. A&E Secondary / Junior High School
             [
                 'username' => 'learner_jhs',
-                'email' => 'jhs.learner@als-sanjuan.local',
+                'email' => 'learner.jhs@deped.gov.ph',
                 'lrn' => '136542240030',
                 'track' => Enrollment::TRACK_AE_JUNIOR_HIGH,
                 'clc_id' => $clcPedroCruz->id,

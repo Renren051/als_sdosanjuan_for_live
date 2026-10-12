@@ -63,6 +63,11 @@ class Module extends Model
         return $this->hasMany(ModuleProgress::class, 'module_id');
     }
 
+    public function gameAttempts(): HasMany
+    {
+        return $this->hasMany(ModuleGameAttempt::class, 'module_id');
+    }
+
     public function getFormattedFileSizeAttribute(): string
     {
         $bytes = $this->pdf_file_size;

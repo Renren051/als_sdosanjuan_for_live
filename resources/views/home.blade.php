@@ -247,7 +247,7 @@
             x-init="startTimer()"
             @mouseenter="stopTimer()"
             @mouseleave="startTimer()"
-            class="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 bg-slate-950 aspect-[16/9] sm:aspect-[2.4/1] min-h-[420px] sm:min-h-[480px] md:min-h-[540px] flex items-center select-none group"
+            class="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-slate-200/80 bg-slate-950 aspect-[16/9] sm:aspect-[2.4/1] min-h-[420px] sm:min-h-[480px] md:min-h-[540px] lg:min-h-0 flex items-center select-none group"
             style="aspect-ratio: 1920 / 800;">
 
                 <!-- Top Green Accent Line (Kingster University Signature Style) -->
@@ -271,9 +271,8 @@
                          :class="activeSlide === {{ $bannerIdx }} ? 'z-20' : 'z-10'">
                         <img src="{{ $banner->image_url }}" 
                              alt="{{ $banner->title }}" 
-                             style="object-position: {{ $banner->position_x ?? 50 }}% {{ $banner->position_y ?? 50 }}%;"
-                             class="w-full h-full object-cover transform transition-transform duration-[7000ms] ease-out"
-                             :class="activeSlide === {{ $bannerIdx }} ? 'scale-105' : 'scale-100'" />
+                             style="object-position: {{ $banner->position_x ?? 50 }}% {{ $banner->position_y ?? 50 }}%; transform: scale({{ ($banner->zoom ?? 100) / 100 }}); transform-origin: {{ $banner->position_x ?? 50 }}% {{ $banner->position_y ?? 50 }}%;"
+                             class="w-full h-full object-cover" />
                         <!-- Gradient Blue Vignette & Overlay (DepEd Blue / Deep Navy) -->
                         <div class="absolute inset-0 bg-gradient-to-r from-[#040e24]/95 via-[#07193f]/80 via-40% to-transparent pointer-events-none"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-slate-950/20 pointer-events-none"></div>

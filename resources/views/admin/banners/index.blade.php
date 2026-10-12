@@ -53,7 +53,7 @@
                 <div>
                     <!-- Banner Photo Preview -->
                     <div class="relative h-48 bg-slate-900 overflow-hidden">
-                        <img src="{{ $banner->image_url }}" alt="{{ $banner->title }}" style="object-position: {{ $banner->position_x ?? 50 }}% {{ $banner->position_y ?? 50 }}%;" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        <img src="{{ $banner->image_url }}" alt="{{ $banner->title }}" style="object-position: {{ $banner->position_x ?? 50 }}% {{ $banner->position_y ?? 50 }}%; transform: scale({{ ($banner->zoom ?? 100) / 100 }}); transform-origin: {{ $banner->position_x ?? 50 }}% {{ $banner->position_y ?? 50 }}%;" class="w-full h-full object-cover">
                         
                         <!-- Status Badge -->
                         <div class="absolute top-3 right-3 flex items-center gap-2">
@@ -245,7 +245,7 @@
                     <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-16 h-9 rounded-lg overflow-hidden bg-slate-900 border border-slate-300 shrink-0">
-                                <img :src="activeBanner.image_url" :style="'object-position: ' + (activeBanner.position_x || 50) + '% ' + (activeBanner.position_y || 50) + '%;'" class="w-full h-full object-cover">
+                                <img :src="activeBanner.image_url" :style="'object-position: ' + (activeBanner.position_x || 50) + '% ' + (activeBanner.position_y || 50) + '%; transform: scale(' + ((activeBanner.zoom || 100) / 100) + '); transform-origin: ' + (activeBanner.position_x || 50) + '% ' + (activeBanner.position_y || 50) + '%;'" class="w-full h-full object-cover">
                             </div>
                             <div class="min-w-0">
                                 <div class="text-xs font-bold text-slate-800 truncate" x-text="activeBanner.title || 'Current Photo'"></div>
@@ -329,7 +329,7 @@
              @click.away="cropper.cancel()">
             
             <!-- Sleek Dark Header -->
-            <div class="shrink-0 px-6 py-3.5 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 z-20">
+            <div class="shrink-0 px-3 sm:px-6 py-3.5 border-b border-slate-800 flex items-center justify-between gap-3 bg-slate-900/90 z-20">
                 <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-xl bg-deped-blue/20 text-blue-400 flex items-center justify-center font-bold shrink-0 border border-blue-500/20">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
@@ -339,11 +339,11 @@
                             <span>Reposition Hero Banner Photo</span>
                             <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-normal border border-blue-400/20 hidden sm:inline-block">1920 &times; 800 HD</span>
                         </h3>
-                        <p class="text-xs text-slate-400">Drag photo to adjust framing &bull; Exactly matches homepage viewing</p>
+                        <p class="text-xs text-slate-400">Drag, scroll, or use the arrow keys to position the photo</p>
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                     <!-- Toggle Title Overlay -->
                     <button type="button" 
                             @click="cropper.showOverlayText = !cropper.showOverlayText"
@@ -353,8 +353,25 @@
                         <span x-text="cropper.showOverlayText ? 'Hide Title' : 'Show Title'"></span>
                     </button>
 
-                    <!-- Close Button -->
-                    <button type="button" @click="cropper.cancel()" class="text-slate-400 hover:text-white text-2xl font-bold leading-none p-1.5 rounded-xl hover:bg-slate-800 transition-colors">&times;</button>
+                    <button type="button"
+                            @click="cropper.cancel()"
+                            :disabled="cropper.isSaving"
+                            class="px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition-colors disabled:opacity-50">
+                        Cancel
+                    </button>
+
+                    <button type="button"
+                            @click="cropper.saveReposition()"
+                            :disabled="cropper.isSaving"
+                            class="inline-flex items-center gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-deped-blue hover:bg-blue-600 text-white font-bold text-xs shadow-md shadow-deped-blue/30 transition-colors disabled:opacity-50">
+                        <template x-if="cropper.isSaving">
+                            <svg class="w-3.5 h-3.5 animate-spin text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                        </template>
+                        <template x-if="!cropper.isSaving">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                        </template>
+                        <span x-text="cropper.isSaving ? 'Saving...' : 'Save Changes'"></span>
+                    </button>
                 </div>
             </div>
 
@@ -362,33 +379,32 @@
             <div class="relative w-full bg-slate-950 overflow-hidden select-none touch-none group"
                  id="bannerCropperViewport"
                  style="aspect-ratio: 1920 / 800;"
-                 @mousedown.prevent="cropper.startDrag($event)"
-                 @touchstart.prevent="cropper.startDrag($event)"
+                 tabindex="0"
+                 role="group"
+                 aria-label="Banner photo positioning area. Drag to reposition, use arrow keys to move, or scroll vertically."
                  @pointerdown.prevent="cropper.startDrag($event)"
-                 @pointermove.window="cropper.onDrag($event)"
-                 @mousemove.window="cropper.onDrag($event)"
-                 @touchmove.window="cropper.onDrag($event)"
-                 @pointerup.window="cropper.stopDrag($event)"
-                 @mouseup.window="cropper.stopDrag($event)"
-                 @touchend.window="cropper.stopDrag($event)"
-                 @pointercancel.window="cropper.stopDrag($event)"
-                 @touchcancel.window="cropper.stopDrag($event)"
+                 @pointermove="cropper.onDrag($event)"
+                 @pointerup="cropper.stopDrag($event)"
+                 @pointercancel="cropper.stopDrag($event)"
+                 @lostpointercapture="cropper.stopDrag($event)"
+                 @keydown="cropper.onKeydown($event)"
                  @wheel.prevent="cropper.onWheel($event)"
                  :class="cropper.isDragging ? 'cursor-grabbing' : 'cursor-grab'">
 
                 <!-- Image Layer -->
                 <img id="bannerRepositionImg"
                      :src="cropper.imageUrl"
-                     :style="'object-position: ' + cropper.posX + '% ' + cropper.posY + '%;'"
+                     @load="cropper.computeOverflow(); cropper.syncDomImage()"
                      draggable="false"
                      ondragstart="return false;"
-                     class="w-full h-full object-cover pointer-events-none select-none transition-none will-change-[object-position]" />
+                     :style="'object-position: ' + cropper.posX + '% ' + cropper.posY + '%; transform: scale(' + (cropper.zoom / 100) + '); transform-origin: ' + cropper.posX + '% ' + cropper.posY + '%;'"
+                     class="absolute inset-0 w-full h-full object-cover pointer-events-none select-none transition-none" />
 
                 <!-- Center Facebook-Style Instruction Pill -->
                 <div class="absolute top-4 sm:top-5 left-1/2 -translate-x-1/2 px-4 sm:px-6 py-2 rounded-full bg-black/80 backdrop-blur-md text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-2xl border border-white/20 select-none pointer-events-none transition-opacity duration-200"
                      :class="cropper.isDragging ? 'opacity-35' : 'opacity-95'">
                     <span class="text-amber-400 text-sm sm:text-base">✋</span>
-                    <span>Drag to Reposition Cover Photo</span>
+                    <span>Drag or use arrow keys to reposition &bull; Scroll to move vertically</span>
                 </div>
 
                 <!-- Live Homepage Headline & Blue Gradient Simulation Overlay -->
@@ -412,36 +428,13 @@
                     </div>
                 </div>
 
-                <!-- Facebook-Style Floating Action Buttons on Bottom-Right of Banner -->
-                <div class="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex items-center gap-2.5 z-30 select-none">
-                    <button type="button" 
-                            @click="cropper.cancel()" 
-                            :disabled="cropper.isSaving"
-                            class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-black/60 hover:bg-black/80 text-white font-bold text-xs sm:text-sm backdrop-blur-md border border-white/20 shadow-lg transition-all hover:scale-105 active:scale-95 cursor-pointer">
-                        Cancel
-                    </button>
-                    
-                    <button type="button" 
-                            @click="cropper.saveReposition()" 
-                            :disabled="cropper.isSaving"
-                            class="inline-flex items-center gap-2 px-5 py-2 sm:px-6 sm:py-2.5 rounded-xl bg-deped-blue hover:bg-blue-600 text-white font-bold text-xs sm:text-sm shadow-xl shadow-deped-blue/40 border border-blue-400/30 transition-all hover:scale-105 active:scale-95 cursor-pointer">
-                        <template x-if="cropper.isSaving">
-                            <svg class="w-4 h-4 animate-spin text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
-                        </template>
-                        <template x-if="!cropper.isSaving">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        </template>
-                        <span x-text="cropper.isSaving ? 'Saving Changes...' : 'Save Changes'"></span>
-                    </button>
-                </div>
-
                 <!-- Coordinates Indicator on Bottom-Left of Banner -->
                 <div class="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 px-3 py-1.5 rounded-lg bg-black/70 backdrop-blur-md text-slate-300 font-mono text-xs font-bold border border-white/10 select-none pointer-events-none">
-                    <span x-text="`Vertical: ${cropper.posY}% | Horizontal: ${cropper.posX}%`"></span>
+                    <span x-text="`Vertical: ${cropper.posY}% | Horizontal: ${cropper.posX}% | Zoom: ${cropper.zoom}%`"></span>
                 </div>
             </div>
 
-            <!-- Compact Helper Bar (Fine-tuning & Presets) -->
+            <!-- Compact Helper Bar (Quick Align & Zoom) -->
             <div class="shrink-0 px-6 py-3 bg-slate-900 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
                 <div class="flex items-center gap-2 text-slate-400">
                     <span class="font-bold text-slate-300">Quick Align:</span>
@@ -453,9 +446,9 @@
                 </div>
 
                 <div class="flex items-center gap-3 text-slate-400 min-w-[200px] sm:min-w-[260px]">
-                    <span class="text-[11px] font-semibold shrink-0">Fine Tune:</span>
-                    <input type="range" min="0" max="100" step="1" x-model.number="cropper.posY" @input="cropper.syncDomImage()" class="w-full accent-deped-blue cursor-pointer h-1.5 bg-slate-700 rounded-lg">
-                    <span class="font-mono text-deped-blue font-bold text-xs shrink-0" x-text="cropper.posY + '%'"></span>
+                    <span class="text-[11px] font-semibold shrink-0">Zoom:</span>
+                    <input type="range" min="100" max="200" step="1" x-model.number="cropper.zoom" @input="cropper.computeOverflow(); cropper.syncDomImage()" class="w-full accent-deped-blue cursor-pointer h-1.5 bg-slate-700 rounded-lg">
+                    <span class="font-mono text-deped-blue font-bold text-xs shrink-0" x-text="cropper.zoom + '%'"></span>
                 </div>
             </div>
         </div>
@@ -467,6 +460,7 @@
         @method('PATCH')
         <input type="hidden" name="position_x" id="globalRepositionPosX">
         <input type="hidden" name="position_y" id="globalRepositionPosY">
+        <input type="hidden" name="zoom" id="globalRepositionZoom">
     </form>
 
 </div>
@@ -489,7 +483,9 @@ document.addEventListener('alpine:init', () => {
             aspectRatioName: '2.4:1',
             posX: 50,
             posY: 50,
+            zoom: 100,
             isDragging: false,
+            activePointerId: null,
             dragStartX: 0,
             dragStartY: 0,
             initialPosX: 50,
@@ -525,15 +521,19 @@ document.addEventListener('alpine:init', () => {
                     renderedH = vpW / imgAspect;
                 }
 
-                this.overflowY = Math.max(10, Math.round(renderedH - vpH));
-                this.overflowX = Math.max(10, Math.round(renderedW - vpW));
+                const zoom = Math.max(100, Math.min(200, Number(this.zoom) || 100)) / 100;
+                this.overflowY = Math.max(0, (renderedH * zoom) - vpH);
+                this.overflowX = Math.max(0, (renderedW * zoom) - vpW);
             },
 
             syncDomImage() {
                 const img = document.getElementById('bannerRepositionImg');
-                if (img) {
-                    img.style.objectPosition = `${this.posX}% ${this.posY}%`;
-                }
+                if (!img) return;
+
+                const zoom = Math.max(100, Math.min(200, Number(this.zoom) || 100)) / 100;
+                img.style.objectPosition = this.posX + '% ' + this.posY + '%';
+                img.style.transform = 'scale(' + zoom + ')';
+                img.style.transformOrigin = this.posX + '% ' + this.posY + '%';
             },
 
             open(imageUrl, posX = 50, posY = 50, banner = null) {
@@ -544,9 +544,11 @@ document.addEventListener('alpine:init', () => {
                 this.targetBannerId = banner ? banner.id : null;
                 this.posX = typeof posX === 'number' ? posX : 50;
                 this.posY = typeof posY === 'number' ? posY : 50;
+                this.zoom = Math.max(100, Math.min(200, Number(banner?.zoom) || 100));
                 this.aspectRatio = 1920 / 800;
                 this.showOverlayText = true;
                 this.isDragging = false;
+                this.activePointerId = null;
                 this.syncDomImage();
                 setTimeout(() => {
                     this.computeOverflow();
@@ -561,6 +563,7 @@ document.addEventListener('alpine:init', () => {
             cancel() {
                 this.isOpen = false;
                 this.isDragging = false;
+                this.activePointerId = null;
             },
 
             setAspectRatio(ratio, name) {
@@ -574,27 +577,37 @@ document.addEventListener('alpine:init', () => {
                 this.syncDomImage();
             },
 
+            onKeydown(e) {
+                const step = e.shiftKey ? 5 : 1;
+                let x = this.posX;
+                let y = this.posY;
+
+                switch (e.key) {
+                    case 'ArrowLeft': x += step; break;
+                    case 'ArrowRight': x -= step; break;
+                    case 'ArrowUp': y += step; break;
+                    case 'ArrowDown': y -= step; break;
+                    default: return;
+                }
+
+                e.preventDefault();
+                this.setPos(x, y);
+            },
+
             startDrag(e) {
-                if (e.button !== undefined && e.button !== 0) return; // Only primary mouse button
+                if (e.isPrimary === false || (e.pointerType === 'mouse' && e.button !== 0)) return;
                 if (e.preventDefault && e.cancelable) e.preventDefault();
                 if (this.isDragging) return;
+                if (e.currentTarget && e.currentTarget.focus) {
+                    try {
+                        e.currentTarget.focus({ preventScroll: true });
+                    } catch (_) {}
+                }
                 this.isDragging = true;
+                this.activePointerId = e.pointerId;
                 
                 let clientX = e.clientX;
                 let clientY = e.clientY;
-
-                if (clientX === undefined || clientY === undefined) {
-                    if (e.touches && e.touches.length > 0) {
-                        clientX = e.touches[0].clientX;
-                        clientY = e.touches[0].clientY;
-                    } else if (e.changedTouches && e.changedTouches.length > 0) {
-                        clientX = e.changedTouches[0].clientX;
-                        clientY = e.changedTouches[0].clientY;
-                    } else {
-                        clientX = 0;
-                        clientY = 0;
-                    }
-                }
 
                 this.computeOverflow();
                 this.dragStartX = clientX;
@@ -610,35 +623,23 @@ document.addEventListener('alpine:init', () => {
             },
 
             onDrag(e) {
-                if (!this.isDragging) return;
+                if (!this.isDragging || e.pointerId !== this.activePointerId) return;
                 if (e.preventDefault && e.cancelable) e.preventDefault();
 
                 let clientX = e.clientX;
                 let clientY = e.clientY;
 
-                if (clientX === undefined || clientY === undefined) {
-                    if (e.touches && e.touches.length > 0) {
-                        clientX = e.touches[0].clientX;
-                        clientY = e.touches[0].clientY;
-                    } else if (e.changedTouches && e.changedTouches.length > 0) {
-                        clientX = e.changedTouches[0].clientX;
-                        clientY = e.changedTouches[0].clientY;
-                    } else {
-                        return;
-                    }
-                }
-
                 const deltaX = clientX - this.dragStartX;
                 const deltaY = clientY - this.dragStartY;
 
-                const overflowY = this.overflowY || 320;
-                const overflowX = this.overflowX || 400;
+                const overflowY = this.overflowY;
+                const overflowX = this.overflowX;
 
                 // 1:1 Pixel accuracy matching Facebook cover photo repositioning:
                 // Dragging down (deltaY > 0) pulls the photo down -> reveals top of photo (posY decreases towards 0%)
                 // Dragging up (deltaY < 0) pulls the photo up -> reveals bottom of photo (posY increases towards 100%)
-                const percentY = (deltaY / overflowY) * 100;
-                const percentX = (deltaX / overflowX) * 100;
+                const percentY = overflowY > 0 ? (deltaY / overflowY) * 100 : 0;
+                const percentX = overflowX > 0 ? (deltaX / overflowX) * 100 : 0;
 
                 this.posY = Math.max(0, Math.min(100, Math.round(this.initialPosY - percentY)));
                 this.posX = Math.max(0, Math.min(100, Math.round(this.initialPosX - percentX)));
@@ -646,20 +647,16 @@ document.addEventListener('alpine:init', () => {
             },
 
             stopDrag(e) {
-                if (!this.isDragging) return;
+                if (!this.isDragging || e.pointerId !== this.activePointerId) return;
                 this.isDragging = false;
+                this.activePointerId = null;
                 this.syncDomImage();
-                if (e && e.pointerId !== undefined && e.currentTarget && e.currentTarget.releasePointerCapture) {
-                    try {
-                        e.currentTarget.releasePointerCapture(e.pointerId);
-                    } catch (_) {}
-                }
             },
 
             onWheel(e) {
                 if (e.preventDefault && e.cancelable) e.preventDefault();
-                // Scrolling down shifts lower, scrolling up shifts higher
-                const delta = Math.sign(e.deltaY) * 4;
+                // Scroll down to reveal lower parts of the photo; scroll up to reveal higher parts.
+                const delta = Math.max(-8, Math.min(8, e.deltaY * 0.04));
                 this.posY = Math.max(0, Math.min(100, this.posY + delta));
                 this.syncDomImage();
             },
@@ -677,8 +674,9 @@ document.addEventListener('alpine:init', () => {
                 const form = document.getElementById('globalRepositionForm');
                 const inputX = document.getElementById('globalRepositionPosX');
                 const inputY = document.getElementById('globalRepositionPosY');
+                const inputZoom = document.getElementById('globalRepositionZoom');
 
-                if (!form || !inputX || !inputY) {
+                if (!form || !inputX || !inputY || !inputZoom) {
                     this.isSaving = false;
                     alert('Reposition form not found.');
                     return;
@@ -687,6 +685,7 @@ document.addEventListener('alpine:init', () => {
                 form.action = '{{ url('/admin/banners') }}/' + this.targetBannerId + '/reposition';
                 inputX.value = this.posX;
                 inputY.value = this.posY;
+                inputZoom.value = this.zoom;
                 form.submit();
             }
         },

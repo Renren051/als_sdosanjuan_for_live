@@ -79,7 +79,7 @@
                         <div class="mb-6 sm:mb-8">
                             <p class="text-xs font-black uppercase tracking-[0.16em] text-deped-blue">Welcome back</p>
                             <h2 id="login-heading" class="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Sign in to your portal</h2>
-                            <p class="mt-2 text-sm leading-relaxed text-slate-500">Use the username or email address linked to your ALS account.</p>
+                            <p class="mt-2 text-sm leading-relaxed text-slate-500">Sign in using your registered email address or username.</p>
                         </div>
 
                         @if(session('error'))
@@ -114,14 +114,14 @@
                         <form action="{{ route('login') }}" method="POST" class="space-y-5" id="loginForm">
                             @csrf
                             <div>
-                                <label for="login" class="block text-sm font-bold text-slate-700">Username or email</label>
+                                <label for="login" class="block text-sm font-bold text-slate-700">Email Address <span class="text-xs font-normal text-slate-500">(or username)</span></label>
                                 <div class="relative mt-2">
                                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/>
                                         </svg>
                                     </div>
-                                    <input id="login" name="login" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required value="{{ old('login') }}" placeholder="Enter your username or email"
+                                    <input id="login" name="login" type="text" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" required value="{{ old('login') }}" placeholder="e.g. learner.blp@deped.gov.ph"
                                            class="min-h-12 w-full rounded-xl border border-slate-300 bg-slate-50 py-3 pl-11 pr-4 text-base text-slate-900 placeholder:text-slate-400 transition focus:border-deped-blue focus:bg-white focus:outline-none focus:ring-4 focus:ring-deped-blue/10 sm:text-sm">
                                 </div>
                             </div>
@@ -158,13 +158,90 @@
                             </button>
                         </form>
 
-                        <details class="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                            <summary class="cursor-pointer select-none text-sm font-bold text-slate-700 marker:text-deped-blue">Quick demo access</summary>
-                            <p class="mt-2 text-xs leading-relaxed text-slate-500">Choose a role to fill the demo sign-in details.</p>
-                            <div class="mt-3 grid grid-cols-3 gap-2">
-                                <button type="button" onclick="fillCredentials('admin_als', 'Password123!')" class="min-h-10 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-slate-700 transition hover:border-deped-blue hover:text-deped-blue focus:outline-none focus:ring-2 focus:ring-deped-blue/30">Admin</button>
-                                <button type="button" onclick="fillCredentials('teacher_juan', 'Password123!')" class="min-h-10 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-slate-700 transition hover:border-emerald-500 hover:text-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500/30">Teacher</button>
-                                <button type="button" onclick="fillCredentials('learner_mark', 'Password123!')" class="min-h-10 rounded-lg border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-slate-700 transition hover:border-amber-500 hover:text-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500/30">Learner</button>
+                        <details class="mt-6 rounded-2xl border border-slate-200 bg-slate-50/90 p-4 transition">
+                            <summary class="cursor-pointer select-none text-xs font-black uppercase tracking-wider text-slate-700 marker:text-deped-blue">
+                                Quick Demo Sign-In Credentials (By Email)
+                            </summary>
+                            <p class="mt-2 text-xs leading-relaxed text-slate-500">
+                                Click any role or track below to auto-fill verified email sign-in credentials:
+                            </p>
+
+                            <!-- Track Learners -->
+                            <!-- Track Learners -->
+                            <div class="mt-3">
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Enrolled ALS Learners by Program Track</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <!-- BLP -->
+                                    <button type="button" onclick="fillCredentials('learner.blp@deped.gov.ph', 'Password123!')"
+                                            class="group flex items-center justify-between gap-2 rounded-xl border border-amber-200 bg-amber-50/70 p-2.5 text-left transition hover:border-amber-400 hover:bg-amber-100/80 focus:outline-none focus:ring-2 focus:ring-amber-500/40">
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="inline-flex items-center rounded-md bg-amber-600 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">BLP</span>
+                                                <span class="text-xs font-bold text-slate-800">Bayani Panaligan</span>
+                                            </div>
+                                            <span class="mt-0.5 block truncate text-[11px] font-medium text-slate-600 group-hover:text-amber-900">learner.blp@deped.gov.ph</span>
+                                            <span class="text-[10px] text-amber-700 font-medium">Batis CLC &bull; Enrolled</span>
+                                        </div>
+                                    </button>
+
+                                    <!-- Elementary -->
+                                    <button type="button" onclick="fillCredentials('learner.elem@deped.gov.ph', 'Password123!')"
+                                            class="group flex items-center justify-between gap-2 rounded-xl border border-blue-200 bg-blue-50/70 p-2.5 text-left transition hover:border-blue-400 hover:bg-blue-100/80 focus:outline-none focus:ring-2 focus:ring-blue-500/40">
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="inline-flex items-center rounded-md bg-blue-600 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">Elem</span>
+                                                <span class="text-xs font-bold text-slate-800">Elena Ramos</span>
+                                            </div>
+                                            <span class="mt-0.5 block truncate text-[11px] font-medium text-slate-600 group-hover:text-blue-900">learner.elem@deped.gov.ph</span>
+                                            <span class="text-[10px] text-blue-700 font-medium">Addition Hills &bull; Enrolled</span>
+                                        </div>
+                                    </button>
+
+                                    <!-- Junior High -->
+                                    <button type="button" onclick="fillCredentials('learner.jhs@deped.gov.ph', 'Password123!')"
+                                            class="group flex items-center justify-between gap-2 rounded-xl border border-indigo-200 bg-indigo-50/70 p-2.5 text-left transition hover:border-indigo-400 hover:bg-indigo-100/80 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="inline-flex items-center rounded-md bg-indigo-600 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">JHS</span>
+                                                <span class="text-xs font-bold text-slate-800">Jun Santos</span>
+                                            </div>
+                                            <span class="mt-0.5 block truncate text-[11px] font-medium text-slate-600 group-hover:text-indigo-900">learner.jhs@deped.gov.ph</span>
+                                            <span class="text-[10px] text-indigo-700 font-medium">Pedro Cruz &bull; Enrolled</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Staff & Administrators -->
+                            <div class="mt-3 pt-3 border-t border-slate-200">
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Instructional &amp; Administrative Staff</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <!-- Mobile Teacher -->
+                                    <button type="button" onclick="fillCredentials('juan.delacruz@deped.gov.ph', 'Password123!')"
+                                            class="group flex items-center justify-between gap-2 rounded-xl border border-emerald-200 bg-emerald-50/70 p-2.5 text-left transition hover:border-emerald-400 hover:bg-emerald-100/80 focus:outline-none focus:ring-2 focus:ring-emerald-500/40">
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="inline-flex items-center rounded-md bg-emerald-600 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">Teacher</span>
+                                                <span class="text-xs font-bold text-slate-800">Teacher Juan Dela Cruz</span>
+                                            </div>
+                                            <span class="mt-0.5 block truncate text-[11px] font-medium text-slate-600 group-hover:text-emerald-900">juan.delacruz@deped.gov.ph</span>
+                                            <span class="text-[10px] text-emerald-700 font-medium">West Crame CLC &bull; Active Teacher</span>
+                                        </div>
+                                    </button>
+
+                                    <!-- Division Admin -->
+                                    <button type="button" onclick="fillCredentials('admin.als@deped.gov.ph', 'Password123!')"
+                                            class="group flex items-center justify-between gap-2 rounded-xl border border-deped-blue/20 bg-blue-50/70 p-2.5 text-left transition hover:border-deped-blue hover:bg-blue-100/80 focus:outline-none focus:ring-2 focus:ring-deped-blue/40">
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="inline-flex items-center rounded-md bg-deped-blue px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">Admin</span>
+                                                <span class="text-xs font-bold text-slate-800">Maria Elena Cruz Santos</span>
+                                            </div>
+                                            <span class="mt-0.5 block truncate text-[11px] font-medium text-slate-600 group-hover:text-deped-blue">admin.als@deped.gov.ph</span>
+                                            <span class="text-[10px] text-deped-blue font-medium">Division Office &bull; Active Admin</span>
+                                        </div>
+                                    </button>
+                                </div>
                             </div>
                         </details>
 
@@ -175,6 +252,18 @@
                                 Begin online enrollment
                                 <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </a>
+                        </div>
+
+                        <div class="mt-3 rounded-xl border border-blue-100 bg-blue-50/70 p-4">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <p class="text-xs font-bold text-slate-800">DepEd ALS Mobile Teacher?</p>
+                                    <p class="text-[11px] text-slate-600">Register your teacher account online.</p>
+                                </div>
+                                <a href="{{ route('teacher.register') }}" class="inline-flex min-h-9 items-center justify-center rounded-lg border border-deped-blue/30 bg-white px-3 py-1.5 text-xs font-bold text-deped-blue hover:bg-deped-blue hover:text-white transition shadow-xs">
+                                    Register as Teacher &rarr;
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </section>

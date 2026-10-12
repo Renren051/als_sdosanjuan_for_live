@@ -7,6 +7,7 @@ use App\Models\CommunityLearningCenter;
 use App\Models\Enrollment;
 use App\Models\LearningStrand;
 use App\Models\Module;
+use App\Models\ModuleGameAttempt;
 use App\Models\ModuleProgress;
 use App\Models\User;
 use Carbon\Carbon;
@@ -136,6 +137,18 @@ class DashboardController extends Controller
         }
         $recentTelemetry = $telemetryQuery->latest('synced_at')->take(6)->get();
 
+        // Recent offline mini-game scores, scoped to assigned learners for mobile teachers.
+        $gameAttemptsQuery = ModuleGameAttempt::with(['user.profile', 'module.strand']);
+        if ($isTeacher) {
+            $gameAttemptsQuery->whereHas('user.enrollments', function ($eq) use ($currentUser) {
+                $eq->where(function ($q) use ($currentUser) {
+                    $q->where('assigned_teacher_id', $currentUser->id)
+                      ->orWhereHas('clc', fn ($cq) => $cq->where('assigned_teacher_id', $currentUser->id));
+                });
+            });
+        }
+        $recentGameAttempts = $gameAttemptsQuery->latest('attempted_at')->take(8)->get();
+
         // 7. CLCs Summary with dynamic active learners count respecting active filters
         $clcsSummaryQuery = CommunityLearningCenter::where('status', 'active');
         if ($isTeacher) {
@@ -235,6 +248,7 @@ class DashboardController extends Controller
             'totalTrackRecords',
             'recentEnrollments',
             'recentTelemetry',
+            'recentGameAttempts',
             'clcsSummary',
             'filterClcs',
             'availableYears',

@@ -263,7 +263,7 @@ class UserSeeder extends Seeder
                 'user' => [
                     'lrn' => '136542240010',
                     'username' => 'learner_blp',
-                    'email' => 'blp.learner@als-sanjuan.local',
+                    'email' => 'learner.blp@deped.gov.ph',
                 ],
                 'profile' => [
                     'first_name' => 'Bayani',
@@ -289,7 +289,7 @@ class UserSeeder extends Seeder
                 'user' => [
                     'lrn' => '136542240020',
                     'username' => 'learner_elem',
-                    'email' => 'elem.learner@als-sanjuan.local',
+                    'email' => 'learner.elem@deped.gov.ph',
                 ],
                 'profile' => [
                     'first_name' => 'Elena',
@@ -317,7 +317,7 @@ class UserSeeder extends Seeder
                 'user' => [
                     'lrn' => '136542240030',
                     'username' => 'learner_jhs',
-                    'email' => 'jhs.learner@als-sanjuan.local',
+                    'email' => 'learner.jhs@deped.gov.ph',
                 ],
                 'profile' => [
                     'first_name' => 'Jun',

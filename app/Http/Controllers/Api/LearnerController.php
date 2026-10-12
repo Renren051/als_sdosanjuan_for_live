@@ -3,15 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SyncGameScoresRequest;
 use App\Http\Requests\SyncProgressRequest;
 use App\Http\Requests\UploadDocumentRequest;
 use App\Models\Enrollment;
 use App\Models\LearnerDocument;
 use App\Models\ModuleProgress;
+use App\Models\ModuleGameAttempt;
+use App\Models\Module;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class LearnerController extends Controller
 {
@@ -153,6 +157,122 @@ class LearnerController extends Controller
             'data' => [
                 'synced_count' => $syncedCount,
                 'synced_at' => $now->toIso8601String(),
+            ],
+        ]);
+    }
+
+    /**
+     * Check whether this learner has already played a module's one-time game.
+     * GET /api/v1/learner/modules/{moduleId}/game-status
+     */
+    public function moduleGameStatus(int $moduleId, Request $request): JsonResponse
+    {
+        $module = Module::query()->published()->findOrFail($moduleId);
+        $user = $request->user();
+        $enrollment = $user->latestEnrollment;
+        $enrolledLevel = match ($enrollment?->program_track) {
+            Enrollment::TRACK_BLP => Module::LEVEL_BLP,
+            Enrollment::TRACK_AE_ELEMENTARY => Module::LEVEL_ELEMENTARY,
+            Enrollment::TRACK_AE_JUNIOR_HIGH => Module::LEVEL_JUNIOR_HIGH,
+            default => null,
+        };
+
+        if ($enrolledLevel && $module->level !== $enrolledLevel) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This module does not match the learner\'s enrolled program.',
+            ], 403);
+        }
+
+        $played = ModuleGameAttempt::query()
+            ->where('user_id', $user->id)
+            ->where('module_id', $module->id)
+            ->exists();
+
+        return response()->json([
+            'success' => true,
+            'data' => ['played' => $played],
+        ]);
+    }
+    /**
+     * Store completed offline mini-game attempts for teacher reporting.
+     * POST /api/v1/learner/sync-game-scores
+     */
+    public function syncGameScores(SyncGameScoresRequest $request): JsonResponse
+    {
+        $user = $request->user();
+        $attempts = $request->input('attempts', []);
+        $moduleIds = collect($attempts)->pluck('module_id')->unique()->values();
+        $completedModuleIds = ModuleProgress::query()
+            ->where('user_id', $user->id)
+            ->whereIn('module_id', $moduleIds)
+            ->where('completion_status', ModuleProgress::STATUS_COMPLETED)
+            ->pluck('module_id')
+            ->all();
+
+        $incompleteModuleIds = $moduleIds->diff($completedModuleIds)->values();
+        if ($incompleteModuleIds->isNotEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Complete each module before syncing its game score.',
+                'data' => [
+                    'incomplete_module_ids' => $incompleteModuleIds,
+                ],
+            ], 422);
+        }
+
+        $deviceIdentifier = $request->input('device_identifier');
+        $syncedCount = 0;
+        $duplicateCount = 0;
+        DB::transaction(function () use ($user, $attempts, $deviceIdentifier, &$syncedCount, &$duplicateCount) {
+            // Serialize syncs for this learner so separate devices cannot create two
+            // first attempts for the same module at the same time.
+            DB::table('users')->where('id', $user->id)->lockForUpdate()->first();
+
+            foreach ($attempts as $attempt) {
+                $existingAttempt = ModuleGameAttempt::query()
+                    ->where('user_id', $user->id)
+                    ->where('attempt_uuid', $attempt['attempt_uuid'])
+                    ->first();
+
+                if ($existingAttempt) {
+                    $syncedCount++;
+                    continue;
+                }
+
+                $alreadyPlayed = ModuleGameAttempt::query()
+                    ->where('user_id', $user->id)
+                    ->where('module_id', $attempt['module_id'])
+                    ->lockForUpdate()
+                    ->exists();
+
+                if ($alreadyPlayed) {
+                    $duplicateCount++;
+                    continue;
+                }
+
+                ModuleGameAttempt::create([
+                    'attempt_uuid' => $attempt['attempt_uuid'],
+                    'user_id' => $user->id,
+                    'module_id' => $attempt['module_id'],
+                    'game_type' => $attempt['game_type'],
+                    'score' => $attempt['score'],
+                    'max_score' => $attempt['max_score'],
+                    'moves' => $attempt['moves'],
+                    'elapsed_seconds' => $attempt['elapsed_seconds'],
+                    'device_identifier' => $deviceIdentifier,
+                    'attempted_at' => $attempt['attempted_at'],
+                ]);
+                $syncedCount++;
+            }
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Mini-game scores synced successfully.',
+            'data' => [
+                'synced_count' => $syncedCount,
+                'duplicate_count' => $duplicateCount,
             ],
         ]);
     }

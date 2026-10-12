@@ -17,14 +17,14 @@ Under the mandate of the **Department of Education (DepEd)** and **Republic Act 
 
 The platform operates as a **single, unified dual-platform system** powered by a **shared central MySQL database**:
 1. **Web-Based Student Information System (SIS) & Administrative Portal:** Multi-role governance portal handling digital intake (DepEd ALS Form 2), document verification, Community Learning Center (CLC) allocation, hero banner management, module authoring/publishing, and automated DepEd masterlist exports (ALS Form 1 & Form 2).
-2. **Centralized Backend API:** High-performance Laravel Sanctum REST API serving data, authentication, binary PDF streaming, and telemetry ingestion for both the web portal and the mobile app.
-3. **Android-Based Modular LMS (Native Mobile App v2.0):** An offline-first mobile application designed for OSYA learners with limited or intermittent internet connectivity, featuring local SQLite/Room caching, background telemetry synchronization, and an in-app PDF module reader. Pre-built standalone package available as `ALSSDOSanJuan_v2.0.apk`.
+2. **Centralized Backend API:** High-performance Laravel Sanctum REST API serving data, authentication, binary PDF streaming, telemetry ingestion, and educational game score synchronization.
+3. **Android-Based Modular LMS (Native Mobile App v2.1):** An offline-first mobile application designed for OSYA learners with limited or intermittent internet connectivity, focused strictly on **Self-Learning Modules (SLMs)** and **Interactive Gamified Learning (Educational Mini-Games)** with local SQLite/Room caching and background telemetry synchronization. *(Note: AI features are officially disclosed/decommissioned from the mobile app to ensure complete offline autonomy, zero data costs, and dedicated focus on curriculum content).* Pre-built standalone package available as `ALSSDOSanJuan_v2.1_alpha.apk`.
 
 ---
 
 ## 🗄️ Single Shared Database Architecture
 
-Both the **Web SIS / LMS** and the **Android Mobile App (v2.0)** operate on the **EXACT SAME MySQL database** (`als_sdosanjuan_db`). There is zero data segregation or secondary synchronization delays:
+Both the **Web SIS / LMS** and the **Android Mobile App (v2.1)** operate on the **EXACT SAME MySQL database** (`als_sdosanjuan_db`). There is zero data segregation or secondary synchronization delays:
 
 ```mermaid
 graph TB
@@ -32,20 +32,21 @@ graph TB
         DB_Users[("users & user_profiles\nLearners, Teachers, Admins")]
         DB_Modules[("learning_strands & modules\nOfficial DepEd SLMs LS1-LS6")]
         DB_Telemetry[("module_progress & enrollments\nPages Read, Completion, Timestamps")]
+        DB_Games[("module_game_attempts\nInteractive Quiz Scores & Badges")]
         DB_CLCs[("clcs & announcements\n12 Learning Centers, Banners")]
     end
 
     subgraph Laravel_Backend [Laravel 12 Backend & API: Host PC Port 8000]
         SIS_Web["Web SIS / LMS\n(Blade + Alpine.js + Tailwind CSS)"]
         Sanctum_API["Laravel Sanctum REST API\n(/api/v1/*)"]
-        AI_Service["Google Gemini 2.5 Flash\n(ALSJay Chat Service)"]
+        AI_Web_Only["Google Gemini 2.5 Flash\n(Web-Only Info Assistant — Disclosed on App)"]
     end
 
     subgraph Client_Applications [Client Access Touchpoints]
         Web_Admin["Super Admin & Division Admin\n(Teacher Provisioning, Intake, Modules)"]
         Web_Teacher["Mobile Teachers\n(CLC Masterlist & Progress Verification)"]
         Web_Learner["Learners on Web Browser\n(Intake, Status Tracker, Fit-Page PDF Reader)"]
-        Android_App["Learners on Android Mobile App v2.0\n(Kotlin, Jetpack Compose, Offline Room DB)"]
+        Android_App["Learners on Android Mobile App v2.1\n(Modules & Educational Games Only — No AI)"]
     end
 
     Laravel_Backend <--> Centralized_Database
@@ -53,16 +54,17 @@ graph TB
     Web_Teacher --> SIS_Web
     Web_Learner --> SIS_Web
     Android_App <-->|HTTP / REST API via LAN IP| Sanctum_API
-    Android_App -.->|Offline Mode: Cache to Room DB| Android_App
-    Android_App -->|Background Telemetry Sync\nWorkManager SyncWorker| Sanctum_API
-    SIS_Web <--> AI_Service
-    Sanctum_API <--> AI_Service
+    Android_App -.->|Offline Mode: Cache Modules & Games in Room DB| Android_App
+    Android_App -->|Background Telemetry & Game Sync\nWorkManager SyncWorker| Sanctum_API
+    SIS_Web -.-> AI_Web_Only
 ```
 
 ### How the Shared Database Works in Practice:
-- **Unified User Accounts & Authentication:** Every learner and teacher registered through the Web Intake Wizard (or created by administrators) is immediately stored in the `users` table. They can log into **both the Web Portal and the Android App** using the exact same username/LRN and password.
+- **Unified User Accounts & Authentication:** Every learner and teacher registered through the Web Intake Wizard (or created by administrators) is immediately stored in the `users` table. They can log into **both the Web Portal and the Android App** using their email address or username and password.
 - **Centralized Module Control:** When an Administrator uploads, publishes, or updates an official DepEd module on the Web SIS (`/admin/modules`), the Android app immediately receives the updated module, title, file URL, and strand count without requiring an app store update.
 - **Bi-Directional Reading Telemetry:** When a learner reads a module on Android (even without internet connection), their reading position (`last_page_read`) and completion status (`is_completed`) are logged into local SQLite. When the mobile device reconnects to Wi-Fi or mobile data, the Android `SyncWorker` sends this data to `/api/v1/learner/sync-progress`, instantly updating the web database so Teachers and Admins can see the progress on their web dashboards.
+- **Gamified Learning & Score Synchronization:** When a learner completes or plays an interactive educational game/quiz on Android, game scores, mastery badges, and attempts are stored in local SQLite (`module_game_attempts`). When online, `SyncWorker` transmits these records to `/api/v1/learner/sync-game-scores`, giving Mobile Teachers verifiable proof of comprehension.
+- **App AI Disclosure Notice:** The mobile application is purely focused on **Modules** and **Games**; the AI chatbot is intentionally disclosed/omitted to preserve device battery, avoid data requirements, and provide a distraction-free learning environment.
 
 ---
 
@@ -73,10 +75,11 @@ graph TB
 | **Backend & API** | Laravel 12.x | PHP 8.2+ (Visual C++ 2019 x64), Eloquent ORM |
 | **Authentication** | Laravel Sanctum | State-based session cookies for Web; Bearer Tokens for Android |
 | **Database** | MySQL 8.0 / MariaDB | Shared database `als_sdosanjuan_db` via XAMPP |
-| **Web Frontend** | Blade + Vite v7.x | Tailwind CSS v4, Alpine.js, Plus Jakarta Sans, Playfair Display |
+| **Web Frontend** | Blade + Vite v7.x | Tailwind CSS, Alpine.js, Plus Jakarta Sans, Playfair Display |
 | **PDF Generation** | DomPDF | Official DepEd Form 1 (Masterlist) & Form 2 (Enrolment Profile) |
-| **AI Assistant** | Google Gemini 2.5 Flash | Real-time Search Grounding, strict DepEd guardrails, Tagalog/English mirroring |
-| **Mobile App (v2.0)** | Native Android | Kotlin 2.0, Jetpack Compose, Material 3, Room, Retrofit 2, WorkManager (`ALSSDOSanJuan_v2.0.apk`) |
+| **Gamified Learning** | Interactive Module Games | Module-linked comprehension quizzes, offline scoring, and `module_game_attempts` sync |
+| **AI Assistant (Web Only)** | Google Gemini 2.5 Flash | Optional Web-only info assistant; **disclosed/decommissioned from the mobile application** |
+| **Mobile App (v2.1)** | Native Android | Kotlin 2.0, Jetpack Compose, Material 3, Room SQLite, Retrofit 2, WorkManager (`ALSSDOSanJuan_v2.1_alpha.apk`) |
 
 ---
 
@@ -192,32 +195,32 @@ If your physical phone cannot reach `http://<YOUR_PC_IP>:8000`, open **Windows D
 
 ## 👥 Seeded Demo Accounts (Shared Database)
 
-All accounts below are pre-configured in `database/seeders/UserSeeder.php` and can be used on **both the Web Portal and the Android App**:
+All accounts below are pre-configured in `database/seeders/UserSeeder.php` and can be used on **both the Web Portal and the Android App**. The system prioritizes signing in using **Email Address** (with username fallback supported):
 
-| Role | Username / Identifier | Password | Program Track / Assignment | Access Capabilities |
-| :--- | :--- | :--- | :--- | :--- |
-| **Super Administrator** | `superadmin_als` | `Password123!` | Division IT / All CLCs | Full System Control, Mobile Teacher Provisioning (`/superadmin/teachers`), CLC Assignments, Account Resets |
-| **Division Administrator** | `admin_als` | `Password123!` | SDO San Juan Division Office | Enrollment Intake Queue, Document Verification, Banner Manager, Module Uploading & Publishing, DepEd Form 1 & 2 Exports |
-| **Mobile Teacher** | `teacher_juan` | `Password123!` | West Crame CLC | Assigned CLC Roster, Learner Attendance, Document Verification |
-| **Mobile Teacher** | `teacher_alyssa` | `Password123!` | Batis CLC | Assigned CLC Roster, Learner Attendance, Document Verification |
-| **Learner (BLP)** | `learner_blp`<br>*(LRN: `136542240010`)* | `Password123!` | Basic Literacy Program (BLP) | Enrolled Learner, BLP Modules, Telemetry Sync |
-| **Learner (Elementary)** | `learner_elem`<br>*(LRN: `136542240020`)* | `Password123!` | A&E Elementary (Grades 1–6) | Enrolled Learner, Elementary SLM Modules (English & Filipino), Telemetry Sync |
-| **Learner (Junior High)** | `learner_jhs`<br>*(LRN: `136542240030`)* | `Password123!` | A&E Junior High School | Enrolled Learner, JHS Modules, Telemetry Sync |
-| **Learner (General)** | `learner_mark`<br>*(LRN: `136542240001`)* | `Password123!` | A&E Junior High School | Enrolled Learner, Dashboard & SLM Reader |
+| Role / Track | Primary Login Email | Username / LRN | Password | Program Track / Assignment | Access Capabilities |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Super Administrator** | `superadmin.als@deped.gov.ph` | `superadmin_als` | `Password123!` | Division IT / All CLCs | Full System Control, Mobile Teacher Provisioning (`/superadmin/teachers`), CLC Assignments, Account Resets |
+| **Division Administrator** | `admin.als@deped.gov.ph` | `admin_als` | `Password123!` | SDO San Juan Division Office | Enrollment Intake Queue, Document Verification, Banner Manager, Module Uploading & Publishing, DepEd Form 1 & 2 Exports |
+| **Mobile Teacher** | `juan.delacruz@deped.gov.ph` | `teacher_juan` | `Password123!` | West Crame CLC | Assigned CLC Roster, Learner Attendance, Document Verification |
+| **Mobile Teacher** | `alyssa.reyes@deped.gov.ph` | `teacher_alyssa` | `Password123!` | Batis CLC | Assigned CLC Roster, Learner Attendance, Document Verification |
+| **Learner (BLP)** | `learner.blp@deped.gov.ph` | `learner_blp`<br>*(LRN: `136542240010`)* | `Password123!` | Basic Literacy Program (BLP) | Enrolled Learner, BLP Modules, Telemetry Sync |
+| **Learner (Elementary)** | `learner.elem@deped.gov.ph` | `learner_elem`<br>*(LRN: `136542240020`)* | `Password123!` | A&E Elementary (Grades 1–6) | Enrolled Learner, Elementary SLM Modules (English & Filipino), Telemetry Sync |
+| **Learner (Junior High)** | `learner.jhs@deped.gov.ph` | `learner_jhs`<br>*(LRN: `136542240030`)* | `Password123!` | A&E Junior High School | Enrolled Learner, JHS Modules, Telemetry Sync |
+| **Learner (General)** | `mark.bautista@example.com` | `learner_mark`<br>*(LRN: `136542240001`)* | `Password123!` | A&E Junior High School | Enrolled Learner, Dashboard & SLM Reader |
 
 ---
 
 ## 📖 How to Use the Web System
 
-### 1. Super Administrator (`superadmin_als`)
-- **Login:** Navigate to `/login` and sign in with `superadmin_als`.
+### 1. Super Administrator (`superadmin.als@deped.gov.ph` / `superadmin_als`)
+- **Login:** Navigate to `/login` and sign in with `superadmin.als@deped.gov.ph`.
 - **Mobile Teacher Provisioning (`/superadmin/teachers`):**
   - Click **"Add Mobile Teacher"** to provision a new field educator.
   - Assign the teacher to one or more Community Learning Centers (CLCs) across the 21 barangays.
   - Reset teacher credentials with temporary passwords when requested.
   - View audit logs and active teacher statuses.
 
-### 2. Division Administrator (`admin_als`)
+### 2. Division Administrator (`admin.als@deped.gov.ph` / `admin_als`)
 - **Enrollment Queue (`/admin/enrollments`):**
   - View submitted online applications (DepEd ALS Form 2).
   - Inspect uploaded documents (PSA Birth Certificate, Barangay Certificate of Residency, 1x1 Photo with Name Tag, Valid ID).
@@ -242,12 +245,12 @@ All accounts below are pre-configured in `database/seeders/UserSeeder.php` and c
   - Export **ALS Form 1** (Individual Learning Agreement and Masterlist) in PDF / Excel format.
   - Export **ALS Form 2** (Official Learner Enrolment and Profile Form) with complete PSA and demographic details.
 
-### 3. Mobile Teacher (`teacher_juan`)
+### 3. Mobile Teacher (`juan.delacruz@deped.gov.ph` / `teacher_juan`)
 - View learners assigned to your specific Community Learning Center (CLC).
 - Check individual learner reading progress, completion timestamps, and quiz achievements.
 - Verify learner physical document submissions during face-to-face sessions.
 
-### 4. Learner on Web Portal (`learner_elem` / `learner_jhs` / `learner_blp`)
+### 4. Learner on Web Portal (`learner.elem@deped.gov.ph` / `learner.blp@deped.gov.ph` / `learner.jhs@deped.gov.ph`)
 - **Digital Intake (Unregistered Users):**
   - Click **"Mag-enroll Na"** on the home page to launch the multi-step DepEd Form 2 Intake Wizard.
   - Enter PSA legal demographics, educational attainment, 4Ps/IP/PWD status, and select preferred CLC and learning delivery mode.
@@ -264,7 +267,21 @@ All accounts below are pre-configured in `database/seeders/UserSeeder.php` and c
   - **Navigation & Shortcuts:** Zoom in (<kbd>+</kbd>), Zoom out (<kbd>-</kbd>), Reset zoom (<kbd>0</kbd>), Fullscreen (<kbd>Shift+F</kbd>), and Exit reader (<kbd>Esc</kbd>).
   - Automatic progress telemetry captures the last page viewed and updates the shared database.
 
-### 5. ALSJay — Official AI Virtual Assistant
+### 5. Mobile App Core Pillars: Self-Learning Modules & Interactive Educational Games
+The native Android app (`ALSSDOSanJuan_v2.1_alpha.apk`) focuses strictly on **Modules** and **Educational Games**. *(The AI assistant on the app is now officially disclosed / decommissioned to allow complete offline functionality, save mobile data, and provide focused, distraction-free modular learning).*
+
+- **Offline Self-Learning Modules (SLMs):**
+  - Download official DepEd modules (LS1–LS6) directly into secure local app storage.
+  - Native offline reading with dark/light modes, page jumping, and zoom support.
+  - Background reading progress telemetry (`last_page_read`, `is_completed`) logged into local Room database and synced via `WorkManager`.
+- **Interactive Module Games & Gamified Learning:**
+  - Each module is paired with strand-aligned interactive educational quizzes and mini-games.
+  - 100% playable without an internet connection.
+  - Computes accuracy scores, mastery stars, and milestone badges stored in local SQLite (`module_game_attempts`).
+  - Automatic background synchronization pushes completed game records via `POST /api/v1/learner/sync-game-scores`.
+
+### 6. Web Portal Information Assistant (ALSJay)
+*(Available on the Web Portal for intake guidance; disclosed/omitted from the mobile application)*
 - Click the anchored speech bubble at the bottom-right corner of any web page.
 - Ask questions in **Tagalog/Filipino** or **English** regarding:
   - ALS qualifications, enrollment requirements, and age brackets.
@@ -275,11 +292,11 @@ All accounts below are pre-configured in `database/seeders/UserSeeder.php` and c
 
 ## 📡 Core REST API Reference (Shared Backend)
 
-All endpoints below are consumed directly by the native Android application (v2.0):
+All endpoints below are consumed directly by the native Android application (v2.1):
 
 | Method | Endpoint | Description | Auth Required |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/v1/auth/login` | Authenticate user & issue Sanctum Bearer token | No |
+| `POST` | `/api/v1/auth/login` | Authenticate user (Email or Username) & issue Sanctum Bearer token | No |
 | `POST` | `/api/v1/auth/register` | Digital learner registration (ALS Form 2) | No |
 | `GET` | `/api/v1/auth/me` | Fetch authenticated learner profile & track | Yes (Bearer Token) |
 | `POST` | `/api/v1/auth/logout` | Revoke active bearer token | Yes (Bearer Token) |
@@ -287,7 +304,10 @@ All endpoints below are consumed directly by the native Android application (v2.
 | `GET` | `/api/v1/modules` | Fetch published modules (filterable by strand and track level) | Yes (Bearer Token) |
 | `GET` | `/api/v1/modules/{id}/download` | Binary PDF download stream for offline caching | Yes (Bearer Token) |
 | `POST` | `/api/v1/learner/sync-progress` | Ingest offline reading telemetry (page numbers, completion) | Yes (Bearer Token) |
-| `POST` | `/chat` | Inquire with ALSJay AI assistant | No (CSRF-exempt) |
+| `GET` | `/api/v1/learner/modules/{id}/game-status` | Retrieve completion and high score for module educational mini-game | Yes (Bearer Token) |
+| `POST` | `/api/v1/learner/sync-game-scores` | Ingest offline educational game quiz attempts & scores | Yes (Bearer Token) |
+| `GET` | `/api/v1/teacher/module-progress` | Retrieve assigned learner module & game completion matrix | Yes (Bearer Token) |
+| `POST` | `/chat` | Web inquiry assistant *(disclosed / omitted from mobile app)* | No (CSRF-exempt) |
 
 ---
 
@@ -312,10 +332,11 @@ PASS  Tests\Feature\ExampleTest
 PASS  Tests\Feature\HeroBannerTest
 PASS  Tests\Feature\LearnerJourneyTest
 PASS  Tests\Feature\RegistrationIntakeTest
+PASS  Tests\Feature\SuperAdminTeacherManagementTest
 PASS  Tests\Feature\WebPortalTest
 
-Tests:    92 passed (578 assertions)
-Duration: ~13s
+Tests:    107 passed (646 assertions)
+Duration: ~24s
 ```
 
 ---
@@ -333,3 +354,17 @@ Duration: ~13s
 - **Schools Division Office of San Juan City** — Alternative Learning System Unit
 - Pinaglabanan Street, Barangay Pedro Cruz, San Juan City, Metro Manila
 - Email: `als.sanjuan@deped.gov.ph`
+
+---
+
+## 📑 Technical Documentation & Appendices
+
+For complete architectural specifications, UML diagrams, procedural workflows, and deployment parameters, see [**README_APPENDIX.md**](file:///c:/xampp/htdocs/als_sdosanjuan/README_APPENDIX.md):
+- **Appendix A:** Procedure of the System (Intake, Teacher Onboarding, Modular Study & Gamified Learning)
+- **Appendix B:** Context Diagram (DFD Level 0 — Modules & Educational Games Architecture)
+- **Appendix C:** Activity Diagrams (Intake, Teacher Onboarding, Offline Telemetry Sync, Module Educational Games)
+- **Appendix D:** Use Case Diagram & Specifications (UC01–UC14)
+- **Appendix E:** Hardware Requirements (Server, Workstation, Mobile)
+- **Appendix F:** Software Requirements (Full Stack Matrix & Game Engine Schema)
+- **Appendix G:** Network Requirements & Offline-First Fault Tolerance
+

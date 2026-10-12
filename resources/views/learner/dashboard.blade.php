@@ -1,6 +1,7 @@
 @extends('layouts.learner')
 
-@section('title', 'Learner Dashboard - SDO San Juan City ALS')
+@section('title', 'Dashboard - SDO San Juan City ALS')
+@section('page_title', 'Dashboard')
 
 @section('content')
 <div class="space-y-6 pt-4">

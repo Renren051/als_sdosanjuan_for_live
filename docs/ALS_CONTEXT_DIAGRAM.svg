@@ -1,0 +1,207 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" role="img" aria-labelledby="title desc">
+  <title id="title">ALS SDO San Juan City System Context Diagram</title>
+  <desc id="desc">A context diagram showing learners, mobile teachers, administrators, DepEd reporting recipients, and the optional Gemini assistant interacting with the ALS SDO San Juan City system.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M1,1 L11,6 L1,11 z" fill="#197A86"/>
+    </marker>
+    <marker id="arrowSoft" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M1,1 L11,6 L1,11 z" fill="#6B7F95"/>
+    </marker>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#132A3A" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .page { fill: #F4F7FA; }
+      .title { font: 700 34px 'Segoe UI', Arial, sans-serif; fill: #173247; }
+      .subtitle { font: 400 17px 'Segoe UI', Arial, sans-serif; fill: #5D7183; }
+      .actor-card { fill: #FFFFFF; stroke: #D5E0E8; stroke-width: 2; }
+      .actor-title { font: 700 19px 'Segoe UI', Arial, sans-serif; fill: #173247; }
+      .actor-copy { font: 400 14px 'Segoe UI', Arial, sans-serif; fill: #637889; }
+      .actor-tag { font: 700 10px 'Segoe UI', Arial, sans-serif; letter-spacing: 1.1px; fill: #607687; }
+      .flow { fill: none; stroke: #197A86; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+      .manual { fill: none; stroke: #6B7F95; stroke-width: 2.5; stroke-dasharray: 8 7; stroke-linecap: round; stroke-linejoin: round; }
+      .flow-label { fill: #FFFFFF; stroke: #DCE5EB; stroke-width: 1.2; }
+      .flow-text { font: 600 13px 'Segoe UI', Arial, sans-serif; fill: #355064; }
+      .system { fill: #173A52; stroke: #0F2D42; stroke-width: 3; }
+      .system-tag { font: 700 11px 'Segoe UI', Arial, sans-serif; letter-spacing: 1.8px; fill: #A9DCE0; }
+      .system-title { font: 700 23px 'Segoe UI', Arial, sans-serif; fill: #FFFFFF; }
+      .system-subtitle { font: 400 16px 'Segoe UI', Arial, sans-serif; fill: #D7E5EC; }
+      .component { fill: #244B63; stroke: #477187; stroke-width: 1; }
+      .component-text { font: 600 13px 'Segoe UI', Arial, sans-serif; fill: #F5FAFC; }
+      .system-note { font: 400 12px 'Segoe UI', Arial, sans-serif; fill: #C3D7E1; }
+      .legend { font: 500 12px 'Segoe UI', Arial, sans-serif; fill: #637889; }
+      .badge { fill: #E7F3F3; }
+      .badge-text { font: 700 10px 'Segoe UI', Arial, sans-serif; letter-spacing: 1px; fill: #197A86; }
+    </style>
+  </defs>
+
+  <rect class="page" width="1920" height="1080"/>
+  <text class="title" x="60" y="66">ALS SDO San Juan City</text>
+  <text class="subtitle" x="60" y="101">System context • Stakeholders and external services around the learner information and learning platform</text>
+
+  <!-- Central system boundary -->
+  <g filter="url(#shadow)">
+    <ellipse class="system" cx="960" cy="590" rx="270" ry="285"/>
+    <rect class="badge" x="847" y="360" width="226" height="25" rx="12.5"/>
+    <text class="badge-text" x="960" y="377" text-anchor="middle">SYSTEM BOUNDARY</text>
+    <text class="system-tag" x="960" y="423" text-anchor="middle">DEPARTMENT OF EDUCATION • SDO SAN JUAN CITY</text>
+    <text class="system-title" x="960" y="460" text-anchor="middle">ALS Student Information</text>
+    <text class="system-title" x="960" y="489" text-anchor="middle">&amp; Learning System</text>
+    <text class="system-subtitle" x="960" y="520" text-anchor="middle">Web SIS • LMS • Backend API</text>
+
+    <rect class="component" x="790" y="550" width="340" height="42" rx="10"/>
+    <text class="component-text" x="960" y="576" text-anchor="middle">Web portal and administration</text>
+    <rect class="component" x="790" y="603" width="340" height="42" rx="10"/>
+    <text class="component-text" x="960" y="629" text-anchor="middle">REST API and Android learning app</text>
+    <rect class="component" x="790" y="656" width="340" height="42" rx="10"/>
+    <text class="component-text" x="960" y="682" text-anchor="middle">Shared MySQL database and file storage</text>
+
+    <text class="system-note" x="960" y="742" text-anchor="middle">Enrollment • modules • learner progress • reports</text>
+    <text class="system-note" x="960" y="764" text-anchor="middle">Offline Android activity syncs when connected</text>
+  </g>
+
+
+  <!-- Applicant / Learner -->
+  <g filter="url(#shadow)">
+    <rect class="actor-card" x="60" y="200" width="330" height="180" rx="18"/>
+    <circle cx="103" cy="249" r="23" fill="#E7F3F3"/>
+    <text x="103" y="254" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#197A86">AL</text>
+    <text class="actor-tag" x="140" y="239">EXTERNAL USER</text>
+    <text class="actor-title" x="140" y="266">Applicant / Learner</text>
+    <text class="actor-copy" x="84" y="310">OSYA learner using the web portal</text>
+    <text class="actor-copy" x="84" y="332">or Android learning app</text>
+  </g>
+
+  <!-- Mobile Teacher -->
+  <g filter="url(#shadow)">
+    <rect class="actor-card" x="60" y="490" width="330" height="180" rx="18"/>
+    <circle cx="103" cy="539" r="23" fill="#EAF0FA"/>
+    <text x="103" y="544" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#456B9A">MT</text>
+    <text class="actor-tag" x="140" y="529">EXTERNAL USER</text>
+    <text class="actor-title" x="140" y="556">Mobile Teacher</text>
+    <text class="actor-copy" x="84" y="600">Reviews assigned learners, intake</text>
+    <text class="actor-copy" x="84" y="622">documents, and learning progress</text>
+  </g>
+
+  <!-- DepEd / SDO reporting recipient -->
+  <g filter="url(#shadow)">
+    <rect class="actor-card" x="60" y="780" width="330" height="180" rx="18"/>
+    <circle cx="103" cy="829" r="23" fill="#F1EEF9"/>
+    <text x="103" y="834" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#765DA2">DR</text>
+    <text class="actor-tag" x="140" y="819">REPORT RECIPIENT</text>
+    <text class="actor-title" x="140" y="846">DepEd / SDO Officials</text>
+    <text class="actor-copy" x="84" y="890">Receive official learner reports</text>
+    <text class="actor-copy" x="84" y="912">through administrator export</text>
+  </g>
+
+  <!-- Division Administrator -->
+  <g filter="url(#shadow)">
+    <rect class="actor-card" x="1530" y="200" width="330" height="180" rx="18"/>
+    <circle cx="1573" cy="249" r="23" fill="#FFF2E5"/>
+    <text x="1573" y="254" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#B46A21">DA</text>
+    <text class="actor-tag" x="1610" y="239">EXTERNAL USER</text>
+    <text class="actor-title" x="1610" y="266">Division Administrator</text>
+    <text class="actor-copy" x="1554" y="310">Manages enrollment decisions,</text>
+    <text class="actor-copy" x="1554" y="332">modules, CLCs, and portal content</text>
+  </g>
+
+  <!-- Super Administrator -->
+  <g filter="url(#shadow)">
+    <rect class="actor-card" x="1530" y="490" width="330" height="180" rx="18"/>
+    <circle cx="1573" cy="539" r="23" fill="#FCEBED"/>
+    <text x="1573" y="544" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#A94C5D">SA</text>
+    <text class="actor-tag" x="1610" y="529">EXTERNAL USER</text>
+    <text class="actor-title" x="1610" y="556">Super Administrator</text>
+    <text class="actor-copy" x="1554" y="600">Manages staff accounts, teacher</text>
+    <text class="actor-copy" x="1554" y="622">assignments, and access resets</text>
+  </g>
+
+  <!-- Optional external AI service -->
+  <g filter="url(#shadow)">
+    <rect class="actor-card" x="1530" y="780" width="330" height="180" rx="18" stroke-dasharray="7 5"/>
+    <circle cx="1573" cy="829" r="23" fill="#EAF3EC"/>
+    <text x="1573" y="834" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="700" fill="#4E805A">AI</text>
+    <text class="actor-tag" x="1610" y="819">OPTIONAL EXTERNAL SERVICE</text>
+    <text class="actor-title" x="1610" y="846">Google Gemini API</text>
+    <text class="actor-copy" x="1554" y="890">Powers the ALSJay assistant</text>
+    <text class="actor-copy" x="1554" y="912">when configured</text>
+  </g>
+
+  <!-- Connectors sit above the system and actor shapes so arrowheads remain visible. -->
+  <g aria-label="Data flows">
+    <!-- Applicant and learner -->
+    <path class="flow" d="M390 250 C520 250 650 330 766 392" marker-end="url(#arrow)"/>
+    <path class="flow" d="M733 435 C650 405 520 330 390 325" marker-end="url(#arrow)"/>
+    <!-- Mobile teacher -->
+    <path class="flow" d="M390 545 C500 545 600 555 691 573" marker-end="url(#arrow)"/>
+    <path class="flow" d="M691 610 C590 615 490 635 390 635" marker-end="url(#arrow)"/>
+    <!-- Manual report recipient -->
+    <path class="manual" d="M772 795 C640 870 520 870 390 870" marker-end="url(#arrowSoft)"/>
+    <!-- Division administrator -->
+    <path class="flow" d="M1530 250 C1400 250 1270 330 1154 392" marker-end="url(#arrow)"/>
+    <path class="flow" d="M1187 435 C1270 405 1400 330 1530 325" marker-end="url(#arrow)"/>
+    <!-- Super administrator -->
+    <path class="flow" d="M1530 545 C1430 545 1330 555 1229 573" marker-end="url(#arrow)"/>
+    <path class="flow" d="M1230 610 C1340 615 1440 635 1530 635" marker-end="url(#arrow)"/>
+    <!-- Optional Gemini service -->
+    <path class="manual" d="M1148 795 C1290 870 1410 870 1530 870" marker-end="url(#arrowSoft)"/>
+    <path class="manual" d="M1530 825 C1410 825 1290 760 1180 755" marker-end="url(#arrowSoft)"/>
+  </g>
+
+  <!-- Flow labels -->
+  <g>
+    <rect class="flow-label" x="415" y="210" width="295" height="58" rx="10"/>
+    <text class="flow-text" x="430" y="233">ALS Form 2, documents, sign-in,</text>
+    <text class="flow-text" x="430" y="252">offline progress and game-score sync</text>
+
+    <rect class="flow-label" x="415" y="337" width="295" height="54" rx="10"/>
+    <text class="flow-text" x="430" y="359">Application status, modules,</text>
+    <text class="flow-text" x="430" y="378">and learning feedback</text>
+
+    <rect class="flow-label" x="410" y="505" width="272" height="54" rx="10"/>
+    <text class="flow-text" x="424" y="527">Enrollment and document review,</text>
+    <text class="flow-text" x="424" y="546">CLC updates</text>
+
+    <rect class="flow-label" x="410" y="620" width="272" height="54" rx="10"/>
+    <text class="flow-text" x="424" y="642">Assigned learner list, progress,</text>
+    <text class="flow-text" x="424" y="661">and game scores</text>
+
+    <rect class="flow-label" x="418" y="833" width="300" height="60" rx="10"/>
+    <text class="flow-text" x="433" y="856">ALS Form 1 and Form 2 reports</text>
+    <text class="flow-text" x="433" y="876">(manual file export)</text>
+
+    <rect class="flow-label" x="1210" y="210" width="295" height="58" rx="10"/>
+    <text class="flow-text" x="1225" y="233">Enrollment decisions, module publishing,</text>
+    <text class="flow-text" x="1225" y="252">CLC and banner settings</text>
+
+    <rect class="flow-label" x="1210" y="337" width="295" height="54" rx="10"/>
+    <text class="flow-text" x="1225" y="359">Intake queue, dashboard,</text>
+    <text class="flow-text" x="1225" y="378">and report exports</text>
+
+    <rect class="flow-label" x="1238" y="505" width="272" height="54" rx="10"/>
+    <text class="flow-text" x="1252" y="527">Staff accounts, teacher / CLC</text>
+    <text class="flow-text" x="1252" y="546">assignments, access resets</text>
+
+    <rect class="flow-label" x="1238" y="620" width="272" height="54" rx="10"/>
+    <text class="flow-text" x="1252" y="642">Account and assignment</text>
+    <text class="flow-text" x="1252" y="661">status</text>
+
+    <rect class="flow-label" x="1210" y="738" width="295" height="54" rx="10"/>
+    <text class="flow-text" x="1225" y="760">ALSJay response and</text>
+    <text class="flow-text" x="1225" y="779">grounded sources</text>
+
+    <rect class="flow-label" x="1210" y="833" width="295" height="54" rx="10"/>
+    <text class="flow-text" x="1225" y="855">Assistant question</text>
+    <text class="flow-text" x="1225" y="874">and conversation context</text>
+  </g>
+
+  <!-- Legend and scope note -->
+  <g transform="translate(60 1013)">
+    <path class="flow" d="M0 0 H58" marker-end="url(#arrow)"/>
+    <text class="legend" x="72" y="4">Regular data exchange</text>
+    <path class="manual" d="M250 0 H308" marker-end="url(#arrowSoft)"/>
+    <text class="legend" x="322" y="4">Optional service or manual file transfer</text>
+    <text class="legend" x="720" y="4">Gemini is optional; report files are exported by authorized staff.</text>
+  </g>
+</svg>

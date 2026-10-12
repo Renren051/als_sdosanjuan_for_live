@@ -15,6 +15,7 @@ class EnrollmentSeeder extends Seeder
 {
     /**
      * Run the database seeds for enrollments, documents, and progress telemetry.
+     * Seeds only the authentic official demo learners (BLP, Elementary, JHS).
      */
     public function run(): void
     {
@@ -24,33 +25,109 @@ class EnrollmentSeeder extends Seeder
         $clcWestCrame = CommunityLearningCenter::where('clc_code', 'CLC-SJ-WCR-01')->first();
         $clcAdditionHills = CommunityLearningCenter::where('clc_code', 'CLC-SJ-ADH-01')->first();
         $clcBatis = CommunityLearningCenter::where('clc_code', 'CLC-SJ-BAT-01')->first();
-        $clcSalapan = CommunityLearningCenter::where('clc_code', 'CLC-SJ-SAL-01')->first();
+        $clcPedroCruz = CommunityLearningCenter::where('clc_code', 'CLC-SJ-CDJ-01')->first()
+            ?? CommunityLearningCenter::where('clc_name', 'like', '%Pedro Cruz%')->first();
 
-        $mark = User::where('username', 'learner_mark')->first();
-        $jenny = User::where('username', 'learner_jenny')->first();
-        $carlos = User::where('username', 'learner_carlos')->first();
-        $bea = User::where('username', 'learner_bea')->first();
+        // 1. Basic Literacy Program (BLP) - Bayani L. Panaligan
+        $blpLearner = User::where('username', 'learner_blp')->first();
+        if ($blpLearner && $clcBatis) {
+            $enrBlp = Enrollment::updateOrCreate(
+                ['user_id' => $blpLearner->id, 'calendar_year' => '2026'],
+                [
+                    'program_track' => Enrollment::TRACK_BLP,
+                    'clc_id' => $clcBatis->id,
+                    'assigned_teacher_id' => $teacherAlyssa?->id ?? $teacherJuan?->id,
+                    'enrollment_status' => Enrollment::STATUS_ENROLLED,
+                    'delivery_mode' => 'modular_offline',
+                    'schedule_preference' => 'weekend',
+                    'remarks' => 'Officially enrolled in Basic Literacy Program (BLP). Verified credentials.',
+                    'enrolled_at' => now()->subDays(10),
+                ]
+            );
+            $this->seedSampleDocument($blpLearner, $enrBlp, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'verified', $teacherAlyssa);
+            $this->seedSampleDocument($blpLearner, $enrBlp, LearnerDocument::TYPE_BARANGAY_CLEARANCE, 'verified', $teacherAlyssa);
+            $this->seedSampleDocument($blpLearner, $enrBlp, LearnerDocument::TYPE_PHOTO_ID, 'verified', $teacherAlyssa);
 
-        // 1. Mark's Enrollment (Officially Enrolled)
-        if ($mark && $clcWestCrame) {
-            $enrMark = Enrollment::updateOrCreate(
-                ['user_id' => $mark->id, 'calendar_year' => '2026'],
+            $blpModule = Module::published()->where('level', Module::LEVEL_BLP)->first();
+            if ($blpModule) {
+                ModuleProgress::updateOrCreate(
+                    [
+                        'user_id' => $blpLearner->id,
+                        'module_id' => $blpModule->id,
+                    ],
+                    [
+                        'downloaded_at' => now()->subDays(5),
+                        'last_opened_at' => now()->subHours(2),
+                        'completion_status' => ModuleProgress::STATUS_IN_PROGRESS,
+                        'device_identifier' => 'LearnerPortal-Web',
+                        'last_page_read' => 2,
+                        'total_pages' => 4,
+                        'synced_at' => now()->subHours(1),
+                    ]
+                );
+            }
+        }
+
+        // 2. A&E Elementary (Grades 1–6) - Elena M. Ramos
+        $elemLearner = User::where('username', 'learner_elem')->first();
+        if ($elemLearner && $clcAdditionHills) {
+            $enrElem = Enrollment::updateOrCreate(
+                ['user_id' => $elemLearner->id, 'calendar_year' => '2026'],
+                [
+                    'program_track' => Enrollment::TRACK_AE_ELEMENTARY,
+                    'clc_id' => $clcAdditionHills->id,
+                    'assigned_teacher_id' => $teacherJuan?->id,
+                    'enrollment_status' => Enrollment::STATUS_ENROLLED,
+                    'delivery_mode' => 'modular_offline',
+                    'schedule_preference' => 'weekday_pm',
+                    'remarks' => 'Officially enrolled in A&E Elementary (Grades 1–6). Verified credentials.',
+                    'enrolled_at' => now()->subDays(10),
+                ]
+            );
+            $this->seedSampleDocument($elemLearner, $enrElem, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'verified', $teacherJuan);
+            $this->seedSampleDocument($elemLearner, $enrElem, LearnerDocument::TYPE_BARANGAY_CLEARANCE, 'verified', $teacherJuan);
+            $this->seedSampleDocument($elemLearner, $enrElem, LearnerDocument::TYPE_PHOTO_ID, 'verified', $teacherJuan);
+
+            $elemModule = Module::published()->where('level', Module::LEVEL_ELEMENTARY)->first();
+            if ($elemModule) {
+                ModuleProgress::updateOrCreate(
+                    [
+                        'user_id' => $elemLearner->id,
+                        'module_id' => $elemModule->id,
+                    ],
+                    [
+                        'downloaded_at' => now()->subDays(5),
+                        'last_opened_at' => now()->subHours(2),
+                        'completion_status' => ModuleProgress::STATUS_IN_PROGRESS,
+                        'device_identifier' => 'LearnerPortal-Web',
+                        'last_page_read' => 2,
+                        'total_pages' => 4,
+                        'synced_at' => now()->subHours(1),
+                    ]
+                );
+            }
+        }
+
+        // 3. A&E Junior High School - Jun H. Santos
+        $jhsLearner = User::where('username', 'learner_jhs')->first();
+        if ($jhsLearner) {
+            $clcJhs = $clcPedroCruz ?? $clcWestCrame;
+            $enrJhs = Enrollment::updateOrCreate(
+                ['user_id' => $jhsLearner->id, 'calendar_year' => '2026'],
                 [
                     'program_track' => Enrollment::TRACK_AE_JUNIOR_HIGH,
-                    'clc_id' => $clcWestCrame->id,
+                    'clc_id' => $clcJhs?->id ?? 1,
                     'assigned_teacher_id' => $teacherJuan?->id,
                     'enrollment_status' => Enrollment::STATUS_ENROLLED,
                     'delivery_mode' => 'modular_offline',
                     'schedule_preference' => 'weekend',
-                    'remarks' => 'Credentials verified. LRN assigned and registered in ALS Masterlist.',
+                    'remarks' => 'Officially enrolled in A&E Junior High School. Verified credentials.',
                     'enrolled_at' => now()->subDays(10),
                 ]
             );
-
-            // Add sample documents
-            $this->seedSampleDocument($mark, $enrMark, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'verified', $teacherJuan);
-            $this->seedSampleDocument($mark, $enrMark, LearnerDocument::TYPE_BARANGAY_CLEARANCE, 'verified', $teacherJuan);
-            $this->seedSampleDocument($mark, $enrMark, LearnerDocument::TYPE_PHOTO_ID, 'verified', $teacherJuan);
+            $this->seedSampleDocument($jhsLearner, $enrJhs, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'verified', $teacherJuan);
+            $this->seedSampleDocument($jhsLearner, $enrJhs, LearnerDocument::TYPE_BARANGAY_CLEARANCE, 'verified', $teacherJuan);
+            $this->seedSampleDocument($jhsLearner, $enrJhs, LearnerDocument::TYPE_PHOTO_ID, 'verified', $teacherJuan);
 
             // Add sample module progress telemetry
             $modules = Module::take(3)->get();
@@ -58,7 +135,7 @@ class EnrollmentSeeder extends Seeder
                 $status = $index === 0 ? ModuleProgress::STATUS_COMPLETED : ModuleProgress::STATUS_IN_PROGRESS;
                 ModuleProgress::updateOrCreate(
                     [
-                        'user_id' => $mark->id,
+                        'user_id' => $jhsLearner->id,
                         'module_id' => $mod->id,
                     ],
                     [
@@ -72,119 +149,6 @@ class EnrollmentSeeder extends Seeder
                     ]
                 );
             }
-        }
-
-        // 2. Jenny's Enrollment (Pending Review)
-        if ($jenny && $clcAdditionHills) {
-            $enrJenny = Enrollment::updateOrCreate(
-                ['user_id' => $jenny->id, 'calendar_year' => '2026'],
-                [
-                    'program_track' => Enrollment::TRACK_AE_ELEMENTARY,
-                    'clc_id' => $clcAdditionHills->id,
-                    'assigned_teacher_id' => $teacherJuan?->id,
-                    'enrollment_status' => Enrollment::STATUS_PENDING,
-                    'delivery_mode' => 'modular_offline',
-                    'schedule_preference' => 'weekday_am',
-                    'remarks' => 'Submitted online registration. Awaiting teacher document review.',
-                ]
-            );
-
-            $this->seedSampleDocument($jenny, $enrJenny, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'pending', null);
-            $this->seedSampleDocument($jenny, $enrJenny, LearnerDocument::TYPE_BARANGAY_CLEARANCE, 'pending', null);
-        }
-
-        // 3. Carlos' Enrollment (Needs Correction)
-        if ($carlos && $clcBatis) {
-            $enrCarlos = Enrollment::updateOrCreate(
-                ['user_id' => $carlos->id, 'calendar_year' => '2026'],
-                [
-                    'program_track' => Enrollment::TRACK_BLP,
-                    'clc_id' => $clcBatis->id,
-                    'assigned_teacher_id' => $teacherAlyssa?->id,
-                    'enrollment_status' => Enrollment::STATUS_NEEDS_CORRECTION,
-                    'delivery_mode' => 'blended',
-                    'schedule_preference' => 'flexible',
-                    'remarks' => 'Barangay clearance scan is blurry. Please upload a clear photo or photocopy with visible seal.',
-                ]
-            );
-
-            $this->seedSampleDocument($carlos, $enrCarlos, LearnerDocument::TYPE_BARANGAY_CLEARANCE, 'rejected', $teacherAlyssa, 'Photo too dark to verify dry seal');
-        }
-
-        // 4. Bea's Enrollment (Under Review)
-        if ($bea && $clcSalapan) {
-            $enrBea = Enrollment::updateOrCreate(
-                ['user_id' => $bea->id, 'calendar_year' => '2026'],
-                [
-                    'program_track' => Enrollment::TRACK_AE_JUNIOR_HIGH,
-                    'clc_id' => $clcSalapan->id,
-                    'assigned_teacher_id' => $teacherJuan?->id,
-                    'enrollment_status' => Enrollment::STATUS_UNDER_REVIEW,
-                    'delivery_mode' => 'modular_offline',
-                    'schedule_preference' => 'weekend',
-                    'remarks' => 'Assigned for initial screening and interview schedule.',
-                ]
-            );
-
-            $this->seedSampleDocument($bea, $enrBea, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'verified', $teacherJuan);
-            $this->seedSampleDocument($bea, $enrBea, LearnerDocument::TYPE_FORM_137_SF10, 'pending', null);
-        }
-
-        // 5. Dedicated Basic Literacy Program Learner (BLP)
-        $blpLearner = User::where('username', 'learner_blp')->first();
-        if ($blpLearner && $clcBatis) {
-            $enrBlp = Enrollment::updateOrCreate(
-                ['user_id' => $blpLearner->id, 'calendar_year' => '2026'],
-                [
-                    'program_track' => Enrollment::TRACK_BLP,
-                    'clc_id' => $clcBatis->id,
-                    'assigned_teacher_id' => $teacherAlyssa?->id,
-                    'enrollment_status' => Enrollment::STATUS_ENROLLED,
-                    'delivery_mode' => 'modular_offline',
-                    'schedule_preference' => 'weekend',
-                    'remarks' => 'Enrolled in Basic Literacy Program. Verified credentials.',
-                    'enrolled_at' => now()->subDays(7),
-                ]
-            );
-            $this->seedSampleDocument($blpLearner, $enrBlp, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'verified', $teacherAlyssa);
-        }
-
-        // 6. Dedicated A&E Lower & Advanced Elementary Learner
-        $elemLearner = User::where('username', 'learner_elem')->first();
-        if ($elemLearner && $clcAdditionHills) {
-            $enrElem = Enrollment::updateOrCreate(
-                ['user_id' => $elemLearner->id, 'calendar_year' => '2026'],
-                [
-                    'program_track' => Enrollment::TRACK_AE_ELEMENTARY,
-                    'clc_id' => $clcAdditionHills->id,
-                    'assigned_teacher_id' => $teacherJuan?->id,
-                    'enrollment_status' => Enrollment::STATUS_ENROLLED,
-                    'delivery_mode' => 'modular_offline',
-                    'schedule_preference' => 'weekday_pm',
-                    'remarks' => 'Enrolled in A&E Elementary. Verified credentials.',
-                    'enrolled_at' => now()->subDays(7),
-                ]
-            );
-            $this->seedSampleDocument($elemLearner, $enrElem, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'verified', $teacherJuan);
-        }
-
-        // 7. Dedicated A&E Secondary / Junior High School Learner
-        $jhsLearner = User::where('username', 'learner_jhs')->first();
-        if ($jhsLearner && $clcWestCrame) {
-            $enrJhs = Enrollment::updateOrCreate(
-                ['user_id' => $jhsLearner->id, 'calendar_year' => '2026'],
-                [
-                    'program_track' => Enrollment::TRACK_AE_JUNIOR_HIGH,
-                    'clc_id' => $clcWestCrame->id,
-                    'assigned_teacher_id' => $teacherJuan?->id,
-                    'enrollment_status' => Enrollment::STATUS_ENROLLED,
-                    'delivery_mode' => 'modular_offline',
-                    'schedule_preference' => 'weekend',
-                    'remarks' => 'Enrolled in A&E Junior High School. Verified credentials.',
-                    'enrolled_at' => now()->subDays(7),
-                ]
-            );
-            $this->seedSampleDocument($jhsLearner, $enrJhs, LearnerDocument::TYPE_PSA_BIRTH_CERT, 'verified', $teacherJuan);
         }
     }
 
@@ -206,7 +170,6 @@ class EnrollmentSeeder extends Seeder
         $fullPath = storage_path('app/public/' . $filePath);
 
         if (!File::exists($fullPath)) {
-            // Write a dummy file placeholder
             File::put($fullPath, "%PDF-1.4 sample DepEd credential document for {$user->username}");
         }
 
@@ -222,7 +185,7 @@ class EnrollmentSeeder extends Seeder
                 'file_size' => File::exists($fullPath) ? File::size($fullPath) : 2048,
                 'mime_type' => 'application/pdf',
                 'verification_status' => $status,
-                'verification_notes' => $notes,
+                'verification_notes' => $notes ?? 'Verified by Mobile Teacher',
                 'reviewed_by' => $reviewer?->id,
                 'reviewed_at' => $reviewer ? now()->subDay() : null,
             ]

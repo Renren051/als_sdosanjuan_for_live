@@ -1,6 +1,7 @@
 @extends('layouts.learner')
 
 @section('title', 'Self-Learning Modules - SDO San Juan City ALS')
+@section('page_title', 'ALS Modules')
 
 @section('content')
 <div class="space-y-6 pt-4">

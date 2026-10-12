@@ -129,10 +129,12 @@ echo =====================================================
 echo  SETUP COMPLETE!
 echo =====================================================
 echo.
-echo  Default Demo Accounts:
-echo    - Administrator : admin_als    ^| Password123!
-echo    - Mobile Teacher: teacher_juan ^| Password123!
-echo    - Learner       : learner_mark ^| Password123!
+echo  Default Demo Accounts (Login using Email or Username):
+echo    - Division Admin: admin.als@deped.gov.ph        ^| Password123!
+echo    - Mobile Teacher: juan.delacruz@deped.gov.ph    ^| Password123!
+echo    - BLP Learner   : learner.blp@deped.gov.ph      ^| Password123!
+echo    - Elem Learner  : learner.elem@deped.gov.ph     ^| Password123!
+echo    - JHS Learner   : learner.jhs@deped.gov.ph      ^| Password123!
 echo.
 echo  To launch the system at any time, simply double-click:
 echo    run.bat

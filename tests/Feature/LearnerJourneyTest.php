@@ -27,7 +27,7 @@ class LearnerJourneyTest extends TestCase
      */
     public function test_learner_can_access_dashboard_and_views_own_enrollment(): void
     {
-        $mark = User::where('username', 'learner_mark')->first();
+        $mark = User::where('username', 'learner_jhs')->first();
         $this->assertNotNull($mark);
 
         $response = $this->actingAs($mark)->get(route('learner.dashboard'));
@@ -44,7 +44,7 @@ class LearnerJourneyTest extends TestCase
      */
     public function test_learner_can_view_own_enrollment_journey_page(): void
     {
-        $mark = User::where('username', 'learner_mark')->first();
+        $mark = User::where('username', 'learner_jhs')->first();
 
         $response = $this->actingAs($mark)->get(route('learner.enrollment'));
 
@@ -163,12 +163,26 @@ class LearnerJourneyTest extends TestCase
         $this->assertNotNull($carlos);
 
         $teacher = User::where('role', User::ROLE_MOBILE_TEACHER)->first();
+        Enrollment::updateOrCreate(
+            ['user_id' => $carlos->id, 'calendar_year' => '2026'],
+            [
+                'program_track' => Enrollment::TRACK_BLP,
+                'clc_id' => 1,
+                'assigned_teacher_id' => $teacher?->id,
+                'enrollment_status' => Enrollment::STATUS_NEEDS_CORRECTION,
+                'remarks' => 'Barangay clearance scan is blurry. Please upload a clear photo or photocopy with visible seal.',
+            ]
+        );
         LearnerDocument::updateOrCreate(
             [
                 'user_id' => $carlos->id,
                 'document_type' => LearnerDocument::TYPE_BARANGAY_CLEARANCE,
             ],
             [
+                'file_path' => 'documents/' . $carlos->id . '/barangay.pdf',
+                'file_name' => 'barangay_clearance.pdf',
+                'file_size' => 1024,
+                'mime_type' => 'application/pdf',
                 'verification_status' => LearnerDocument::STATUS_REJECTED,
                 'verification_notes' => 'Photo too dark to verify dry seal',
                 'reviewed_by' => $teacher?->id,

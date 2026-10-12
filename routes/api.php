@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LearnerController;
 use App\Http\Controllers\Api\ModuleController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\TeacherProgressController;
 use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 
@@ -38,7 +39,9 @@ Route::prefix('v1')->group(function () {
         Route::middleware('role:learner,admin,mobile_teacher')->group(function () {
             Route::post('/learner/documents/upload', [LearnerController::class, 'uploadDocument']);
             Route::get('/learner/enrollment-status', [LearnerController::class, 'getEnrollmentStatus']);
+            Route::get('/learner/modules/{moduleId}/game-status', [LearnerController::class, 'moduleGameStatus']);
             Route::post('/learner/sync-progress', [LearnerController::class, 'syncProgress']);
+            Route::post('/learner/sync-game-scores', [LearnerController::class, 'syncGameScores']);
         });
 
         // Administrator & Mobile Teacher Reports & Exports
@@ -46,5 +49,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/admin/reports/form-1', [ReportController::class, 'exportForm1']);
             Route::get('/admin/reports/form-2/{learner_id}', [ReportController::class, 'exportForm2']);
         });
+
+        // Assigned learner module progress for the teacher dashboard in Android.
+        Route::get('/teacher/module-progress', [TeacherProgressController::class, 'index'])
+            ->middleware('role:super_admin,admin,mobile_teacher');
     });
 });

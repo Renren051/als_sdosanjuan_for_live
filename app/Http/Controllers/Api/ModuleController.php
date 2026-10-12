@@ -170,8 +170,8 @@ class ModuleController extends Controller
             ], 404);
         }
 
-        // Track download for authenticated learner
-        if ($user && $user->isLearner()) {
+        // Viewing a module online must not mark it as downloaded for offline use.
+        if ($user && $user->isLearner() && !$request->boolean('view_only')) {
             $existing = ModuleProgress::where('user_id', $user->id)->where('module_id', $module->id)->first();
             if (!$existing) {
                 ModuleProgress::create([

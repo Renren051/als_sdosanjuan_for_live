@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\Admin\BannerController;
 use App\Http\Controllers\Web\Admin\ClcController;
 use App\Http\Controllers\Web\Admin\DashboardController;
 use App\Http\Controllers\Web\Admin\EnrollmentController;
+use App\Http\Controllers\Web\Admin\ModuleProgressController;
 use App\Http\Controllers\Web\Admin\ModuleController as AdminModuleController;
 use App\Http\Controllers\Web\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Web\SuperAdmin\TeacherManagementController;
@@ -34,6 +35,8 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
+Route::get('/register/teacher', [AuthController::class, 'showTeacherRegister'])->name('teacher.register');
+Route::post('/register/teacher', [AuthController::class, 'registerTeacher'])->name('teacher.register.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Super Administrator Protected Portal (Teacher & Staff Account Management)
@@ -49,6 +52,7 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('superadmin')->name('sup
 // Teacher & Administrator Protected Portal
 Route::middleware(['auth', 'role:super_admin,admin,mobile_teacher'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/module-progress', [ModuleProgressController::class, 'index'])->name('module-progress.index');
 
     // Enrollment Intake & Verification
     Route::get('/enrollments', [EnrollmentController::class, 'index'])->name('enrollments.index');

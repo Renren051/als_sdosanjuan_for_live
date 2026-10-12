@@ -1,6 +1,7 @@
 @extends('layouts.learner')
 
 @section('title', 'My Documents & Credentials - SDO San Juan City ALS')
+@section('page_title', 'My Documents')
 
 @section('content')
 <div class="space-y-6 pt-4" x-data="{ uploadModal: false, activeDocType: '', activeDocTitle: '' }">

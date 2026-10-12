@@ -112,6 +112,11 @@ class User extends Authenticatable
         return $this->hasMany(ModuleProgress::class, 'user_id');
     }
 
+    public function moduleGameAttempts(): HasMany
+    {
+        return $this->hasMany(ModuleGameAttempt::class, 'user_id');
+    }
+
     /* =========================================================================
      * ROLE & PERMISSION HELPERS
      * ========================================================================= */

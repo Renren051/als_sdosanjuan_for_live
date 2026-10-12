@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1330" viewBox="0 0 1600 1330" role="img" aria-labelledby="title desc">
+  <title id="title">Activity Diagram 3 — Offline Module Caching and Telemetry Sync</title>
+  <desc id="desc">A UML-style activity diagram showing module publishing, Android download and offline progress capture, then online synchronization with the ALS API.</desc>
+  <defs>
+    
+    
+    <marker id="arrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L10 5.5 L0 11 z" fill="#43566B"/></marker>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#1E293B" flood-opacity="0.13"/></filter>
+    <style>
+      .title{font:700 31px 'Segoe UI',Arial,sans-serif;fill:#263746}.subtitle{font:400 16px 'Segoe UI',Arial,sans-serif;fill:#647587}
+      .action{fill:#303B70;stroke:#1F2C57;stroke-width:2}.actionTitle{font:700 17px 'Segoe UI',Arial,sans-serif;fill:#FFF}.owner{font:700 10px 'Segoe UI',Arial,sans-serif;letter-spacing:1.15px;fill:#B9C8F4}
+      .decision{fill:#FFF;stroke:#303B70;stroke-width:2.5}.decisionText{font:700 14px 'Segoe UI',Arial,sans-serif;fill:#283553}.flow{fill:none;stroke:#43566B;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.branch{font:700 12px 'Segoe UI',Arial,sans-serif;fill:#4D6074}.endLabel{font:600 13px 'Segoe UI',Arial,sans-serif;fill:#34495E}
+    </style>
+  </defs>
+  
+  <text class="title" x="800" y="62" text-anchor="middle">Appendix C. Activity Diagram 3</text>
+  <text class="subtitle" x="800" y="92" text-anchor="middle">Self-Learning Module Offline Caching &amp; Telemetry Sync</text>
+
+  <g filter="url(#shadow)">
+    <circle cx="800" cy="125" r="16" fill="#101820"/><text class="endLabel" x="830" y="130">Start</text>
+    <rect class="action" x="600" y="180" width="400" height="80" rx="15"/>
+    <text class="owner" x="800" y="208" text-anchor="middle">DIVISION ADMIN</text><text class="actionTitle" x="800" y="238" text-anchor="middle">Upload a module PDF and its details</text>
+    <rect class="action" x="600" y="285" width="400" height="80" rx="15"/>
+    <text class="owner" x="800" y="313" text-anchor="middle">SYSTEM</text><text class="actionTitle" x="800" y="343" text-anchor="middle">Store the file and module record</text>
+    <rect class="action" x="600" y="390" width="400" height="80" rx="15"/>
+    <text class="owner" x="800" y="418" text-anchor="middle">DIVISION ADMIN</text><text class="actionTitle" x="800" y="448" text-anchor="middle">Publish the module to the catalogue</text>
+    <rect class="action" x="600" y="495" width="400" height="85" rx="15"/>
+    <text class="owner" x="800" y="523" text-anchor="middle">LEARNER / ANDROID APP</text><text class="actionTitle" x="800" y="553" text-anchor="middle">Fetch published modules and download a PDF</text>
+    <rect class="action" x="600" y="605" width="400" height="90" rx="15"/>
+    <text class="owner" x="800" y="633" text-anchor="middle">ANDROID APP / LEARNER</text><text class="actionTitle" x="800" y="663" text-anchor="middle">Cache the module; study and record</text><text class="actionTitle" x="800" y="685" text-anchor="middle">page progress locally</text>
+    <polygon class="decision" points="800,725 865,765 800,805 735,765"/><text class="decisionText" x="800" y="770" text-anchor="middle">Connected?</text>
+    <rect class="action" x="600" y="845" width="400" height="82" rx="15"/>
+    <text class="owner" x="800" y="873" text-anchor="middle">WORKMANAGER / ANDROID APP</text><text class="actionTitle" x="800" y="903" text-anchor="middle">Send progress batch to the ALS API</text>
+    <rect class="action" x="600" y="950" width="400" height="90" rx="15"/>
+    <text class="owner" x="800" y="978" text-anchor="middle">LARAVEL API</text><text class="actionTitle" x="800" y="1008" text-anchor="middle">Validate request and update learner</text><text class="actionTitle" x="800" y="1030" text-anchor="middle">module progress in the shared database</text>
+    <rect class="action" x="600" y="1060" width="400" height="88" rx="15"/>
+    <text class="owner" x="800" y="1088" text-anchor="middle">SYSTEM / ANDROID APP</text><text class="actionTitle" x="800" y="1118" text-anchor="middle">Return sync result and mark local</text><text class="actionTitle" x="800" y="1140" text-anchor="middle">progress as synced</text>
+    <circle cx="800" cy="1250" r="16" fill="#FFF" stroke="#101820" stroke-width="4"/><circle cx="800" cy="1250" r="7" fill="#101820"/><text class="endLabel" x="830" y="1255">End: Progress Synced</text>
+    <rect class="action" x="80" y="720" width="400" height="90" rx="15"/>
+    <text class="owner" x="280" y="748" text-anchor="middle">ANDROID APP</text><text class="actionTitle" x="280" y="778" text-anchor="middle">Keep progress in Room; wait for a connection</text>
+  </g>
+
+  <g aria-label="Activity flows">
+    <path class="flow" d="M800 141 V174" marker-end="url(#arrow)"/><path class="flow" d="M800 260 V279" marker-end="url(#arrow)"/>
+    <path class="flow" d="M800 365 V384" marker-end="url(#arrow)"/><path class="flow" d="M800 470 V489" marker-end="url(#arrow)"/>
+    <path class="flow" d="M800 580 V599" marker-end="url(#arrow)"/><path class="flow" d="M800 695 V719" marker-end="url(#arrow)"/>
+    <path class="flow" d="M800 805 V838" marker-end="url(#arrow)"/><text class="branch" x="812" y="829">Yes</text>
+    <path class="flow" d="M735 765 H485" marker-end="url(#arrow)"/><text class="branch" x="600" y="753">No</text>
+    <path class="flow" d="M80 765 H45 V700 H710 V765 H728" marker-end="url(#arrow)"/><text class="branch" x="56" y="744">Retry on reconnect</text>
+    <path class="flow" d="M800 927 V943" marker-end="url(#arrow)"/><path class="flow" d="M800 1040 V1053" marker-end="url(#arrow)"/>
+    <path class="flow" d="M800 1148 V1226" marker-end="url(#arrow)"/>
+  </g>
+</svg>

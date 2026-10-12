@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050" role="img" aria-labelledby="title desc">
+  <title id="title">Activity Diagram 2 — ALS Mobile Teacher Registration and Onboarding</title>
+  <desc id="desc">A UML-style activity diagram for teacher registration, input validation, account and profile creation, optional CLC assignment, and automatic sign-in.</desc>
+  <defs>
+    
+    
+    <marker id="arrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L10 5.5 L0 11 z" fill="#43566B"/></marker>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#1E293B" flood-opacity="0.13"/></filter>
+    <style>
+      .title{font:700 31px 'Segoe UI',Arial,sans-serif;fill:#263746}.subtitle{font:400 16px 'Segoe UI',Arial,sans-serif;fill:#647587}
+      .action{fill:#303B70;stroke:#1F2C57;stroke-width:2}.actionTitle{font:700 17px 'Segoe UI',Arial,sans-serif;fill:#FFF}.owner{font:700 10px 'Segoe UI',Arial,sans-serif;letter-spacing:1.15px;fill:#B9C8F4}
+      .decision{fill:#FFF;stroke:#303B70;stroke-width:2.5}.decisionText{font:700 14px 'Segoe UI',Arial,sans-serif;fill:#283553}.flow{fill:none;stroke:#43566B;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.branch{font:700 12px 'Segoe UI',Arial,sans-serif;fill:#4D6074}.endLabel{font:600 13px 'Segoe UI',Arial,sans-serif;fill:#34495E}
+    </style>
+  </defs>
+  
+  <text class="title" x="800" y="62" text-anchor="middle">Appendix C. Activity Diagram 2</text>
+  <text class="subtitle" x="800" y="92" text-anchor="middle">ALS Mobile Teacher Registration &amp; Station Onboarding Workflow</text>
+
+  <g filter="url(#shadow)">
+    <circle cx="800" cy="135" r="16" fill="#101820"/><text class="endLabel" x="830" y="140">Start</text>
+    <rect class="action" x="600" y="200" width="400" height="82" rx="15"/>
+    <text class="owner" x="800" y="228" text-anchor="middle">EDUCATOR</text><text class="actionTitle" x="800" y="258" text-anchor="middle">Open /register/teacher and enter profile details</text>
+    <rect class="action" x="600" y="315" width="400" height="90" rx="15"/>
+    <text class="owner" x="800" y="343" text-anchor="middle">EDUCATOR</text><text class="actionTitle" x="800" y="372" text-anchor="middle">Set username, email, password, and</text><text class="actionTitle" x="800" y="394" text-anchor="middle">optional education and CLC</text>
+    <rect class="action" x="600" y="440" width="400" height="82" rx="15"/>
+    <text class="owner" x="800" y="468" text-anchor="middle">SYSTEM</text><text class="actionTitle" x="800" y="498" text-anchor="middle">Validate required fields and unique credentials</text>
+    <polygon class="decision" points="800,535 865,580 800,625 735,580"/><text class="decisionText" x="800" y="585" text-anchor="middle">Input valid?</text>
+    <rect class="action" x="600" y="665" width="400" height="95" rx="15"/>
+    <text class="owner" x="800" y="693" text-anchor="middle">SYSTEM</text><text class="actionTitle" x="800" y="722" text-anchor="middle">Create active mobile_teacher account</text><text class="actionTitle" x="800" y="744" text-anchor="middle">and profile; link CLC if available</text>
+    <rect class="action" x="600" y="795" width="400" height="82" rx="15"/>
+    <text class="owner" x="800" y="823" text-anchor="middle">SYSTEM</text><text class="actionTitle" x="800" y="853" text-anchor="middle">Sign in and open /admin/dashboard</text>
+    <circle cx="800" cy="955" r="16" fill="#FFF" stroke="#101820" stroke-width="4"/><circle cx="800" cy="955" r="7" fill="#101820"/><text class="endLabel" x="830" y="960">End: Teacher Onboarded</text>
+    <rect class="action" x="100" y="540" width="380" height="82" rx="15"/>
+    <text class="owner" x="290" y="568" text-anchor="middle">SYSTEM</text><text class="actionTitle" x="290" y="598" text-anchor="middle">Show field validation messages</text>
+  </g>
+
+  <g aria-label="Activity flows">
+    <path class="flow" d="M800 151 V194" marker-end="url(#arrow)"/><path class="flow" d="M800 282 V309" marker-end="url(#arrow)"/>
+    <path class="flow" d="M800 405 V434" marker-end="url(#arrow)"/><path class="flow" d="M800 522 V529" marker-end="url(#arrow)"/>
+    <path class="flow" d="M800 625 V658" marker-end="url(#arrow)"/><text class="branch" x="812" y="648">Yes</text>
+    <path class="flow" d="M735 580 H485" marker-end="url(#arrow)"/><text class="branch" x="594" y="568">No</text>
+    <path class="flow" d="M100 581 H55 V360 H592" marker-end="url(#arrow)"/><text class="branch" x="62" y="559">Correct and retry</text>
+    <path class="flow" d="M800 760 V788" marker-end="url(#arrow)"/><path class="flow" d="M800 877 V931" marker-end="url(#arrow)"/>
+  </g>
+</svg>

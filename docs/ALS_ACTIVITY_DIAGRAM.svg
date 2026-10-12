@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1420" viewBox="0 0 1600 1420" role="img" aria-labelledby="title desc">
+  <title id="title">Appendix C. Activity Diagram — ALS Learner Digital Intake</title>
+  <desc id="desc">A UML-style activity diagram for ALS learner registration, Form 2 validation, document review, correction, rejection, and enrollment.</desc>
+  <defs>
+    
+    
+    <marker id="arrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5.5 L0,11 z" fill="#43566B"/>
+    </marker>
+    <filter id="softShadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#1E293B" flood-opacity="0.13"/>
+    </filter>
+    <style>
+      .title { font: 700 31px 'Segoe UI', Arial, sans-serif; fill: #263746; }
+      .subtitle { font: 400 16px 'Segoe UI', Arial, sans-serif; fill: #647587; }
+      .action { fill: #303B70; stroke: #1F2C57; stroke-width: 2; }
+      .actionTitle { font: 700 17px 'Segoe UI', Arial, sans-serif; fill: #FFFFFF; }
+      .owner { font: 700 10px 'Segoe UI', Arial, sans-serif; letter-spacing: 1.15px; fill: #B9C8F4; }
+      .decision { fill: #FFFFFF; stroke: #303B70; stroke-width: 2.5; }
+      .decisionText { font: 700 14px 'Segoe UI', Arial, sans-serif; fill: #283553; }
+      .flow { fill: none; stroke: #43566B; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .branch { font: 700 12px 'Segoe UI', Arial, sans-serif; fill: #4D6074; }
+      .endLabel { font: 600 13px 'Segoe UI', Arial, sans-serif; fill: #34495E; }
+      .startEnd { fill: #101820; stroke: #101820; }
+      .finalNode { fill: #FFFFFF; stroke: #101820; stroke-width: 4; }
+    </style>
+  </defs>
+
+  
+  
+
+  <text class="title" x="800" y="62" text-anchor="middle">Appendix C. Activity Diagram</text>
+  <text class="subtitle" x="800" y="92" text-anchor="middle">Learner Digital Intake &amp; Document Verification Workflow</text>
+
+  <!-- Start, activities, decisions, and outcomes -->
+  <g filter="url(#softShadow)">
+    <!-- Start node -->
+    <circle class="startEnd" cx="800" cy="145" r="16"/>
+    <text class="endLabel" x="830" y="150">Start</text>
+
+    <!-- Main learner and system actions -->
+    <rect class="action" x="610" y="205" width="380" height="80" rx="15"/>
+    <text class="owner" x="800" y="232" text-anchor="middle">LEARNER</text>
+    <text class="actionTitle" x="800" y="260" text-anchor="middle">Open portal and complete ALS Form 2</text>
+
+    <rect class="action" x="610" y="325" width="380" height="80" rx="15"/>
+    <text class="owner" x="800" y="352" text-anchor="middle">SYSTEM</text>
+    <text class="actionTitle" x="800" y="380" text-anchor="middle">Validate the submitted form</text>
+
+    <polygon class="decision" points="800,440 865,485 800,530 735,485"/>
+    <text class="decisionText" x="800" y="490" text-anchor="middle">Form valid?</text>
+
+    <rect class="action" x="610" y="565" width="380" height="88" rx="15"/>
+    <text class="owner" x="800" y="592" text-anchor="middle">SYSTEM</text>
+    <text class="actionTitle" x="800" y="619" text-anchor="middle">Create learner profile and pending enrollment</text>
+    <text class="actionTitle" x="800" y="640" text-anchor="middle">Issue application tracking number</text>
+
+    <rect class="action" x="610" y="680" width="380" height="82" rx="15"/>
+    <text class="owner" x="800" y="707" text-anchor="middle">LEARNER</text>
+    <text class="actionTitle" x="800" y="736" text-anchor="middle">Upload required supporting documents</text>
+
+    <rect class="action" x="610" y="790" width="380" height="90" rx="15"/>
+    <text class="owner" x="800" y="818" text-anchor="middle">MOBILE TEACHER / ADMIN</text>
+    <text class="actionTitle" x="800" y="846" text-anchor="middle">Review application and document files</text>
+
+    <polygon class="decision" points="800,910 865,955 800,1000 735,955"/>
+    <text class="decisionText" x="800" y="960" text-anchor="middle">Review result?</text>
+
+    <!-- Correction outcome -->
+    <rect class="action" x="100" y="1040" width="400" height="82" rx="15"/>
+    <text class="owner" x="300" y="1067" text-anchor="middle">MOBILE TEACHER / ADMIN</text>
+    <text class="actionTitle" x="300" y="1096" text-anchor="middle">Set needs-correction status and add remarks</text>
+
+    <rect class="action" x="100" y="1150" width="400" height="92" rx="15"/>
+    <text class="owner" x="300" y="1177" text-anchor="middle">LEARNER</text>
+    <text class="actionTitle" x="300" y="1206" text-anchor="middle">Review remarks; upload corrected</text>
+    <text class="actionTitle" x="300" y="1228" text-anchor="middle">or missing documents</text>
+
+    <!-- Approval outcome -->
+    <rect class="action" x="610" y="1040" width="380" height="90" rx="15"/>
+    <text class="owner" x="800" y="1067" text-anchor="middle">MOBILE TEACHER / ADMIN</text>
+    <text class="actionTitle" x="800" y="1093" text-anchor="middle">Approve; confirm CLC and teacher</text>
+    <text class="actionTitle" x="800" y="1115" text-anchor="middle">assignment / LRN if needed</text>
+
+    <rect class="action" x="610" y="1150" width="380" height="92" rx="15"/>
+    <text class="owner" x="800" y="1177" text-anchor="middle">SYSTEM / LEARNER</text>
+    <text class="actionTitle" x="800" y="1206" text-anchor="middle">Show enrollment status and</text>
+    <text class="actionTitle" x="800" y="1228" text-anchor="middle">learner dashboard</text>
+
+    <!-- Rejection outcome -->
+    <rect class="action" x="1100" y="1040" width="400" height="82" rx="15"/>
+    <text class="owner" x="1300" y="1067" text-anchor="middle">MOBILE TEACHER / ADMIN</text>
+    <text class="actionTitle" x="1300" y="1096" text-anchor="middle">Set rejected status and add remarks</text>
+
+    <rect class="action" x="1100" y="1150" width="400" height="92" rx="15"/>
+    <text class="owner" x="1300" y="1177" text-anchor="middle">SYSTEM / LEARNER</text>
+    <text class="actionTitle" x="1300" y="1206" text-anchor="middle">Show rejection status</text>
+    <text class="actionTitle" x="1300" y="1228" text-anchor="middle">and staff remarks</text>
+
+    <!-- End nodes -->
+    <circle class="startEnd" cx="800" cy="1335" r="16"/>
+    <circle class="finalNode" cx="1300" cy="1335" r="16"/>
+    <circle class="startEnd" cx="1300" cy="1335" r="7"/>
+    <text class="endLabel" x="830" y="1340">End: Enrolled</text>
+    <text class="endLabel" x="1330" y="1340">End: Rejected</text>
+
+    <!-- Invalid form feedback -->
+    <rect class="action" x="120" y="445" width="350" height="82" rx="15"/>
+    <text class="owner" x="295" y="472" text-anchor="middle">SYSTEM</text>
+    <text class="actionTitle" x="295" y="501" text-anchor="middle">Show fields that need correction</text>
+  </g>
+
+  <!-- Connectors and arrowheads -->
+  <g aria-label="Activity flows">
+    <path class="flow" d="M800 161 V199" marker-end="url(#arrow)"/>
+    <path class="flow" d="M800 285 V319" marker-end="url(#arrow)"/>
+    <path class="flow" d="M800 405 V434" marker-end="url(#arrow)"/>
+
+    <path class="flow" d="M800 530 V558" marker-end="url(#arrow)"/>
+    <text class="branch" x="812" y="550">Yes</text>
+    <path class="flow" d="M735 485 H475" marker-end="url(#arrow)"/>
+    <text class="branch" x="585" y="473">No</text>
+    <path class="flow" d="M120 486 H55 V245 H602" marker-end="url(#arrow)"/>
+    <text class="branch" x="62" y="466">Correct and retry</text>
+
+    <path class="flow" d="M800 653 V673" marker-end="url(#arrow)"/>
+    <path class="flow" d="M800 762 V783" marker-end="url(#arrow)"/>
+    <path class="flow" d="M800 880 V904" marker-end="url(#arrow)"/>
+
+    <!-- Needs correction branch and resubmission loop -->
+    <path class="flow" d="M735 955 H620 V1081 H508" marker-end="url(#arrow)"/>
+    <text class="branch" x="585" y="942">Needs correction</text>
+    <path class="flow" d="M300 1122 V1143" marker-end="url(#arrow)"/>
+    <path class="flow" d="M100 1196 H55 V835 H602" marker-end="url(#arrow)"/>
+    <text class="branch" x="62" y="1018">Resubmit for review</text>
+
+    <!-- Approval branch -->
+    <path class="flow" d="M800 1000 V1033" marker-end="url(#arrow)"/>
+    <text class="branch" x="812" y="1025">Approved</text>
+    <path class="flow" d="M800 1130 V1143" marker-end="url(#arrow)"/>
+    <path class="flow" d="M800 1242 V1311" marker-end="url(#arrow)"/>
+
+    <!-- Rejection branch -->
+    <path class="flow" d="M865 955 H1300 V1033" marker-end="url(#arrow)"/>
+    <text class="branch" x="1045" y="942">Rejected</text>
+    <path class="flow" d="M1300 1122 V1143" marker-end="url(#arrow)"/>
+    <path class="flow" d="M1300 1242 V1311" marker-end="url(#arrow)"/>
+  </g>
+
+  <text class="subtitle" x="800" y="1390" text-anchor="middle">Correction and rejection remarks are shown in the learner portal; staff manage enrollment status and document review.</text>
+</svg>

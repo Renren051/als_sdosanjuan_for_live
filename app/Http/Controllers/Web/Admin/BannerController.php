@@ -37,6 +37,7 @@ class BannerController extends Controller
             'cropped_image' => ['nullable', 'string'],
             'position_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'position_y' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'zoom' => ['nullable', 'integer', 'min:100', 'max:200'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
@@ -68,6 +69,7 @@ class BannerController extends Controller
             'image_path' => $relativePath,
             'position_x' => (int) round($validated['position_x'] ?? 50),
             'position_y' => (int) round($validated['position_y'] ?? 50),
+            'zoom' => (int) ($validated['zoom'] ?? 100),
             'button_text' => $validated['button_text'] ?: 'Take A Tour',
             'button_url' => $validated['button_url'] ?: '/register',
             'order_seq' => $validated['order_seq'] ?? ($maxOrder + 1),
@@ -94,6 +96,7 @@ class BannerController extends Controller
             'cropped_image' => ['nullable', 'string'],
             'position_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'position_y' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'zoom' => ['nullable', 'integer', 'min:100', 'max:200'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
@@ -130,6 +133,9 @@ class BannerController extends Controller
         if (isset($validated['position_y'])) {
             $banner->position_y = (int) round($validated['position_y']);
         }
+        if (isset($validated['zoom'])) {
+            $banner->zoom = (int) $validated['zoom'];
+        }
         $banner->is_active = $request->has('is_active');
         $banner->save();
 
@@ -144,14 +150,16 @@ class BannerController extends Controller
         $banner = HeroBanner::findOrFail($id);
 
         // Repositioning without destructive cropping (saves CSS object-position focal point)
-        if ($request->has('position_y') || $request->has('position_x')) {
+        if ($request->hasAny(['position_y', 'position_x', 'zoom'])) {
             $validated = $request->validate([
                 'position_x' => ['nullable', 'numeric', 'min:0', 'max:100'],
                 'position_y' => ['nullable', 'numeric', 'min:0', 'max:100'],
+                'zoom' => ['nullable', 'integer', 'min:100', 'max:200'],
             ]);
 
-            $banner->position_x = (int) round($validated['position_x'] ?? 50);
-            $banner->position_y = (int) round($validated['position_y'] ?? 50);
+            $banner->position_x = (int) round($validated['position_x'] ?? $banner->position_x ?? 50);
+            $banner->position_y = (int) round($validated['position_y'] ?? $banner->position_y ?? 50);
+            $banner->zoom = (int) ($validated['zoom'] ?? $banner->zoom ?? 100);
             $banner->save();
 
             if ($request->wantsJson() || $request->ajax()) {
@@ -160,6 +168,7 @@ class BannerController extends Controller
                     'message' => "Banner reposition updated successfully for '{$banner->title}'!",
                     'position_x' => $banner->position_x,
                     'position_y' => $banner->position_y,
+                    'zoom' => $banner->zoom,
                 ]);
             }
 

@@ -16,6 +16,7 @@ class HeroBanner extends Model
         'image_path',
         'position_x',
         'position_y',
+        'zoom',
         'button_text',
         'button_url',
         'order_seq',
@@ -27,6 +28,7 @@ class HeroBanner extends Model
         'order_seq' => 'integer',
         'position_x' => 'integer',
         'position_y' => 'integer',
+        'zoom' => 'integer',
     ];
 
     /**

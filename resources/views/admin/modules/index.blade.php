@@ -4,7 +4,39 @@
 @section('page_title', 'Self-Learning Module Repository (LS 1–6)')
 
 @section('content')
-<div class="space-y-6" x-data="{ uploadModal: false }">
+<div class="space-y-6" x-data="{ 
+    uploadModal: false, 
+    editModal: false,
+    editData: {
+        id: null,
+        strand_id: '',
+        level: '',
+        sub_level: '',
+        language: '',
+        module_number: '',
+        title: '',
+        description: '',
+        version: '',
+        is_published: '1',
+        updateUrl: ''
+    },
+    openEdit(mod, updateUrl) {
+        this.editData = {
+            id: mod.id,
+            strand_id: mod.strand_id,
+            level: mod.level,
+            sub_level: mod.sub_level || '',
+            language: mod.language || 'English',
+            module_number: mod.module_number,
+            title: mod.title,
+            description: mod.description || '',
+            version: mod.version || '1.0',
+            is_published: mod.is_published ? '1' : '0',
+            updateUrl: updateUrl
+        };
+        this.editModal = true;
+    }
+}">
 
     <!-- Top Action & Upload Trigger -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/80 shadow-sm">
@@ -135,6 +167,14 @@
                     </div>
 
                     <div class="flex items-center gap-1.5">
+                        <!-- Edit Module Trigger -->
+                        <button type="button" 
+                                @click="openEdit({{ json_encode($mod) }}, '{{ route('admin.modules.update', $mod->id) }}')"
+                                class="p-1.5 rounded-xl text-slate-500 hover:text-deped-blue hover:bg-slate-100 transition-colors"
+                                title="Edit Module Information & Replace PDF">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        </button>
+
                         <!-- Toggle Publish Form -->
                         <form action="{{ route('admin.modules.toggle', $mod->id) }}" method="POST">
                             @csrf
@@ -263,6 +303,106 @@
                     <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
                         <button type="button" @click="uploadModal = false" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
                         <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-deped-blue hover:bg-deped-dark rounded-xl shadow-md">Upload & Save Module</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Module Modal -->
+    <div x-show="editModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
+        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" @click="editModal = false"></div>
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Edit Module / Replace PDF</h3>
+                        <p class="text-xs text-slate-500">Update metadata or replace with a revised PDF file</p>
+                    </div>
+                    <button @click="editModal = false" class="text-slate-400 hover:text-slate-700 text-xl font-bold">&times;</button>
+                </div>
+
+                <form :action="editData.updateUrl" method="POST" enctype="multipart/form-data" class="mt-4 space-y-4">
+                    @csrf
+                    @method('PUT')
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase">Learning Strand *</label>
+                        <select name="strand_id" x-model="editData.strand_id" required class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                            @foreach($strands as $st)
+                                <option value="{{ $st->id }}">{{ $st->code }} - {{ $st->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Academic Level *</label>
+                            <select name="level" x-model="editData.level" required class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                                <option value="Elementary">A&E Lower &amp; Advanced Elementary</option>
+                                <option value="Junior_High">A&E Secondary (Junior High)</option>
+                                <option value="BLP">Basic Literacy (BLP)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Sub-Level</label>
+                            <select name="sub_level" x-model="editData.sub_level" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                                <option value="Basic Literacy">Basic Literacy (BLP)</option>
+                                <option value="Lower Elementary">Lower Elementary (Grades 1-3)</option>
+                                <option value="Advanced Elementary">Advanced Elementary (Grades 4-6)</option>
+                                <option value="Junior High School">Junior High School (Grades 7-10)</option>
+                                <option value="">None / Not Applicable</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Language Track *</label>
+                            <select name="language" x-model="editData.language" required class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                                <option value="English">English</option>
+                                <option value="Filipino">Filipino</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Module Number *</label>
+                            <input type="text" name="module_number" x-model="editData.module_number" required class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase">Module Title *</label>
+                        <input type="text" name="title" x-model="editData.title" required class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase">Description / Competencies</label>
+                        <textarea name="description" x-model="editData.description" rows="2" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Version</label>
+                            <input type="text" name="version" x-model="editData.version" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase">Publish State</label>
+                            <select name="is_published" x-model="editData.is_published" class="mt-1 w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs">
+                                <option value="1">Published</option>
+                                <option value="0">Draft / Unpublished</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase">Replace PDF File (Optional)</label>
+                        <p class="text-[11px] text-slate-400 mb-1">Leave empty to keep current file, or choose a new PDF to replace it (Max 25MB).</p>
+                        <input type="file" name="pdf_file" accept=".pdf,application/pdf"
+                               class="mt-1 w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-deped-blue/10 file:text-deped-blue hover:file:bg-deped-blue/20">
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+                        <button type="button" @click="editModal = false" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl">Cancel</button>
+                        <button type="submit" class="px-5 py-2 text-xs font-bold text-white bg-deped-blue hover:bg-deped-dark rounded-xl shadow-md">Save Changes</button>
                     </div>
                 </form>
             </div>

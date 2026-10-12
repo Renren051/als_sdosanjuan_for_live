@@ -80,6 +80,15 @@
                 <span>Module Repository</span>
             </a>
 
+            <!-- Learner Module Progress -->
+            <a href="{{ route('admin.module-progress.index') }}"
+               class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.module-progress.*') ? 'bg-deped-blue text-white shadow-lg shadow-deped-blue/30' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
+                <svg class="w-5 h-5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19V5m0 14h16M8 15l3-4 3 2 5-7"/>
+                </svg>
+                <span>Module Progress</span>
+            </a>
+
             <!-- Homepage Hero Banners -->
             <a href="{{ route('admin.banners.index') }}" 
                class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all {{ request()->routeIs('admin.banners.*') ? 'bg-deped-blue text-white shadow-lg shadow-deped-blue/30' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
@@ -176,7 +185,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                     </svg>
-                    <span>Encode Walk-in</span>
+                    <span>Encode Walk-In</span>
                 </button>
 
                 <div class="h-6 w-px bg-slate-200 hidden sm:block"></div>

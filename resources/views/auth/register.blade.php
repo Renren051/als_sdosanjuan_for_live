@@ -126,6 +126,10 @@
         </a>
 
         <div class="flex items-center gap-2">
+            <a href="{{ route('teacher.register') }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-deped-blue/10 border border-deped-blue/20 hover:bg-deped-blue hover:text-white text-deped-blue text-xs sm:text-sm font-bold shadow-xs transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                <span>Teacher Register</span>
+            </a>
             <span class="text-xs text-slate-500 font-semibold hidden sm:inline">Already registered?</span>
             <a href="{{ route('login') }}" class="px-4 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-deped-blue text-xs sm:text-sm font-bold shadow-xs transition-all">
                 Sign In &rarr;

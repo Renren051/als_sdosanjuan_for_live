@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Executive Dashboard - SDO San Juan City ALS')
-@section('page_title', 'Executive Dashboard')
+@section('title', 'Dashboard - SDO San Juan City ALS')
+@section('page_title', 'Dashboard')
 
 @section('content')
 <div class="space-y-8" 
@@ -598,11 +598,57 @@
             </div>
 
             <div class="mt-4 pt-4 border-t border-slate-100 text-center">
-                <a href="{{ route('admin.modules.index') }}" class="text-xs font-bold text-deped-blue hover:underline">
-                    View Self-Learning Modules &rarr;
+                <a href="{{ route('admin.module-progress.index') }}" class="text-xs font-bold text-deped-blue hover:underline">
+                    View all learner module progress &rarr;
                 </a>
             </div>
         </div>
+    </div>
+
+    <!-- Recent Offline Mini-game Scores -->
+    <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+                <h2 class="text-base font-bold text-slate-900">Recent Mini-game Scores</h2>
+                <p class="text-xs text-slate-500">Offline memory-match results appear here after learners reconnect.</p>
+            </div>
+            <span class="text-xs font-semibold text-slate-500">{{ $isTeacher ? 'Assigned learners' : 'All learners' }}</span>
+        </div>
+
+        @if($recentGameAttempts->isNotEmpty())
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider font-semibold border-b border-slate-100">
+                        <tr>
+                            <th class="px-6 py-3">Learner</th>
+                            <th class="px-6 py-3">Module</th>
+                            <th class="px-6 py-3">Score</th>
+                            <th class="px-6 py-3">Moves</th>
+                            <th class="px-6 py-3">Time</th>
+                            <th class="px-6 py-3">Played</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @foreach($recentGameAttempts as $attempt)
+                            <tr class="hover:bg-slate-50/70">
+                                <td class="px-6 py-3 font-semibold text-slate-800">{{ $attempt->user?->full_name ?? 'Learner' }}</td>
+                                <td class="px-6 py-3 text-slate-600">{{ $attempt->module?->title ?? 'Module unavailable' }}</td>
+                                <td class="px-6 py-3">
+                                    <span class="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold">{{ $attempt->score }} / {{ $attempt->max_score }}</span>
+                                </td>
+                                <td class="px-6 py-3 text-slate-600">{{ $attempt->moves }}</td>
+                                <td class="px-6 py-3 text-slate-600">{{ intdiv($attempt->elapsed_seconds, 60) }}:{{ str_pad((string) ($attempt->elapsed_seconds % 60), 2, '0', STR_PAD_LEFT) }}</td>
+                                <td class="px-6 py-3 text-slate-500">{{ $attempt->attempted_at?->diffForHumans() ?? '—' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="m-6 py-8 text-center text-slate-400 text-xs bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                No mini-game scores have synced yet.
+            </div>
+        @endif
     </div>
 
     <!-- Metrics Definitions & Methodology Modal -->
