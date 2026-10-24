@@ -45,38 +45,46 @@ class BannerController extends Controller
             return back()->withErrors(['image' => 'Please select an image for the hero banner.'])->withInput();
         }
 
-        if (!empty($validated['cropped_image']) && str_starts_with($validated['cropped_image'], 'data:image')) {
-            $relativePath = $this->saveCroppedImage($validated['cropped_image']);
-        } else {
-            $imageFile = $request->file('image');
-            $destinationDir = public_path('images/banners');
+        try {
+            if (!empty($validated['cropped_image']) && str_starts_with($validated['cropped_image'], 'data:image')) {
+                $relativePath = $this->saveCroppedImage($validated['cropped_image']);
+            } else {
+                $imageFile = $request->file('image');
+                $destinationDir = public_path('images/banners');
 
-            if (!File::isDirectory($destinationDir)) {
-                File::makeDirectory($destinationDir, 0755, true);
+                if (!File::isDirectory($destinationDir)) {
+                    File::makeDirectory($destinationDir, 0775, true, true);
+                }
+
+                $extension = $imageFile->getClientOriginalExtension();
+                $fileName = 'hero-slide-' . time() . '-' . Str::random(6) . '.' . $extension;
+                $imageFile->move($destinationDir, $fileName);
+                $relativePath = 'images/banners/' . $fileName;
             }
 
-            $extension = $imageFile->getClientOriginalExtension();
-            $fileName = 'hero-slide-' . time() . '-' . Str::random(6) . '.' . $extension;
-            $imageFile->move($destinationDir, $fileName);
-            $relativePath = 'images/banners/' . $fileName;
+            $maxOrder = HeroBanner::max('order_seq') ?? 0;
+
+            HeroBanner::create([
+                'title' => $validated['title'],
+                'subtitle' => $validated['subtitle'] ?? 'SDO San Juan City • Division ALS Network',
+                'image_path' => $relativePath,
+                'position_x' => (int) round($validated['position_x'] ?? 50),
+                'position_y' => (int) round($validated['position_y'] ?? 50),
+                'zoom' => (int) ($validated['zoom'] ?? 100),
+                'button_text' => $validated['button_text'] ?: 'Take A Tour',
+                'button_url' => $validated['button_url'] ?: '/register',
+                'order_seq' => $validated['order_seq'] ?? ($maxOrder + 1),
+                'is_active' => $request->has('is_active'),
+            ]);
+
+            return redirect()->route('admin.banners.index')->with('status', 'Hero banner uploaded and added successfully!');
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Hero banner store error: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
+
+            return back()->withErrors(['image' => 'Upload failed: ' . $e->getMessage()])->withInput();
         }
-
-        $maxOrder = HeroBanner::max('order_seq') ?? 0;
-
-        HeroBanner::create([
-            'title' => $validated['title'],
-            'subtitle' => $validated['subtitle'] ?? 'SDO San Juan City • Division ALS Network',
-            'image_path' => $relativePath,
-            'position_x' => (int) round($validated['position_x'] ?? 50),
-            'position_y' => (int) round($validated['position_y'] ?? 50),
-            'zoom' => (int) ($validated['zoom'] ?? 100),
-            'button_text' => $validated['button_text'] ?: 'Take A Tour',
-            'button_url' => $validated['button_url'] ?: '/register',
-            'order_seq' => $validated['order_seq'] ?? ($maxOrder + 1),
-            'is_active' => $request->has('is_active'),
-        ]);
-
-        return redirect()->route('admin.banners.index')->with('status', 'Hero banner uploaded and added successfully!');
     }
 
     /**
@@ -100,46 +108,54 @@ class BannerController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        if (!empty($validated['cropped_image']) && str_starts_with($validated['cropped_image'], 'data:image')) {
-            $relativePath = $this->saveCroppedImage($validated['cropped_image']);
-            $this->deleteOldBannerImage($banner->image_path);
-            $banner->image_path = $relativePath;
-        } elseif ($request->hasFile('image')) {
-            $imageFile = $request->file('image');
-            $destinationDir = public_path('images/banners');
+        try {
+            if (!empty($validated['cropped_image']) && str_starts_with($validated['cropped_image'], 'data:image')) {
+                $relativePath = $this->saveCroppedImage($validated['cropped_image']);
+                $this->deleteOldBannerImage($banner->image_path);
+                $banner->image_path = $relativePath;
+            } elseif ($request->hasFile('image')) {
+                $imageFile = $request->file('image');
+                $destinationDir = public_path('images/banners');
 
-            if (!File::isDirectory($destinationDir)) {
-                File::makeDirectory($destinationDir, 0755, true);
+                if (!File::isDirectory($destinationDir)) {
+                    File::makeDirectory($destinationDir, 0775, true, true);
+                }
+
+                $extension = $imageFile->getClientOriginalExtension();
+                $fileName = 'hero-slide-' . time() . '-' . Str::random(6) . '.' . $extension;
+                $imageFile->move($destinationDir, $fileName);
+
+                $this->deleteOldBannerImage($banner->image_path);
+                $banner->image_path = 'images/banners/' . $fileName;
             }
 
-            $extension = $imageFile->getClientOriginalExtension();
-            $fileName = 'hero-slide-' . time() . '-' . Str::random(6) . '.' . $extension;
-            $imageFile->move($destinationDir, $fileName);
+            $banner->title = $validated['title'];
+            $banner->subtitle = $validated['subtitle'] ?? '';
+            $banner->button_text = $validated['button_text'] ?: 'Take A Tour';
+            $banner->button_url = $validated['button_url'] ?: '/register';
+            if (isset($validated['order_seq'])) {
+                $banner->order_seq = $validated['order_seq'];
+            }
+            if (isset($validated['position_x'])) {
+                $banner->position_x = (int) round($validated['position_x']);
+            }
+            if (isset($validated['position_y'])) {
+                $banner->position_y = (int) round($validated['position_y']);
+            }
+            if (isset($validated['zoom'])) {
+                $banner->zoom = (int) $validated['zoom'];
+            }
+            $banner->is_active = $request->has('is_active');
+            $banner->save();
 
-            $this->deleteOldBannerImage($banner->image_path);
-            $banner->image_path = 'images/banners/' . $fileName;
-        }
+            return redirect()->route('admin.banners.index')->with('status', 'Hero banner updated successfully!');
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Hero banner update error: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
 
-        $banner->title = $validated['title'];
-        $banner->subtitle = $validated['subtitle'] ?? '';
-        $banner->button_text = $validated['button_text'] ?: 'Take A Tour';
-        $banner->button_url = $validated['button_url'] ?: '/register';
-        if (isset($validated['order_seq'])) {
-            $banner->order_seq = $validated['order_seq'];
+            return back()->withErrors(['image' => 'Upload failed: ' . $e->getMessage()])->withInput();
         }
-        if (isset($validated['position_x'])) {
-            $banner->position_x = (int) round($validated['position_x']);
-        }
-        if (isset($validated['position_y'])) {
-            $banner->position_y = (int) round($validated['position_y']);
-        }
-        if (isset($validated['zoom'])) {
-            $banner->zoom = (int) $validated['zoom'];
-        }
-        $banner->is_active = $request->has('is_active');
-        $banner->save();
-
-        return redirect()->route('admin.banners.index')->with('status', 'Hero banner updated successfully!');
     }
 
     /**
@@ -285,8 +301,12 @@ class BannerController extends Controller
             !str_contains($path, 'hero-slide-2.jpg') && 
             !str_contains($path, 'hero-slide-3.jpg')) {
             $fullPath = public_path($path);
-            if (File::exists($fullPath)) {
-                File::delete($fullPath);
+            try {
+                if (File::exists($fullPath)) {
+                    File::delete($fullPath);
+                }
+            } catch (\Throwable $e) {
+                // Ignore failure if file couldn't be deleted
             }
         }
     }
